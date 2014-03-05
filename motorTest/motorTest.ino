@@ -7,10 +7,30 @@
 
 #include "Motor.h"
 
+void slowToStop(Motor right, Motor left, int time){
+  int i;
+  float rightDecrement = ((float)right.power)/time;
+  float leftDecrement = ((float)left.power)/time;
+  float rightPowerFloat = right.power;
+  float leftPowerFloat = left.power;
+  
+  for(i = 0; i < time; i++){
+    rightPowerFloat -= rightDecrement;
+    leftPowerFloat -= leftDecrement;
+    right.power = (int)rightPowerFloat;
+    left.power = (int)leftPowerFloat;
+    
+    analogWrite(right.enablePin, right.power);
+    analogWrite(left.enablePin, left.power);
+    delay(1);
+  }
+}
+
 void timedMove(Motor right, Motor left, int time){
   analogWrite(right.enablePin, right.power);
   analogWrite(left.enablePin, left.power);
-  delay(time);
+  delay(time-1000);
+  slowToStop(right, left, 1000);
   digitalWrite(right.enablePin, LOW);
   digitalWrite(left.enablePin, LOW);
 }
@@ -27,15 +47,12 @@ void setup(){
 
 
 void loop(){
-  rightMotor.setState(1, 100);
-  leftMotor.setState(1, 100);
-  timedMove(rightMotor, leftMotor, 1000);
-  rightMotor.setState(2, 100);
-  leftMotor.setState(2, 100);
-  timedMove(rightMotor, leftMotor, 1000);
+  rightMotor.setState(1, 150);
+  leftMotor.setState(1, 200);
+  timedMove(rightMotor, leftMotor, 2000);
   rightMotor.setState(0, 100);
   leftMotor.setState(0, 100);
-  timedMove(rightMotor, leftMotor, 1000);
+  timedMove(rightMotor, leftMotor, 3000);
 }
 
 
