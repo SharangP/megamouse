@@ -5,8 +5,8 @@
 * Sameer Chauhan
 ***************/
 
-#ifndef MOTOR_C
-#define MOTOR_C
+#ifndef MOTOR_CPP
+#define MOTOR_CPP
 
 #include "Motor.h"
 

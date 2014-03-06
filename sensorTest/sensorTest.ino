@@ -2,7 +2,7 @@
 IR test
  */
 
-int irPin[3] = {1, 2, 3};
+int irPin[3] = {0, 1, 2};
 int i, j;
 
 void setup() {
@@ -16,8 +16,6 @@ void setup() {
 
 
 void loop() {
-  Serial.println("begin 3x ir testing");
-  
   float readVal[3] = {0};
   int nSamples = 10;
 
