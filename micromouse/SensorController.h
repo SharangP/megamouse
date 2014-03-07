@@ -9,22 +9,23 @@
 #define SENSORCONTROLLER_H
 
 #include "Arduino.h"
-
-#define LEFT 0
-#define RIGHT 1
-#define CENTER 2
+#include "const.h"
 
 class SensorController{
 
 public:
 
   SensorController(); //initialize sensors
-  void detectWalls(int (&walls)[3]);
+  void sample();
+  void mlDetect(int (&walls)[3]); //detect walls using ML thresholds
+
+  int irSignal[3,N_IR];
+  int irSmooth[3];
   
 private:
 
   int encoder[2];
-
+  int irThreshold[3];
 };
 
 #endif

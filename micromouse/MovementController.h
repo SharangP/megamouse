@@ -9,12 +9,9 @@
 #define MOVEMENTCONTROLLER_H
 
 #include "Arduino.h"
+#include "const.h"
 #include "SensorController.h"
 #include "Motor.h"
-
-#define LEFT 0
-#define RIGHT 1
-#define CENTER 2
 
 
 class MovementController{
@@ -26,6 +23,8 @@ public:
   void goLeft();
   void goRight();
   void goBack();
+  void turn(int dir);
+  
 private:
 
   void go();
@@ -35,7 +34,7 @@ private:
   Motor * right;
   Motor * left;
   SensorController * sensors;
-  int walls[3] = {0};
+
 };
 
 #endif

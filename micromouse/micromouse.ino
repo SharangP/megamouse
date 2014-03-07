@@ -16,4 +16,5 @@ void setup(){
 
 void loop(){
   mouse.solveMaze();
+  delay(100000);
 }

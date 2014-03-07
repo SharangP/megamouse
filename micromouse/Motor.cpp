@@ -41,6 +41,9 @@ void Motor::setState(int state, int power){
       digitalWrite(this->pin2, HIGH);
       break;
   }
+  
+  analogWrite(this->enablePin, this->power);
+ 
 }
 
 #endif

@@ -17,20 +17,22 @@ void setup() {
 
 void loop() {
   float readVal[3] = {0};
-  int nSamples = 10;
+  int nSamples = 1;
 
   for(i = 0; i < nSamples; i++){
     for(j = 0; j < 3; j++){
-      readVal[j] = readVal[j] + (float)(analogRead(irPin[j]))/10;
+      readVal[j] = readVal[j] + (float)(analogRead(irPin[j]))/nSamples;
     }
     delay(64);
   }
 
-  Serial.print("1: ");
+//  Serial.print("1: ");
   Serial.print(readVal[0]);
-  Serial.print("2: ");
+  Serial.print(", ");
+//  Serial.print("2: ");
   Serial.print(readVal[1]);
-  Serial.print("3: ");
+  Serial.print(", ");
+//  Serial.print("3: ");
   Serial.println(readVal[2]);
 }
 
