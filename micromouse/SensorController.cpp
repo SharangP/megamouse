@@ -29,9 +29,9 @@ void SensorController::sample(int (&walls)[3]){
     }
   }
   
-  this->irSignal[LEFT,31] = analogRead(LEFT);
-  this->irSignal[RIGHT,31] = analogRead(RIGHT);
-  this->irSignal[CENTER,31] = analogRead(CENTER);
+  this->irSignal[LEFT,N_IR-1] = analogRead(LEFT);
+  this->irSignal[RIGHT,N_IR-1] = analogRead(RIGHT);
+  this->irSignal[CENTER,N_IR-1] = analogRead(CENTER);
   
   this->irSmooth[LEFT] = irSmoothNew[LEFT];
   this->irSmooth[RIGHT] = irSmoothNew[RIGHT];

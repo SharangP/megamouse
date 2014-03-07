@@ -17,7 +17,7 @@ public:
 
   SensorController(); //initialize sensors
   void sample();
-  void mlDetect(int (&walls)[3]); //detect walls using ML thresholds
+  //void mlDetect(int (&walls)[3]); //detect walls using ML thresholds
 
   int irSignal[3,N_IR];
   int irSmooth[3];
