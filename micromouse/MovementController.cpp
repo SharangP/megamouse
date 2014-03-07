@@ -23,25 +23,33 @@ void MovementController::goStraight(){
   Serial.println(CENTERTHRESH, DEC);
   right->setState(1, 50);
   left->setState(1, 50);
+  int adjusting = 0;
 //  go();
   
   sensors->sample();
   while(sensors->irSmooth[CENTER] < CENTERTHRESH){
     delay(SAMPLEPERIOD);
     sensors->sample();
-    if(sensors->irSmooth[LEFT] > sensors->irSmooth[RIGHT]){
-     // Right wall is farther than left wall
-      right->setState(1,right->power-2);
-      left->setState(1,left->power+2);
-    } else if (sensors->irSmooth[LEFT] < sensors->irSmooth[RIGHT]){
-     // Left wall is farther than right wall
-      right->setState(1,right->power+2);
-      left->setState(1,left->power-2);
-    }
+
+      if(sensors->irSmooth[LEFT] > sensors->irSmooth[RIGHT] && adjusting !=1 ){
+       // Right wall is farther than left wall
+        adjusting = 1;
+        right->setState(1,right->power-2);
+        left->setState(1,left->power+2);
+      } else if (sensors->irSmooth[LEFT] < sensors->irSmooth[RIGHT] && adjusting !=2){
+       // Left wall is farther than right wall
+        adjusting = 2;
+        right->setState(1,right->power+2);
+        left->setState(1,left->power-2);
+      }
+      
+      
     Serial.println(sensors->irSmooth[CENTER]);
   }
 
   brake();
+  
+  
 }
 
 void MovementController::goLeft(){
