@@ -12,10 +12,12 @@
 
 
 //initialize motors and save sensors
-MovementController::MovementController(SensorController * sensors){
+MovementController::MovementController(Scheduler * scheduler, SensorController * sensors){
  right = new Motor(3, 4, 5);
  left = new Motor(6, 7, 8);
- sensors->sample();
+ 
+ this->scheduler = scheduler;
+ this->sensors = sensors;
 }
 
 void MovementController::goStraight(){
@@ -25,10 +27,7 @@ void MovementController::goStraight(){
   left->setState(1, 50);
 //  go();
   
-  sensors->sample();
   while(sensors->irSmooth[CENTER] < CENTERTHRESH){
-    delay(SAMPLEPERIOD);
-    sensors->sample();
     if(sensors->irSmooth[LEFT] > sensors->irSmooth[RIGHT]){
      // Right wall is farther than left wall
       right->setState(1,right->power-2);

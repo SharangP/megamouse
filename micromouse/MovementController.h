@@ -18,7 +18,7 @@ class MovementController{
 
 public:
 
-  MovementController(SensorController * sensors); //initialize motors and save sensors
+  MovementController(Scheduler * scheduler, SensorController * sensors); //initialize motors and save sensors
   void goStraight();
   void goLeft();
   void goRight();
@@ -34,6 +34,7 @@ private:
   Motor * right;
   Motor * left;
   SensorController * sensors;
+  Scheduler * scheduler;
 
 };
 

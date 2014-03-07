@@ -5,16 +5,25 @@
 *  Sameer Chauhan
 ***************/
 
-#include "Micromouse.h"
+#include <Scheduler.h>
+#include "SensorController.h"
+#include "MovementController.h"
+#include "Maze.h"
 
-Micromouse mouse;
-  
+Scheduler scheduler;
+Maze maze;
+SensorController sensors = SensorController(&scheduler);
+MovementController movement = MovementController(&scheduler, &sensors);
+
+void solveMaze(){
+}
+
 void setup(){
   Serial.begin(9600);
   Serial.println("Micromouse Running...");
 }
 
 void loop(){
-  mouse.solveMaze();
+  scheduler.update();
   delay(100000);
 }

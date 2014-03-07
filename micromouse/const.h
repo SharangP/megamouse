@@ -17,7 +17,7 @@
 //#define CENTERTHRESH 387
 #define CENTERTHRESH 300
 
-#define SAMPLEPERIOD 30
+#define SAMPLE_PERIOD 30
 #define N_IR 16
 
 #endif
