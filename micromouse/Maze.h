@@ -9,6 +9,7 @@
 #define MAZE_H
 
 #include "Arduino.h"
+#include "graph.h"
 
 
 class Maze{

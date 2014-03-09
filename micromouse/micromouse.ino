@@ -20,7 +20,6 @@ void exploreMaze(Maze maze){
     //update maze
     //find shortest path to center
     //make a move in that direction
-    
   }
 }
 
