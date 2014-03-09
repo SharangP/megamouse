@@ -25,7 +25,8 @@ void MovementController::goStraight(){
      // Right wall is farther than left wall
       right->setState(1,right->power-2);
       left->setState(1,left->power+2);
-    } else if (SensorController::irSmooth[LEFT] < SensorController::irSmooth[RIGHT]){
+    }
+    else if(SensorController::irSmooth[LEFT] < SensorController::irSmooth[RIGHT]){
      // Left wall is farther than right wall
       right->setState(1,right->power+2);
       left->setState(1,left->power-2);
@@ -46,7 +47,6 @@ void MovementController::goBack(){
   Serial.println("Going back...");
   right->setState(2,100);
   left->setState(2,100);
-//  go();
   delay(1000);
 }
 
@@ -54,7 +54,6 @@ void MovementController::turn(int dir){
   dir = RIGHT;
   right->setState(1,50);
   left->setState(2,50);
-//  go();
   delay(750);
 }
 
@@ -70,7 +69,6 @@ void MovementController::brake(){
   digitalWrite(left->enablePin, LOW);
 }
 
-
-//void MovementController::accel(int startPow, int endPow, int time){}
+void MovementController::accel(int startPow, int endPow, int time){}
 
 #endif

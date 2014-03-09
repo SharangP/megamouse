@@ -10,10 +10,26 @@
 #include "MovementController.h"
 #include "Maze.h"
 
-Maze maze;
 
-void solveMaze(){
+//maze exploring function
+//returns true if maze has been fully explored
+void exploreMaze(Maze maze){
+  while (!maze.fullyExplored()){
+  //explore:
+    //detect walls
+    //update maze
+    //find shortest path to center
+    //make a move in that direction
+    
+  }
 }
+
+void returnToStart(Maze maze){}
+
+void solveMaze(Maze maze){}
+
+
+Maze maze;
 
 void setup(){
   Serial.begin(9600);
@@ -24,11 +40,10 @@ void setup(){
 }
 
 void loop(){
-  Serial.print("L: ");
-  Serial.print(SensorController::irSmooth[LEFT]);
-  Serial.print("R: ");
-  Serial.print(SensorController::irSmooth[RIGHT]);
-  Serial.print("C: ");
-  Serial.println(SensorController::irSmooth[CENTER]);
-  delay(1000);
+  //calibrate
+  exploreMaze(maze);
+  returnToStart(maze);
+  solveMaze(maze);
+  //gg wp
+  delay(100000);
 }

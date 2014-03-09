@@ -10,12 +10,14 @@
 
 #include "Arduino.h"
 
+
 class Maze{
 
-public:
+public: 
 
   Maze(); //initialize maze to have no walls except border
   void addWall(int x, int y, int wallPos); //add a particular wall to coordinate x,y
+  boolean fullyExplored();
  
 private:
 
