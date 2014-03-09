@@ -11,15 +11,6 @@
 #include "SensorController.h"
 
 
-//initialize sensors
-SensorController::SensorController(Scheduler * scheduler){
-   this->scheduler = scheduler;
-}
-
-void sample2(){
-}
-
-//attempt to detect walls
 void SensorController::sample(){
   
   int i, j;
@@ -27,22 +18,19 @@ void SensorController::sample(){
   
   for(int i = 0; i < 3; i++){
     for(int j = 0; j < N_IR-1; j++){
-      this->irSignal[i][j] = this->irSignal[i][j+1];
-      irSmoothNew[i] += ((float)(this->irSignal[i][j]))*(j+1)*2/(N_IR*(N_IR+1));
+      irSignal[i][j] = irSignal[i][j+1];
+      irSmoothNew[i] += ((float)(irSignal[i][j]))*(j+1)*2/(N_IR*(N_IR+1));
     }
   }
   
-  this->irSignal[LEFT][N_IR-1] = analogRead(LEFT);
-  this->irSignal[RIGHT][N_IR-1] = analogRead(RIGHT);
-  this->irSignal[CENTER][N_IR-1] = analogRead(CENTER);
+  irSignal[LEFT][N_IR-1] = analogRead(LEFT);
+  irSignal[RIGHT][N_IR-1] = analogRead(RIGHT);
+  irSignal[CENTER][N_IR-1] = analogRead(CENTER);
   
-  this->irSmooth[LEFT] = irSmoothNew[LEFT];
-  this->irSmooth[RIGHT] = irSmoothNew[RIGHT];
-  this->irSmooth[CENTER] = irSmoothNew[CENTER];
-  
-  this->scheduler->schedule(reinterpret_cast<void (*)(SensorController*)>&SensorController::sample, SAMPLE_PERIOD);
+  irSmooth[LEFT] = irSmoothNew[LEFT];
+  irSmooth[RIGHT] = irSmoothNew[RIGHT];
+  irSmooth[CENTER] = irSmoothNew[CENTER];
 }
-
 
 
 #endif

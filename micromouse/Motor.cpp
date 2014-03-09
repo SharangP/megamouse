@@ -43,7 +43,6 @@ void Motor::setState(int state, int power){
   }
   
   analogWrite(this->enablePin, this->power);
- 
 }
 
 #endif

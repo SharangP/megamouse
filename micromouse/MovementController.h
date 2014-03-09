@@ -14,28 +14,18 @@
 #include "Motor.h"
 
 
-class MovementController{
-
-public:
-
-  MovementController(Scheduler * scheduler, SensorController * sensors); //initialize motors and save sensors
+namespace MovementController{
+  extern Motor * right;
+  extern Motor * left;
+  
   void goStraight();
   void goLeft();
   void goRight();
   void goBack();
-  void turn(int dir);
-  
-private:
-
   void go();
   void brake();
+  void turn(int dir);
   void accel(int startPow, int endPow, int time);
-
-  Motor * right;
-  Motor * left;
-  SensorController * sensors;
-  Scheduler * scheduler;
-
-};
+}
 
 #endif
