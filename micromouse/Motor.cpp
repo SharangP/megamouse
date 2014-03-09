@@ -10,6 +10,7 @@
 
 #include "Motor.h"
 
+
 Motor::Motor(int enablePin, int pin1, int pin2){
   this->enablePin = enablePin;
   this->pin1 = pin1;

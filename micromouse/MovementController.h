@@ -14,7 +14,7 @@
 #include "Motor.h"
 
 
-namespace MovementController{
+namespace MovementController {
   extern Motor * right;
   extern Motor * left;
   

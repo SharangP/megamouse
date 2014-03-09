@@ -11,6 +11,9 @@
 #include "MovementController.h"
 
 
+Motor * MovementController::right = new Motor(3, 4, 5);
+Motor * MovementController::left = new Motor(6, 7, 8);
+
 void MovementController::goStraight(){
   Serial.print("Going forward until ");
   Serial.println(CENTERTHRESH, DEC);

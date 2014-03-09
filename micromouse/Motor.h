@@ -10,7 +10,7 @@
 
 #include "Arduino.h"
 
-class Motor{
+class Motor {
 
 public:
 

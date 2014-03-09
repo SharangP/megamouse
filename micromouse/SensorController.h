@@ -12,7 +12,7 @@
 #include "Arduino.h"
 #include "const.h"
 
-namespace SensorController{
+namespace SensorController {
 
   extern int irSignal[3][N_IR];
   extern int irSmooth[3];

@@ -11,7 +11,14 @@
 #include "SensorController.h"
 
 
+int SensorController::irSignal[3][N_IR] = {{0}};
+int SensorController::irSmooth[3] = {0};
+int SensorController::encoder[2] = {0};
+int SensorController::irThreshold[3] = {LEFTTHRESH, RIGHTTHRESH, CENTERTHRESH};
+
 void SensorController::sample(){
+  
+  Serial.println("sampling now");
   
   int i, j;
   float irSmoothNew[3] = {0.0};
