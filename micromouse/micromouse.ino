@@ -20,7 +20,7 @@ void exploreMaze(Maze maze){
     //update maze
     //find shortest path to center
     //make a move in that direction
-    
+    MovementController::goStraight();
   }
 }
 
@@ -40,7 +40,7 @@ void setup(){
 }
 
 void loop(){
-  //calibrate
+  delay(1000);  //calibrate
   exploreMaze(maze);
   returnToStart(maze);
   solveMaze(maze);

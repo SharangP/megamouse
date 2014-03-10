@@ -11,10 +11,10 @@
 #include "SensorController.h"
 
 
-int SensorController::irSignal[3][N_IR] = {{0}};
-int SensorController::irSmooth[3] = {0};
-int SensorController::encoder[2] = {0};
-int SensorController::irThreshold[3] = {LEFTTHRESH, RIGHTTHRESH, CENTERTHRESH};
+volatile int SensorController::irSignal[3][N_IR] = {{0}};
+volatile int SensorController::irSmooth[3] = {0};
+volatile int SensorController::encoder[2] = {0};
+volatile int SensorController::irThreshold[3] = {LEFTTHRESH, RIGHTTHRESH, CENTERTHRESH};
 
 void SensorController::sample(){
   
@@ -39,5 +39,13 @@ void SensorController::sample(){
   irSmooth[CENTER] = irSmoothNew[CENTER];
 }
 
+void SensorController::printSensors(){
+  Serial.print("L: ");
+  Serial.print(irSmooth[LEFT]);
+  Serial.print(" R: ");
+  Serial.print(irSmooth[RIGHT]);
+  Serial.print(" C: ");
+  Serial.println(irSmooth[CENTER]);
+}
 
 #endif

@@ -47,12 +47,12 @@ void setup(){
 
 
 void loop(){
+//  rightMotor.setState(1, 150);
+//  leftMotor.setState(1, 200);
+//  timedMove(rightMotor, leftMotor, 2000);
   rightMotor.setState(1, 150);
-  leftMotor.setState(1, 200);
-  timedMove(rightMotor, leftMotor, 2000);
-  rightMotor.setState(0, 100);
-  leftMotor.setState(0, 100);
-  timedMove(rightMotor, leftMotor, 3000);
+  leftMotor.setState(1, 150);
+//  timedMove(rightMotor, leftMotor, 3000);
 }
 
 
