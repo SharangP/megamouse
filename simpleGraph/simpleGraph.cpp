@@ -26,7 +26,6 @@ int walls[16][16];
 
 
 
-
 void printGraph(){
 	for (int i = 0; i<16; i++ ) {
 		for (int j = 0; j<16; j++){
@@ -81,7 +80,13 @@ vector<Cell*> getNeighbors(Cell* cell){
 	vector<Cell*> neighbors;
 	int row = cell->x;
 	int col = cell->y;
+	if ( walls[row][col] == 0 ){
+		neighbors.push_back(&distVal[row][col-1]);
+		neighbors.push_back(&distVal[row][col+1]);
+		neighbors.push_back(&distVal[row+1][col]);
+		neighbors.push_back(&distVal[row-1][col]);
 
+	}
 	if( (walls[row][col] & NORTH) == 0){
 		neighbors.push_back(&distVal[row][col-1]);
 	} 
@@ -109,7 +114,7 @@ void recursiveFlood(vector<Cell *> currentLevel, int level){
 		Cell* tmp = currentLevel.back();
 		
 		cout<<"("<<tmp->x <<", " <<tmp->y<<")"<<endl;
-
+		// tmp->x is a huge number... idk why...
 		if (distanceValue[tmp->x][tmp->y] == 255){
 
 			distanceValue[tmp->x][tmp->y] = level;
