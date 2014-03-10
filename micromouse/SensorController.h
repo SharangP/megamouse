@@ -14,12 +14,13 @@
 
 namespace SensorController {
 
-  extern int irSignal[3][N_IR];
-  extern int irSmooth[3];
-  extern int encoder[2];
-  extern int irThreshold[3];
+  extern volatile int irSignal[3][N_IR];
+  extern volatile int irSmooth[3];
+  extern volatile int encoder[2];
+  extern volatile int irThreshold[3];
   
   void sample();
+  void printSensors();
   //void mlDetect(int (&walls)[3]); //detect walls using ML thresholds
 
 }
