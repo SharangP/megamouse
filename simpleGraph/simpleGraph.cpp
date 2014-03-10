@@ -1,6 +1,5 @@
 /**
  * Simple Graph implementation
- *  Skeleton (not compiled)
  */
 
 #include <iostream>
@@ -14,12 +13,23 @@ using namespace std;
 
 class Cell {
 	public:
+		Cell();
+		Cell(int x, int y);
 		int value;
 		int x;
 		int y;
 };
 
-Cell distVal[16][16];
+
+Cell::Cell(int x, int y){
+	this->x = x;
+	this->y = y;
+}
+
+Cell::Cell(){
+}
+
+Cell nodes[16][16];
 int distanceValue[16][16] = {{0}};
 int walls[16][16];
 
@@ -29,7 +39,7 @@ int walls[16][16];
 void printGraph(){
 	for (int i = 0; i<16; i++ ) {
 		for (int j = 0; j<16; j++){
-			cout<<distVal[i][j].value<<"  ";
+			cout<<nodes[i][j].value<<"  ";
 		}
 		cout<<endl;
 	}
@@ -39,12 +49,12 @@ void printGraph(){
 void printDistance(){
 	for (int i = 0; i<16; i++ ) {
 		for (int j = 0; j<16; j++){
+			cout.width(2);
 			cout<<distanceValue[i][j]<<"  ";
 		}
 		cout<<endl;
 	}
 	cout<<endl;
-	cout<<"DONE PRINTING"<<endl<<endl;
 }
 
 void printWalls(){
@@ -64,12 +74,14 @@ void initializeWalls(){
 		walls[15][15-j]+= SOUTH;
 		walls[15-j][15] +=EAST;
 	}
+	walls[4][3] += NORTH;
+	walls[4][3] +=EAST;
 }
 
 void initializeGraph(){
 	for (int i = 0; i<16; i++){
 		for (int j =0 ; j<16; j++){
-			 distVal[i][j] = (Cell) { 0, i, j};
+			 nodes[i][j] = Cell(i, j);
 		}
 	}
 }
@@ -81,24 +93,26 @@ vector<Cell*> getNeighbors(Cell* cell){
 	int row = cell->x;
 	int col = cell->y;
 	if ( walls[row][col] == 0 ){
-		neighbors.push_back(&distVal[row][col-1]);
-		neighbors.push_back(&distVal[row][col+1]);
-		neighbors.push_back(&distVal[row+1][col]);
-		neighbors.push_back(&distVal[row-1][col]);
-
+		neighbors.push_back(&nodes[row][col-1]);
+		neighbors.push_back(&nodes[row][col+1]);
+		neighbors.push_back(&nodes[row+1][col]);
+		neighbors.push_back(&nodes[row-1][col]);
+		return neighbors;
 	}
+
 	if( (walls[row][col] & NORTH) == 0){
-		neighbors.push_back(&distVal[row][col-1]);
+		neighbors.push_back(&nodes[row-1][col]);
 	} 
 	if( (walls[row][col] & SOUTH )== 0){
-		neighbors.push_back(&distVal[row][col+1]);
+		neighbors.push_back(&nodes[row+1][col]);
 	}
 	if( (walls[row][col] & EAST )== 0){
-		neighbors.push_back(&distVal[row+1][col]);
+		neighbors.push_back(&nodes[row][col+1]);
 	}
 	if( (walls[row][col] & WEST )== 0){
-		neighbors.push_back(&distVal[row-1][col]);
+		neighbors.push_back(&nodes[row][col-1]);
 	}
+
 
 	return neighbors;
 }
@@ -106,15 +120,16 @@ vector<Cell*> getNeighbors(Cell* cell){
 
 
 void recursiveFlood(vector<Cell *> currentLevel, int level){
-	cout<<"Calling flood: #"<<level<<endl;;
 
 
 	vector<Cell*> nextLevel;
+
 	while(!currentLevel.empty()){
 		Cell* tmp = currentLevel.back();
 		
-		cout<<"("<<tmp->x <<", " <<tmp->y<<")"<<endl;
+		// cout<<"("<<tmp->x <<", " <<tmp->y<<")"<<endl;
 		// tmp->x is a huge number... idk why...
+		// 
 		if (distanceValue[tmp->x][tmp->y] == 255){
 
 			distanceValue[tmp->x][tmp->y] = level;
@@ -130,8 +145,6 @@ void recursiveFlood(vector<Cell *> currentLevel, int level){
 
 	}
 
-
-	cout<<" "<<nextLevel.size()<<endl;
 	if(!nextLevel.empty()){
 		level++;
 		currentLevel = nextLevel;
@@ -152,24 +165,23 @@ void floodGraph(){
 	vector<Cell*> currentLevel;
 
 
-	currentLevel.push_back(&distVal[7][7]);
-	currentLevel.push_back(&distVal[7][8]);
-	currentLevel.push_back(&distVal[8][8]);
-	currentLevel.push_back(&distVal[8][7]);
+	currentLevel.push_back(&nodes[7][7]);
+	currentLevel.push_back(&nodes[7][8]);
+	currentLevel.push_back(&nodes[8][8]);
+	currentLevel.push_back(&nodes[8][7]);
 	int level = 0;
 
 	recursiveFlood(currentLevel, level);
-
 }
 
-
+void addWalls(int row, int col, int location){
+	walls[row][col] += location;
+}
 
 int main(){
-	cout<<"Hello Penis\n";
 	initializeWalls();
 	initializeGraph();
 	printWalls();
-	printGraph();
 
 	floodGraph();
 	printDistance();
