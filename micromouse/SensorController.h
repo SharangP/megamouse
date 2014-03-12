@@ -11,9 +11,10 @@
 
 #include "Arduino.h"
 #include "const.h"
+#include "Encoder.cpp"
 
 namespace SensorController {
-
+  
   extern volatile int irSignal[3][N_IR];
   extern volatile int irSmooth[3];
   extern volatile int encoder[2];
