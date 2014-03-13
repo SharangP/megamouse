@@ -11,37 +11,64 @@
 #include "MovementController.h"
 
 
-Motor * MovementController::left = new Motor(6, 7, 8);
-Motor * MovementController::right = new Motor(3, 4, 5);
+double MovementController::input = 1;
+double MovementController::output = 1;
+double MovementController::setpoint = 1;
 
+Motor * MovementController::right = new Motor(7, 8, 9);
+Motor * MovementController::left = new Motor(4, 5, 6);
 
-void MovementController::goStraight(){
-  Serial.print("Going forward until ");
-  Serial.println(CENTERTHRESH, DEC);
-  right->setState(1, 50);
-  left->setState(1, 50);
-  int shit = 0;
+PID * MovementController::pid = new PID(&MovementController::input,
+                                        &MovementController::output,
+                                        &MovementController::setpoint,
+                                        2, 5, 1, DIRECT);
 
-  while(SensorController::irSmooth[CENTER] < CENTERTHRESH  ){
-    delay(100);
-    if(SensorController::irSmooth[LEFT] > SensorController::irSmooth[RIGHT] && shit !=1){
-     // Right wall is farther than left wall
-     shit = 1;
-      right->setState(1,right->power-2);
-      left->setState(1,left->power+2);
-    }
-    else if(SensorController::irSmooth[LEFT] < SensorController::irSmooth[RIGHT] && shit !=2){
-     // Left wall is farther than right wall
-     shit = 2;
-      right->setState(1,right->power+2);
-      left->setState(1,left->power-2);
-    }
-    
-    SensorController::printSensors();
+void MovementController::updatePID(int state){
+  switch(state){
+    case 1:  //straight
+      MovementController::input = ((double)SensorController::leftEncoder->read())
+          /SensorController::rightEncoder->read();
+      break;
+    default:
+      //?
+      break;
   }
-  if(right->power != 0 || left->power != 0){
-     brake(); 
+  
+  pid->Compute();
+}
+
+void MovementController::goStraight(int * state){
+  // decode the output
+  double leftSpeed = 50;
+  double rightSpeed = output*50;
+  right->setState(1, rightSpeed);
+  left->setState(1, leftSpeed);
+  
+  if ( SensorController::leftEncoder->read() >= 1400 || SensorController::rightEncoder->read() >=1400){
+      *state = STOP;
   }
+  
+  //int shit = 0
+//  while(SensorController::irSmooth[CENTER] < CENTERTHRESH  ){
+//    delay(100);
+//    if(SensorController::irSmooth[LEFT] > SensorController::irSmooth[RIGHT] && shit !=1){
+//     // Right wall is farther than left wall
+//     shit = 1;
+//      right->setState(1,right->power-2);
+//      left->setState(1,left->power+2);
+//    }
+//    else if(SensorController::irSmooth[LEFT] < SensorController::irSmooth[RIGHT] && shit !=2){
+//     // Left wall is farther than right wall
+//     shit = 2;
+//      right->setState(1,right->power+2);
+//      left->setState(1,left->power-2);
+//    }
+//    
+//    SensorController::printSensors();
+//  }
+//  if(right->power != 0 || left->power != 0){
+//     brake(); 
+//  }
 }
 
 void MovementController::goLeft(){
@@ -62,12 +89,6 @@ void MovementController::turn(int dir){
   right->setState(1,50);
   left->setState(2,50);
   delay(750);
-}
-
-
-void MovementController::go(){
-  analogWrite(right->enablePin, right->power);
-  analogWrite(left->enablePin, left->power);
 }
 
 void MovementController::brake(){

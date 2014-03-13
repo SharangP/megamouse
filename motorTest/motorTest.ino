@@ -36,8 +36,8 @@ void timedMove(Motor right, Motor left, int time){
 }
 
 
-Motor rightMotor(3, 4, 5);
-Motor leftMotor(6, 7, 8);
+Motor rightMotor(7, 8, 9);
+Motor leftMotor(4, 5, 6);
 
 
 void setup(){
@@ -50,9 +50,13 @@ void loop(){
 //  rightMotor.setState(1, 150);
 //  leftMotor.setState(1, 200);
 //  timedMove(rightMotor, leftMotor, 2000);
-  rightMotor.setState(1, 150);
-  leftMotor.setState(1, 150);
+  rightMotor.setState(1, 50);
+  leftMotor.setState(1, 50);
 //  timedMove(rightMotor, leftMotor, 3000);
+  delay(500);
+  rightMotor.setState(0,0);
+  leftMotor.setState(0,0);
+  delay(5000);
 }
 
 

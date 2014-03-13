@@ -2,7 +2,7 @@
 IR test
  */
 
-int irPin[3] = {0, 1, 2};
+int irPin[3] = {3, 4, 5};
 int i, j;
 
 void setup() {

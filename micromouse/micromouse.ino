@@ -5,24 +5,49 @@
 *  Sameer Chauhan
 ***************/
 
-#include <MsTimer2.h>
+#include <PID_v1.h>
+#include <Encoder.h>
 #include "SensorController.h"
 #include "MovementController.h"
 #include "Maze.h"
 
-
 //maze exploring function
-//returns true if maze has been fully explored
 void exploreMaze(Maze maze){
+  int state = 0;
+  state = DECIDE; //go straight  
+  
   while (!maze.fullyExplored()){
-  //explore:
-    //detect walls
-    //update maze
-    //find shortest path to center
-    //make a move in that direction
-    MovementController::goStraight();
+    SensorController::sample();
+  
+      //decision
+        //update maze
+        //find shortest path to center
+        //make a move in that direction
+    
+    switch(state){
+      case DECIDE: //Make decision, reset encoder values
+        decision(&state);
+          break;
+      case STRAIGHT:
+        MovementController::goStraight(&state); //decode output -> motors, keep track of execution of current state
+        break;
+      case TURN: // Turn
+        break;
+      case STOP: // Stop
+        Serial.println("Stopped");
+        break;
+    }
+    
+    MovementController::updatePID(state);
   }
 }
+
+
+void decision(int* state){
+  Serial.println("Deciding");
+  *state = STRAIGHT;
+  return;
+} 
 
 void returnToStart(Maze maze){}
 
@@ -34,9 +59,9 @@ Maze maze;
 void setup(){
   Serial.begin(9600);
   Serial.println("Micromouse Running...");
-  
-  MsTimer2::set(SAMPLE_PERIOD, SensorController::sample);
-  MsTimer2::start();
+  MovementController::pid->SetMode(AUTOMATIC);
+  SensorController::leftEncoder->write(1);
+  SensorController::rightEncoder->write(1);
 }
 
 void loop(){

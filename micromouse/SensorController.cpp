@@ -12,21 +12,24 @@
 
 
 volatile int SensorController::irSignal[3][N_IR] = {{0}};
-volatile int SensorController::irSmooth[3] = {0};
-volatile int SensorController::encoder[2] = {0};
+volatile double SensorController::irSmooth[3] = {0};
 volatile int SensorController::irThreshold[3] = {LEFTTHRESH, RIGHTTHRESH, CENTERTHRESH};
+
+Encoder * SensorController::leftEncoder = new Encoder(LEFT_ENCODER_1, LEFT_ENCODER_2);
+Encoder * SensorController::rightEncoder = new Encoder(RIGHT_ENCODER_1, RIGHT_ENCODER_2);
+
 
 void SensorController::sample(){
   
-  Serial.println("sampling now");
+  Serial.println("Sampling now" );
   
   int i, j;
-  float irSmoothNew[3] = {0.0};
+  double irSmoothNew[3] = {0.0};
   
   for(int i = 0; i < 3; i++){
     for(int j = 0; j < N_IR-1; j++){
       irSignal[i][j] = irSignal[i][j+1];
-      irSmoothNew[i] += ((float)(irSignal[i][j]))*(j+1)*2/(N_IR*(N_IR+1));
+      irSmoothNew[i] += ((double)(irSignal[i][j]))*(j+1)*2/(N_IR*(N_IR+1));
     }
   }
   

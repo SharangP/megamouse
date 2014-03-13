@@ -11,7 +11,7 @@
 #include "Motor.h"
 
 
-Motor::Motor(int enablePin, int pin1, int pin2){
+Motor::Motor(int pin1, int pin2, int enablePin){
   this->enablePin = enablePin;
   this->pin1 = pin1;
   this->pin2 = pin2;
@@ -26,8 +26,9 @@ Motor::Motor(int enablePin, int pin1, int pin2){
   digitalWrite(pin2, LOW);
 }
 
-void Motor::setState(int state, int power){
+void Motor::setState(int state, double power){
   this->power = power;
+  
   switch (state){
     case 0:  //lock
       digitalWrite(this->pin1, LOW);
@@ -43,7 +44,7 @@ void Motor::setState(int state, int power){
       break;
   }
   
-  analogWrite(this->enablePin, this->power);
+  analogWrite(this->enablePin, power);
 }
 
 #endif

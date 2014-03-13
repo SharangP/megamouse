@@ -17,7 +17,18 @@
 //#define CENTERTHRESH 387
 #define CENTERTHRESH 300
 
+#define LEFT_ENCODER_1 3
+#define LEFT_ENCODER_2 11
+#define RIGHT_ENCODER_1 2
+#define RIGHT_ENCODER_2 10
+
 #define SAMPLE_PERIOD 200
 #define N_IR 16
+
+#define DECIDE    0
+#define STRAIGHT  1
+#define TURN      2
+#define STOP      3
+#define ENCODER_USE_INTERRUPTS
 
 #endif

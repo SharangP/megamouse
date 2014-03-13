@@ -12,17 +12,25 @@
 #include "const.h"
 #include "SensorController.h"
 #include "Motor.h"
-
+#include <Encoder.h>
+#include <PID_v1.h>
 
 namespace MovementController {
+  
+  extern double input;
+  extern double output;
+  extern double setpoint;
+  
   extern Motor * right;
   extern Motor * left;
   
-  void goStraight();
+  extern PID * pid;
+  
+  void updatePID(int state);
+  void goStraight(int* state);
   void goLeft();
   void goRight();
   void goBack();
-  void go();
   void brake();
   void turn(int dir);
   void accel(int startPow, int endPow, int time);
