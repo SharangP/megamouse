@@ -22,6 +22,7 @@ public:
   int pin1;
   int pin2;
   double power;
+  int state;
 };
 
 #endif

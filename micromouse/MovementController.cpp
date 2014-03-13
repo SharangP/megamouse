@@ -23,30 +23,40 @@ PID * MovementController::pid = new PID(&MovementController::input,
                                         &MovementController::setpoint,
                                         2, 5, 1, DIRECT);
 
+
 void MovementController::updatePID(int state){
   switch(state){
     case 1:  //straight
-      MovementController::input = ((double)SensorController::leftEncoder->read())
-          /SensorController::rightEncoder->read();
+      MovementController::input = ((double)SensorController::leftEncoder.read())
+          /SensorController::rightEncoder.read();
       break;
     default:
       //?
       break;
   }
+  // Somehow include IR values in this...
+ // input = ((double)(input + ((double)SensorController::irSmooth[LEFT]/SensorController::irSmooth[RIGHT]) ))/2;
   
   pid->Compute();
+
 }
 
 void MovementController::goStraight(int * state){
   // decode the output
-  double leftSpeed = 50;
-  double rightSpeed = output*50;
+  // Must take into account of IR sensor values. 
+  double leftSpeed = output*50;
+  double rightSpeed = 50;
   right->setState(1, rightSpeed);
   left->setState(1, leftSpeed);
   
-  if ( SensorController::leftEncoder->read() >= 1400 || SensorController::rightEncoder->read() >=1400){
-      *state = STOP;
+  if( SensorController::irSmooth[CENTER] >400 ){
+    Serial.println(SensorController::irSmooth[CENTER]);
+    *state = STOP;
   }
+  
+//  if ( SensorController::leftEncoder.read() >= 1100 || SensorController::rightEncoder.read() >=1100){
+//      *state = STOP;
+//  }
   
   //int shit = 0
 //  while(SensorController::irSmooth[CENTER] < CENTERTHRESH  ){

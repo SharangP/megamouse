@@ -19,8 +19,8 @@ namespace SensorController {
   extern volatile double irSmooth[3];
   extern volatile int irThreshold[3];
   
-  extern Encoder * leftEncoder;
-  extern Encoder * rightEncoder;
+  extern Encoder leftEncoder;
+  extern Encoder rightEncoder;
   
   void sample();
   void printSensors();

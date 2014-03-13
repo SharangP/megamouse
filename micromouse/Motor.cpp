@@ -16,6 +16,7 @@ Motor::Motor(int pin1, int pin2, int enablePin){
   this->pin1 = pin1;
   this->pin2 = pin2;
   this->power = 0;
+  this->state = -1;
   
   pinMode(enablePin, OUTPUT);
   pinMode(pin1, OUTPUT);
@@ -28,6 +29,7 @@ Motor::Motor(int pin1, int pin2, int enablePin){
 
 void Motor::setState(int state, double power){
   this->power = power;
+  this->state = state;
   
   switch (state){
     case 0:  //lock

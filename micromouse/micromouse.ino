@@ -5,6 +5,7 @@
 *  Sameer Chauhan
 ***************/
 
+#define ENCODER_USE_INTERRUPTS
 #include <PID_v1.h>
 #include <Encoder.h>
 #include "SensorController.h"
@@ -30,20 +31,36 @@ void exploreMaze(Maze maze){
           break;
       case STRAIGHT:
         MovementController::goStraight(&state); //decode output -> motors, keep track of execution of current state
+         Serial.println(SensorController::irSmooth[CENTER]);
         break;
       case TURN: // Turn
         break;
       case STOP: // Stop
-        Serial.println("Stopped");
-        break;
+          if(MovementController::left->state != 0 && MovementController::right->state != 0){
+
+            Serial.print("Left Encoder ");
+            Serial.println(SensorController::leftEncoder.read()); // This is always 1...
+            Serial.print("Right Encoder ");
+            Serial.println(SensorController::rightEncoder.read());
+            Serial.print("Left Speed ");
+            Serial.println(MovementController::left->power);
+            Serial.print("Right Speed ");
+            Serial.println(MovementController::right->power);
+           MovementController::brake();
+         }
+       break;
     }
     
     MovementController::updatePID(state);
+    delay(32);
   }
 }
 
 
 void decision(int* state){
+       //   if(MovementController::leftMotor.state != 0 && MovementController::rightMotor.state != 0){
+         // 
+          //}
   Serial.println("Deciding");
   *state = STRAIGHT;
   return;
@@ -60,8 +77,9 @@ void setup(){
   Serial.begin(9600);
   Serial.println("Micromouse Running...");
   MovementController::pid->SetMode(AUTOMATIC);
-  SensorController::leftEncoder->write(1);
-  SensorController::rightEncoder->write(1);
+  SensorController::leftEncoder.write(1);
+  SensorController::rightEncoder.write(1);
+  delay(2000);
 }
 
 void loop(){

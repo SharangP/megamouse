@@ -29,6 +29,7 @@
 #define STRAIGHT  1
 #define TURN      2
 #define STOP      3
-#define ENCODER_USE_INTERRUPTS
+
+
 
 #endif
