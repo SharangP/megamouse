@@ -15,7 +15,6 @@ Motor::Motor(int pin1, int pin2, int enablePin){
   this->enablePin = enablePin;
   this->pin1 = pin1;
   this->pin2 = pin2;
-  this->state = -1;
   this->power = 0;
   
   pinMode(enablePin, OUTPUT);
@@ -27,10 +26,8 @@ Motor::Motor(int pin1, int pin2, int enablePin){
   digitalWrite(pin2, LOW);
 }
 
-void Motor::setState(int state, double power){
+void Motor::setState(int state, int power){
   this->power = power;
-  this->state = state;
-  
   switch (state){
     case 0:  //lock
       digitalWrite(this->pin1, LOW);
@@ -46,7 +43,7 @@ void Motor::setState(int state, double power){
       break;
   }
   
-  analogWrite(this->enablePin, power);
+  analogWrite(this->enablePin, this->power);
 }
 
 #endif

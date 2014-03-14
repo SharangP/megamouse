@@ -14,8 +14,7 @@
 
 //maze exploring function
 void exploreMaze(Maze maze){
-  int state = 0;
-  state = DECIDE; //go straight  
+  int state = DECIDE;
   
   while (!maze.fullyExplored()){
     SensorController::sample();
@@ -38,15 +37,15 @@ void exploreMaze(Maze maze){
       case STOP: // Stop
           if(MovementController::left->state != 0 && MovementController::right->state != 0){
 
-            Serial.print("Left Encoder ");
+            Serial.print("Left Encoder: ");
             Serial.println(SensorController::leftEncoder.read()); // This is always 1...
-            Serial.print("Right Encoder ");
+            Serial.print("Right Encoder: ");
             Serial.println(SensorController::rightEncoder.read());
-            Serial.print("Left Speed ");
+            Serial.print("Left Speed: ");
             Serial.println(MovementController::left->power);
-            Serial.print("Right Speed ");
+            Serial.print("Right Speed: ");
             Serial.println(MovementController::right->power);
-           MovementController::brake();
+            MovementController::brake();
          }
        break;
     }
@@ -57,7 +56,7 @@ void exploreMaze(Maze maze){
 }
 
 
-void decision(int* state){
+void decision(int * state){
        //   if(MovementController::leftMotor.state != 0 && MovementController::rightMotor.state != 0){
          // 
           //}

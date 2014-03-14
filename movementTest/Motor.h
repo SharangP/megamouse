@@ -16,13 +16,12 @@ class Motor {
 public:
 
   Motor(int pin1, int pin2, int enablePin);
-  void setState(int state, double power);
+  void setState(int state, int power);
 
   int enablePin;
   int pin1;
   int pin2;
-  int state;
-  double power;
+  int power;
 };
 
 #endif

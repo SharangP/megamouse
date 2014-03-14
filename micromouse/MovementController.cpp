@@ -49,7 +49,7 @@ void MovementController::goStraight(int * state){
   right->setState(1, rightSpeed);
   left->setState(1, leftSpeed);
   
-  if( SensorController::irSmooth[CENTER] >400 ){
+  if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
     Serial.println(SensorController::irSmooth[CENTER]);
     *state = STOP;
   }
@@ -103,10 +103,10 @@ void MovementController::turn(int dir){
 
 void MovementController::brake(){
   Serial.println("Stopping");
-  right->setState(0,0);
-  left->setState(0,0);
- // digitalWrite(right->enablePin, LOW);
-  //digitalWrite(left->enablePin, LOW);
+  //right->setState(0,0);
+  //left->setState(0,0);
+  digitalWrite(right->enablePin, LOW);
+  digitalWrite(left->enablePin, LOW);
 }
 
 void MovementController::accel(int startPow, int endPow, int time){}
