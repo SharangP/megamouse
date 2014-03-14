@@ -14,8 +14,7 @@
 
 #define LEFTTHRESH       261
 #define RIGHTTHRESH      257
-//#define CENTERTHRESH   387
-#define CENTERTHRESH     300
+#define CENTERTHRESH     200
 
 #define LEFT_IR    3
 #define CENTER_IR  4
@@ -26,8 +25,7 @@
 #define RIGHT_ENCODER_1  2
 #define RIGHT_ENCODER_2  10
 
-#define SAMPLE_PERIOD 200
-#define N_IR 8
+#define SAMPLE_PERIOD 32
 #define ALPHA 0.5
 
 #define DECIDE    0

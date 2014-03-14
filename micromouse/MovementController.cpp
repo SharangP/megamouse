@@ -11,74 +11,63 @@
 #include "MovementController.h"
 
 
+double MovementController::movementSpeed = 75;
 double MovementController::input = 1;
 double MovementController::output = 1;
 double MovementController::setpoint = 1;
 
 Motor * MovementController::right = new Motor(7, 8, 9);
-Motor * MovementController::left = new Motor(4, 5, 6);
+Motor * MovementController::left  = new Motor(4, 5, 6);
 
-PID * MovementController::pid = new PID(&MovementController::input,
+PID * MovementController::pidEncoder = new PID(&MovementController::input,
                                         &MovementController::output,
                                         &MovementController::setpoint,
-                                        2, 5, 1, DIRECT);
+                                        2, 3, 1, DIRECT);
 
+PID * MovementController::pidIR = new PID(&SensorController::input,
+                                        &SensorController::output,
+                                        &SensorController::setpoint,
+                                        2, 3, 1, DIRECT);
 
 void MovementController::updatePID(int state){
+
+  //TODO: Use pidEncoder and pidIR values (outputs) to inform locomotion
+  //change left and right powers to go straight/turn etc. as needed
+
+  //TODO: move forward/turn one block at a time
+
   switch(state){
     case 1:  //straight
-      MovementController::input = ((double)SensorController::leftEncoder.read())
+      input = ((double)SensorController::leftEncoder.read())
           /SensorController::rightEncoder.read();
+
+      SensorController::input = abs(SensorController::irSmooth[LEFT]
+          - SensorController::irSmooth[RIGHT]);
       break;
     default:
       //?
       break;
   }
-  // Somehow include IR values in this...
- // input = ((double)(input + ((double)SensorController::irSmooth[LEFT]/SensorController::irSmooth[RIGHT]) ))/2;
-  
-  pid->Compute();
-
+  pidEncoder->Compute();
+  pidIR->Compute();
 }
 
 void MovementController::goStraight(int * state){
   // decode the output
   // Must take into account of IR sensor values. 
-  double leftSpeed = output*50;
-  double rightSpeed = 50;
-  right->setState(1, rightSpeed);
+  // double leftSpeed = output*movementSpeed;
+  // double rightSpeed = movementSpeed;
+
+  //TODO: see what the output looks like!!
+
+  double leftSpeed = SensorController::output*movementSpeed;
+  double rightSpeed = movementSpeed;
   left->setState(1, leftSpeed);
+  right->setState(1, rightSpeed);
   
   if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
-    Serial.println(SensorController::irSmooth[CENTER]);
     *state = STOP;
   }
-  
-//  if ( SensorController::leftEncoder.read() >= 1100 || SensorController::rightEncoder.read() >=1100){
-//      *state = STOP;
-//  }
-  
-  //int shit = 0
-//  while(SensorController::irSmooth[CENTER] < CENTERTHRESH  ){
-//    delay(100);
-//    if(SensorController::irSmooth[LEFT] > SensorController::irSmooth[RIGHT] && shit !=1){
-//     // Right wall is farther than left wall
-//     shit = 1;
-//      right->setState(1,right->power-2);
-//      left->setState(1,left->power+2);
-//    }
-//    else if(SensorController::irSmooth[LEFT] < SensorController::irSmooth[RIGHT] && shit !=2){
-//     // Left wall is farther than right wall
-//     shit = 2;
-//      right->setState(1,right->power+2);
-//      left->setState(1,left->power-2);
-//    }
-//    
-//    SensorController::printSensors();
-//  }
-//  if(right->power != 0 || left->power != 0){
-//     brake(); 
-//  }
 }
 
 void MovementController::goLeft(){
@@ -103,8 +92,6 @@ void MovementController::turn(int dir){
 
 void MovementController::brake(){
   Serial.println("Stopping");
-  //right->setState(0,0);
-  //left->setState(0,0);
   digitalWrite(right->enablePin, LOW);
   digitalWrite(left->enablePin, LOW);
 }

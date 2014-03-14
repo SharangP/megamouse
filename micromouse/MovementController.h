@@ -15,8 +15,10 @@
 #include <Encoder.h>
 #include <PID_v1.h>
 
+
 namespace MovementController {
   
+  extern double movementSpeed;
   extern double input;
   extern double output;
   extern double setpoint;
@@ -24,7 +26,8 @@ namespace MovementController {
   extern Motor * right;
   extern Motor * left;
   
-  extern PID * pid;
+  extern PID * pidEncoder;
+  extern PID * pidIR;
   
   void updatePID(int state);
   void goStraight(int* state);

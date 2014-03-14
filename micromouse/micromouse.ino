@@ -12,6 +12,14 @@
 #include "MovementController.h"
 #include "Maze.h"
 
+
+void decision(int * state){
+  Serial.println("Deciding");
+  *state = STRAIGHT;
+  return;
+} 
+
+
 //maze exploring function
 void exploreMaze(Maze maze){
   int state = DECIDE;
@@ -37,33 +45,23 @@ void exploreMaze(Maze maze){
       case STOP: // Stop
           if(MovementController::left->state != 0 && MovementController::right->state != 0){
 
-            Serial.print("Left Encoder: ");
-            Serial.println(SensorController::leftEncoder.read()); // This is always 1...
-            Serial.print("Right Encoder: ");
-            Serial.println(SensorController::rightEncoder.read());
-            Serial.print("Left Speed: ");
-            Serial.println(MovementController::left->power);
-            Serial.print("Right Speed: ");
-            Serial.println(MovementController::right->power);
+            // Serial.print("Left Encoder: ");
+            // Serial.println(SensorController::leftEncoder.read()); // This is always 1...
+            // Serial.print("Right Encoder: ");
+            // Serial.println(SensorController::rightEncoder.read());
+            // Serial.print("Left Speed: ");
+            // Serial.println(MovementController::left->power);
+            // Serial.print("Right Speed: ");
+            // Serial.println(MovementController::right->power);
             MovementController::brake();
          }
        break;
     }
     
     MovementController::updatePID(state);
-    delay(32);
+    //delay(32);
   }
 }
-
-
-void decision(int * state){
-       //   if(MovementController::leftMotor.state != 0 && MovementController::rightMotor.state != 0){
-         // 
-          //}
-  Serial.println("Deciding");
-  *state = STRAIGHT;
-  return;
-} 
 
 void returnToStart(Maze maze){}
 
@@ -75,14 +73,22 @@ Maze maze;
 void setup(){
   Serial.begin(9600);
   Serial.println("Micromouse Running...");
-  MovementController::pid->SetMode(AUTOMATIC);
+  MovementController::pidEncoder->SetMode(AUTOMATIC);
+  MovementController::pidIR->SetMode(AUTOMATIC);
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
   delay(2000);
+  Serial.print("Calibrating...");
+  SensorController::calibrate();
+  Serial.println("Done Calibrating!");
 }
 
 void loop(){
-  delay(1000);  //calibrate
+
+  // SensorController::sample();
+  // SensorController::printSensors();
+  // delay(SAMPLE_PERIOD);
+
   exploreMaze(maze);
   returnToStart(maze);
   solveMaze(maze);

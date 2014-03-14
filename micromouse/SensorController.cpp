@@ -11,38 +11,30 @@
 #include "SensorController.h"
 
 
-volatile int SensorController::irSignal[3][N_IR] = {{0}};
-volatile double SensorController::irSmooth[3] = {0};
-volatile int SensorController::irThreshold[3] = {LEFTTHRESH, RIGHTTHRESH, CENTERTHRESH};
+double SensorController::irSmooth[3];
+double SensorController::sensorMean[3];
+double SensorController::sensorSigma[3];
+
+double SensorController::input = 0;
+double SensorController::output = 0;
+double SensorController::setpoint = 0;
 
 Encoder SensorController::leftEncoder = Encoder(LEFT_ENCODER_1, LEFT_ENCODER_2);
 Encoder SensorController::rightEncoder = Encoder(RIGHT_ENCODER_1, RIGHT_ENCODER_2);
 
 
 void SensorController::sample(){
-
-//  int i, j;
-//  double irSmoothNew[3] = {0.0};
-//  
-//  for(int i = 0; i < 3; i++){
-//    for(int j = 0; j < N_IR-1; j++){
-//      irSignal[i][j] = irSignal[i][j+1];
-//      // non-recursive linear filter implementation
-//      irSmoothNew[i] += ((double)(irSignal[i][j]))*(j+1)*2/(N_IR*(N_IR+1));
-//    }
-//  }
-//  
-//  irSignal[LEFT][N_IR-1] = analogRead(LEFT_IR);
-//  irSignal[RIGHT][N_IR-1] = analogRead(RIGHT_IR);
-//  irSignal[CENTER][N_IR-1] = analogRead(CENTER_IR);
-  
   int l = analogRead(LEFT_IR);
   int r = analogRead(RIGHT_IR);
   int c = analogRead(CENTER_IR);
   
-  irSmooth[LEFT]   = ALPHA*l + (1 - ALPHA)*irSmooth[LEFT];//irSmoothNew[LEFT];
-  irSmooth[RIGHT]  = ALPHA*r + (1 - ALPHA)*irSmooth[RIGHT];//irSmoothNew[RIGHT];
-  irSmooth[CENTER] = ALPHA*c + (1 - ALPHA)*irSmooth[CENTER];//irSmoothNew[CENTER];
+  l = (l - sensorMean[LEFT])/sensorSigma[LEFT];
+  r = (r - sensorMean[RIGHT])/sensorSigma[RIGHT];
+  // irSmooth[CENTER] = (irSmooth[CENTER] - sensorMean[CENTER])/sensorSigma[CENTER];
+
+  irSmooth[LEFT]   = ALPHA*l + (1 - ALPHA)*irSmooth[LEFT];
+  irSmooth[RIGHT]  = ALPHA*r + (1 - ALPHA)*irSmooth[RIGHT];
+  irSmooth[CENTER] = ALPHA*c + (1 - ALPHA)*irSmooth[CENTER];
 }
 
 void SensorController::printSensors(){
@@ -53,5 +45,42 @@ void SensorController::printSensors(){
   Serial.print(" C: ");
   Serial.println(irSmooth[CENTER]);
 }
+
+//estimate parameters of each ir sensor's distribution
+void SensorController::calibrate(){
+  int i;
+  const int nSamples = 100;
+  double samples[3][nSamples];
+
+  sensorMean[LEFT] = 0;
+  sensorMean[RIGHT] = 0;
+  sensorMean[CENTER] = 0;
+  sensorSigma[LEFT] = 0;
+  sensorSigma[RIGHT] = 0;
+  sensorSigma[CENTER] = 0;
+
+  for(i = 0; i < nSamples; i++){
+    samples[LEFT][i]   = analogRead(LEFT_IR);
+    samples[RIGHT][i]  = analogRead(RIGHT_IR);
+    // samples[CENTER][i] = analogRead(CENTER_IR);
+
+    sensorMean[LEFT]   += samples[LEFT][i]/nSamples;
+    sensorMean[RIGHT]  += samples[RIGHT][i]/nSamples;
+    // sensorMean[CENTER] += samples[CENTER][i]/nSamples;
+
+    delay(SAMPLE_PERIOD);
+  }
+
+  for(i = 0; i < nSamples; i++){
+    sensorSigma[LEFT]   += sq(samples[LEFT][i] - sensorMean[LEFT]);
+    sensorSigma[RIGHT]  += sq(samples[RIGHT][i] - sensorMean[RIGHT]);
+    // sensorSigma[CENTER] += sq(samples[CENTER][i] - sensorMean[CENTER]);
+  }
+
+  sensorSigma[LEFT]   = sqrt(sensorSigma[LEFT]/nSamples);
+  sensorSigma[RIGHT]  = sqrt(sensorSigma[RIGHT]/nSamples);
+  // sensorSigma[CENTER] = sqrt(sensorSigma[CENTER]/nSamples);
+}
+
 
 #endif
