@@ -18,11 +18,11 @@ namespace SensorController {
   extern double irSmooth[3];
   extern double sensorMean[3];
   extern double sensorSigma[3];
-
-	extern double input;
-	extern double output;
-	extern double setpoint;
-
+				
+				  extern double input;
+				  extern double output;
+				  extern double setpoint;
+				
   extern Encoder leftEncoder;
   extern Encoder rightEncoder;
   

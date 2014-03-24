@@ -27,7 +27,7 @@ PID * MovementController::pidEncoder = new PID(&MovementController::input,
 PID * MovementController::pidIR = new PID(&SensorController::input,
                                         &SensorController::output,
                                         &SensorController::setpoint,
-                                        2, 3, 1, DIRECT);
+                                        10, 3, 1, DIRECT);
 
 void MovementController::updatePID(int state){
 
@@ -37,12 +37,16 @@ void MovementController::updatePID(int state){
   //TODO: move forward/turn one block at a time
 
   switch(state){
-    case 1:  //straight
+    case 1:  //straight 
+    // Follow a wall that exists...
+
       input = ((double)SensorController::leftEncoder.read())
           /SensorController::rightEncoder.read();
 
-      SensorController::input = abs(SensorController::irSmooth[LEFT]
-          - SensorController::irSmooth[RIGHT]);
+      //SensorController::input = abs(SensorController::irSmooth[LEFT]
+      //    - SensorController::irSmooth[RIGHT]);
+      SensorController::setpoint = 0; // Sensor values are normalized so want 0
+      SensorController::input = SensorController::irSmooth[RIGHT];
       break;
     default:
       //?
@@ -59,8 +63,18 @@ void MovementController::goStraight(int * state){
   // double rightSpeed = movementSpeed;
 
   //TODO: see what the output looks like!!
+  //Serial.print("Encoder PID Output: ");
+  //Serial.println(output);
+  
+  Serial.print("Setpoint/Sensor Val/Sensor PID: ");
+  Serial.print(SensorController::setpoint);
+  Serial.print("/");
+  Serial.print(SensorController::irSmooth[RIGHT]);
+  Serial.print("/");
+  Serial.println(SensorController::output);
 
-  double leftSpeed = SensorController::output*movementSpeed;
+  
+  double leftSpeed = movementSpeed;
   double rightSpeed = movementSpeed;
   left->setState(1, leftSpeed);
   right->setState(1, rightSpeed);
@@ -92,6 +106,8 @@ void MovementController::turn(int dir){
 
 void MovementController::brake(){
   Serial.println("Stopping");
+  right->setState(0,0);
+  left->setState(0,0);
   digitalWrite(right->enablePin, LOW);
   digitalWrite(left->enablePin, LOW);
 }

@@ -38,12 +38,13 @@ void exploreMaze(Maze maze){
           break;
       case STRAIGHT:
         MovementController::goStraight(&state); //decode output -> motors, keep track of execution of current state
-         Serial.println(SensorController::irSmooth[CENTER]);
+        //Serial.println(SensorController::irSmooth[CENTER]);
         break;
       case TURN: // Turn
         break;
       case STOP: // Stop
-          if(MovementController::left->state != 0 && MovementController::right->state != 0){
+          // If you haven't stopped before, stop. 
+          if(MovementController::left->state != 0 && MovementController::right->state != 0){ 
 
             // Serial.print("Left Encoder: ");
             // Serial.println(SensorController::leftEncoder.read()); // This is always 1...
@@ -58,6 +59,7 @@ void exploreMaze(Maze maze){
        break;
     }
     
+    // Change motor speeds depending on current state
     MovementController::updatePID(state);
     //delay(32);
   }

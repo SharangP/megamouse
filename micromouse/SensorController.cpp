@@ -49,7 +49,7 @@ void SensorController::printSensors(){
 //estimate parameters of each ir sensor's distribution
 void SensorController::calibrate(){
   int i;
-  const int nSamples = 100;
+  const int nSamples = 50;  // 100 samples failed
   double samples[3][nSamples];
 
   sensorMean[LEFT] = 0;
@@ -59,7 +59,9 @@ void SensorController::calibrate(){
   sensorSigma[RIGHT] = 0;
   sensorSigma[CENTER] = 0;
 
+  //Serial.print("Finding mean...");
   for(i = 0; i < nSamples; i++){
+    //Serial.println(i);
     samples[LEFT][i]   = analogRead(LEFT_IR);
     samples[RIGHT][i]  = analogRead(RIGHT_IR);
     // samples[CENTER][i] = analogRead(CENTER_IR);
@@ -70,16 +72,17 @@ void SensorController::calibrate(){
 
     delay(SAMPLE_PERIOD);
   }
-
+  //Serial.print("Finding Sum...");
   for(i = 0; i < nSamples; i++){
     sensorSigma[LEFT]   += sq(samples[LEFT][i] - sensorMean[LEFT]);
     sensorSigma[RIGHT]  += sq(samples[RIGHT][i] - sensorMean[RIGHT]);
     // sensorSigma[CENTER] += sq(samples[CENTER][i] - sensorMean[CENTER]);
   }
-
+  // Serial.print("Final Calculation..");
   sensorSigma[LEFT]   = sqrt(sensorSigma[LEFT]/nSamples);
   sensorSigma[RIGHT]  = sqrt(sensorSigma[RIGHT]/nSamples);
   // sensorSigma[CENTER] = sqrt(sensorSigma[CENTER]/nSamples);
+  // Serial.print("Done...");
 }
 
 
