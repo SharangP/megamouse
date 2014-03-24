@@ -72,7 +72,6 @@ void SensorController::calibrate(){
 
     delay(SAMPLE_PERIOD);
   }
-  //Serial.print("Finding Sum...");
   for(i = 0; i < nSamples; i++){
     sensorSigma[LEFT]   += sq(samples[LEFT][i] - sensorMean[LEFT]);
     sensorSigma[RIGHT]  += sq(samples[RIGHT][i] - sensorMean[RIGHT]);
@@ -82,7 +81,11 @@ void SensorController::calibrate(){
   sensorSigma[LEFT]   = sqrt(sensorSigma[LEFT]/nSamples);
   sensorSigma[RIGHT]  = sqrt(sensorSigma[RIGHT]/nSamples);
   // sensorSigma[CENTER] = sqrt(sensorSigma[CENTER]/nSamples);
-  // Serial.print("Done...");
+
+  Serial.print("Right/Left: ");
+  Serial.print(sensorSigma[RIGHT]);
+  Serial.print(" / ");
+  Serial.println(sensorSigma[LEFT]);
 }
 
 

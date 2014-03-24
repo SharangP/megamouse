@@ -11,10 +11,12 @@
 #include "MovementController.h"
 
 
-double MovementController::movementSpeed = 75;
+double MovementController::movementSpeed = 40;
+double MovementController::movementSpeedAdj = 0;
 double MovementController::input = 1;
 double MovementController::output = 1;
 double MovementController::setpoint = 1;
+
 
 Motor * MovementController::right = new Motor(7, 8, 9);
 Motor * MovementController::left  = new Motor(4, 5, 6);
@@ -27,7 +29,7 @@ PID * MovementController::pidEncoder = new PID(&MovementController::input,
 PID * MovementController::pidIR = new PID(&SensorController::input,
                                         &SensorController::output,
                                         &SensorController::setpoint,
-                                        10, 3, 1, DIRECT);
+                                        10, 10, 5, DIRECT);
 
 void MovementController::updatePID(int state){
 
@@ -40,6 +42,7 @@ void MovementController::updatePID(int state){
     case 1:  //straight 
     // Follow a wall that exists...
 
+/* PID stuff that is not used
       input = ((double)SensorController::leftEncoder.read())
           /SensorController::rightEncoder.read();
 
@@ -47,13 +50,23 @@ void MovementController::updatePID(int state){
       //    - SensorController::irSmooth[RIGHT]);
       SensorController::setpoint = 0; // Sensor values are normalized so want 0
       SensorController::input = SensorController::irSmooth[RIGHT];
+*/
+
+      if (SensorController::irSmooth[RIGHT] < 2*11){//2*SensorController::sensorSigma[RIGHT] ) {
+        movementSpeedAdj = 0.75*SensorController::irSmooth[RIGHT];
+      } else if (SensorController::irSmooth[LEFT] < 2*11){//2*SensorController::sensorSigma[LEFT]){
+        movementSpeedAdj = 0.75*SensorController::irSmooth[LEFT];
+      } else{
+        movementSpeedAdj = 0;
+      }
+      
       break;
     default:
       //?
       break;
   }
-  pidEncoder->Compute();
-  pidIR->Compute();
+  // pidEncoder->Compute();
+  // pidIR->Compute();
 }
 
 void MovementController::goStraight(int * state){
@@ -66,16 +79,25 @@ void MovementController::goStraight(int * state){
   //Serial.print("Encoder PID Output: ");
   //Serial.println(output);
   
-  Serial.print("Setpoint/Sensor Val/Sensor PID: ");
-  Serial.print(SensorController::setpoint);
-  Serial.print("/");
-  Serial.print(SensorController::irSmooth[RIGHT]);
-  Serial.print("/");
-  Serial.println(SensorController::output);
+  // Serial.print("Setpoint/Sensor Val/Sensor PID: ");
+  // Serial.print(SensorController::setpoint);
+  // Serial.print("/");
+  // Serial.print(SensorController::irSmooth[RIGHT]);
+  // Serial.print("/");
+  // Serial.println(SensorController::output);
+
+
 
   
-  double leftSpeed = movementSpeed;
-  double rightSpeed = movementSpeed;
+  double leftSpeed = movementSpeed + movementSpeedAdj;
+  double rightSpeed = movementSpeed - movementSpeedAdj;
+
+ // Serial.print("Motor Speed left/right: ");
+ // Serial.print(leftSpeed);
+ // Serial.print(" / ");
+ // Serial.println(rightSpeed);
+ // Serial.println("");
+
   left->setState(1, leftSpeed);
   right->setState(1, rightSpeed);
   

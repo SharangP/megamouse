@@ -19,6 +19,7 @@
 namespace MovementController {
   
   extern double movementSpeed;
+  extern double movementSpeedAdj;
   extern double input;
   extern double output;
   extern double setpoint;
