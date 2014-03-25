@@ -27,7 +27,7 @@ void SensorController::sample(){
   int l = analogRead(LEFT_IR);
   int r = analogRead(RIGHT_IR);
   int c = analogRead(CENTER_IR);
-  
+
   l = (l - sensorMean[LEFT])/sensorSigma[LEFT];
   r = (r - sensorMean[RIGHT])/sensorSigma[RIGHT];
   // irSmooth[CENTER] = (irSmooth[CENTER] - sensorMean[CENTER])/sensorSigma[CENTER];
@@ -82,10 +82,15 @@ void SensorController::calibrate(){
   sensorSigma[RIGHT]  = sqrt(sensorSigma[RIGHT]/nSamples);
   // sensorSigma[CENTER] = sqrt(sensorSigma[CENTER]/nSamples);
 
-  Serial.print("Right/Left: ");
+  Serial.println("");
+  Serial.print("Sigma Right/Left: ");
   Serial.print(sensorSigma[RIGHT]);
   Serial.print(" / ");
   Serial.println(sensorSigma[LEFT]);
+  Serial.print("Mean Right/Left: ");
+  Serial.print(sensorMean[RIGHT]);
+  Serial.print(" / ");
+  Serial.println(sensorMean[LEFT]);
 }
 
 

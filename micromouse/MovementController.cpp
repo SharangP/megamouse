@@ -11,7 +11,7 @@
 #include "MovementController.h"
 
 
-double MovementController::movementSpeed = 40;
+double MovementController::movementSpeed = 70;
 double MovementController::moveSpeedRight = MovementController::movementSpeed;
 double MovementController::moveSpeedLeft = MovementController::movementSpeed;
 double MovementController::movementSpeedAdj = 0;
@@ -52,17 +52,59 @@ void MovementController::updatePID(int state){
       SensorController::input = SensorController::irSmooth[RIGHT];
 */
       // Follow a wall that exists
-      if (SensorController::irSmooth[RIGHT] < 2*11 && SensorController::irSmooth[RIGHT] > -2*11){//2*SensorController::sensorSigma[RIGHT] ) {
-        moveSpeedLeft  = movementSpeed + 0.75*SensorController::irSmooth[RIGHT];
-        moveSpeedRight = movementSpeed - 0.75*SensorController::irSmooth[RIGHT];
-      } else if (SensorController::irSmooth[LEFT] < 2*11 && SensorController::irSmooth[LEFT] > -2*11){//2*SensorController::sensorSigma[LEFT]){
-        moveSpeedLeft  = movementSpeed - 0.75*SensorController::irSmooth[LEFT];
-        moveSpeedRight = movementSpeed + 0.75*SensorController::irSmooth[LEFT];
-      } else{
-        moveSpeedRight = movementSpeed;
-        moveSpeedLeft  = movementSpeed;
+      // if (SensorController::irSmooth[RIGHT] < 2*SensorController::sensorSigma[RIGHT] && SensorController::irSmooth[RIGHT] > -2*SensorController::sensorSigma[RIGHT] ) {
+      //   moveSpeedLeft  = movementSpeed + 0.75*SensorController::irSmooth[RIGHT];
+      //   moveSpeedRight = movementSpeed - 0.75*SensorController::irSmooth[RIGHT];
+      // } else if (SensorController::irSmooth[LEFT] < 2*SensorController::sensorSigma[LEFT] && SensorController::irSmooth[LEFT] > -2*SensorController::sensorSigma[LEFT]){
+      //   moveSpeedLeft  = movementSpeed - 0.75*SensorController::irSmooth[LEFT];
+      //   moveSpeedRight = movementSpeed + 0.75*SensorController::irSmooth[LEFT];
+      // } else{
+      //   moveSpeedRight = movementSpeed;
+      //   moveSpeedLeft  = movementSpeed;
+      // }
+
+      //int whichWall = LEFT*(SensorController::irSmooth[RIGHT] > SensorController::irSmooth[LEFT]) + RIGHT*(SensorController::irSmooth[RIGHT] < SensorController::irSmooth[LEFT])
+
+      switch(Maze::nextSquare()){
+        case 1: //no walls
+          moveSpeedRight = movementSpeed;
+          moveSpeedLeft  = movementSpeed;
+          break;
+        case 2: //right wall only - follow right
+          if (SensorController::irSmooth[LEFT] < -2*SensorController::sensorSigma[LEFT]) {
+            moveSpeedLeft  = movementSpeed + 10;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed - 10;//1*SensorController::irSmooth[RIGHT];
+          } else if (SensorController::irSmooth[LEFT] > 2*SensorController::sensorSigma[LEFT]) {
+            moveSpeedLeft  = movementSpeed - 10;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed + 10;//1*SensorController::irSmooth[RIGHT];
+          } else {
+            moveSpeedRight = movementSpeed;
+            moveSpeedLeft  = movementSpeed;
+          }
+          break;
+        case 3: //left walls
+          //break;
+          //do the same thing as both walls
+        case 4: //both walls - follow left
+        if (SensorController::irSmooth[RIGHT] < -2*SensorController::sensorSigma[RIGHT]) {
+            moveSpeedLeft  = movementSpeed + 10;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed - 10;//1*SensorController::irSmooth[RIGHT];
+          } else if (SensorController::irSmooth[RIGHT] > 2*SensorController::sensorSigma[RIGHT]) {
+            moveSpeedLeft  = movementSpeed - 10;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed + 10;//1*SensorController::irSmooth[RIGHT];
+          } else {
+            moveSpeedRight = movementSpeed;
+            moveSpeedLeft  = movementSpeed;
+          }
+          break;
       }
 
+      moveSpeedRight = (moveSpeedRight - SLOWEST)/SQUARE_SIZE * (SQUARE_SIZE - SensorController::rightEncoder.read()) + SLOWEST;
+      moveSpeedLeft  = (moveSpeedLeft  - SLOWEST)/SQUARE_SIZE * (SQUARE_SIZE - SensorController::leftEncoder.read())  + SLOWEST;
+
+      break;
+
+    case TURN:
       break;
     default:
       //?
@@ -101,9 +143,9 @@ void MovementController::goStraight(int * state){
   left->setState(1, moveSpeedLeft);
   right->setState(1, moveSpeedRight);
 
-  if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
-    *state = STOP;
-  }
+  // if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
+  //   *state = STOP;
+  // }
 }
 
 

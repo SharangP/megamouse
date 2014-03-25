@@ -23,7 +23,7 @@ long countRight =0;
 
 
 void interFun(){
- countLeft++; 
+ countLeft++;
 }
 
 void setup() {

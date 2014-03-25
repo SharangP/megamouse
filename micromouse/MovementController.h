@@ -12,6 +12,7 @@
 #include "const.h"
 #include "SensorController.h"
 #include "Motor.h"
+#include "Maze.h"
 #include <Encoder.h>
 #include <PID_v1.h>
 

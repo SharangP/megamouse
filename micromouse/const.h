@@ -32,5 +32,8 @@
 #define STRAIGHT  1
 #define TURN      2
 #define STOP      3
+#define IDLE      4
 
+#define SQUARE_SIZE 1300 // 1200
+#define SLOWEST 15
 #endif

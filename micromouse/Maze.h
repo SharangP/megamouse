@@ -11,18 +11,13 @@
 #include "Arduino.h"
 
 
-class Maze{
+namespace Maze{
+  extern int grid[16][16]; //maze representation
 
-public: 
-
-  Maze(); //initialize maze to have no walls except border
+ // Maze(); //initialize maze to have no walls except border
   void addWall(int x, int y, int wallPos); //add a particular wall to coordinate x,y
+  int nextSquare(); //figure out what walls the next square has
   boolean fullyExplored();
- 
-private:
-
-  int grid[16][16]; //maze representation
-  
-};
+}
 
 #endif
