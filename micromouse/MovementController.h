@@ -17,7 +17,7 @@
 
 
 namespace MovementController {
-  
+
   extern double movementSpeed;
   extern double movementSpeedAdj;
   extern double moveSpeedRight;
@@ -25,13 +25,13 @@ namespace MovementController {
   extern double input;
   extern double output;
   extern double setpoint;
-  
+
   extern Motor * right;
   extern Motor * left;
-  
+
   extern PID * pidEncoder;
   extern PID * pidIR;
-  
+
   void updatePID(int state);
   void goStraight(int* state);
   void goLeft();

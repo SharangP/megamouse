@@ -1,6 +1,6 @@
 /***************
 *  Maze Solving Micromouse
-*  
+*
 *  Sharang Phadke
 *  Sameer Chauhan
 ***************/
@@ -17,34 +17,42 @@ void decision(int * state){
   Serial.println("Deciding");
   *state = STRAIGHT;
   return;
-} 
+}
 
 
 //maze exploring function
 void exploreMaze(Maze maze){
   int state = DECIDE;
-  
+
   while (!maze.fullyExplored()){
     SensorController::sample();
-  
+
       //decision
         //update maze
         //find shortest path to center
         //make a move in that direction
-    
+
     switch(state){
       case DECIDE: //Make decision, reset encoder values
         decision(&state);
           break;
+
       case STRAIGHT:
         MovementController::goStraight(&state); //decode output -> motors, keep track of execution of current state
         //Serial.println(SensorController::irSmooth[CENTER]);
         break;
+
       case TURN: // Turn
+        MovementController::turn(LEFT);
+        if (SensorController::rightEncoder.read() >= 1000){
+            MovementController::brake();
+            state= STOP;
+        }
         break;
+
       case STOP: // Stop
-          // If you haven't stopped before, stop. 
-          if(MovementController::left->state != 0 && MovementController::right->state != 0){ 
+          // If you haven't stopped before, stop.
+          if(MovementController::left->state != 0 && MovementController::right->state != 0){
 
             // Serial.print("Left Encoder: ");
             // Serial.println(SensorController::leftEncoder.read()); // This is always 1...
@@ -55,10 +63,16 @@ void exploreMaze(Maze maze){
             // Serial.print("Right Speed: ");
             // Serial.println(MovementController::right->power);
             MovementController::brake();
+            SensorController::leftEncoder.write(1);
+            SensorController::rightEncoder.write(1);
+            delay(10);
+            state = TURN;
          }
+
        break;
+
     }
-    
+
     // Change motor speeds depending on current state
     MovementController::updatePID(state);
     //delay(32);

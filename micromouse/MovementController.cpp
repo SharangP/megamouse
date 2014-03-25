@@ -41,7 +41,7 @@ void MovementController::updatePID(int state){
   //TODO: move forward/turn one block at a time
 
   switch(state){
-    case 1:  //straight 
+    case STRAIGHT:  //straight
 /* PID stuff that is not used
       input = ((double)SensorController::leftEncoder.read())
           /SensorController::rightEncoder.read();
@@ -51,7 +51,7 @@ void MovementController::updatePID(int state){
       SensorController::setpoint = 0; // Sensor values are normalized so want 0
       SensorController::input = SensorController::irSmooth[RIGHT];
 */
-      // Follow a wall that exists  
+      // Follow a wall that exists
       if (SensorController::irSmooth[RIGHT] < 2*11 && SensorController::irSmooth[RIGHT] > -2*11){//2*SensorController::sensorSigma[RIGHT] ) {
         moveSpeedLeft  = movementSpeed + 0.75*SensorController::irSmooth[RIGHT];
         moveSpeedRight = movementSpeed - 0.75*SensorController::irSmooth[RIGHT];
@@ -62,7 +62,7 @@ void MovementController::updatePID(int state){
         moveSpeedRight = movementSpeed;
         moveSpeedLeft  = movementSpeed;
       }
-      
+
       break;
     default:
       //?
@@ -74,14 +74,14 @@ void MovementController::updatePID(int state){
 
 void MovementController::goStraight(int * state){
   // decode the output
-  // Must take into account of IR sensor values. 
+  // Must take into account of IR sensor values.
   // double leftSpeed = output*movementSpeed;
   // double rightSpeed = movementSpeed;
 
   //TODO: see what the output looks like!!
   //Serial.print("Encoder PID Output: ");
   //Serial.println(output);
-  
+
   // Serial.print("Setpoint/Sensor Val/Sensor PID: ");
   // Serial.print(SensorController::setpoint);
   // Serial.print("/");
@@ -100,11 +100,13 @@ void MovementController::goStraight(int * state){
 
   left->setState(1, moveSpeedLeft);
   right->setState(1, moveSpeedRight);
-  
+
   if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
     *state = STOP;
   }
 }
+
+
 
 void MovementController::goLeft(){
 }
@@ -120,14 +122,16 @@ void MovementController::goBack(){
 }
 
 void MovementController::turn(int dir){
-  dir = RIGHT;
-  right->setState(1,50);
-  left->setState(2,50);
-  delay(750);
+  right->setState(1*(dir==LEFT) + 2*(dir==RIGHT),75);
+  left->setState(2*(dir==LEFT) + 1*(dir==RIGHT),75);
+  //delay(750);
 }
 
 void MovementController::brake(){
   Serial.println("Stopping");
+  right->setState(2,moveSpeedRight);
+  left->setState(2,moveSpeedLeft);
+  delay(50);
   right->setState(0,0);
   left->setState(0,0);
   digitalWrite(right->enablePin, LOW);
