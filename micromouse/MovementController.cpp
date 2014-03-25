@@ -12,6 +12,8 @@
 
 
 double MovementController::movementSpeed = 40;
+double MovementController::moveSpeedRight = MovementController::movementSpeed;
+double MovementController::moveSpeedLeft = MovementController::movementSpeed;
 double MovementController::movementSpeedAdj = 0;
 double MovementController::input = 1;
 double MovementController::output = 1;
@@ -40,8 +42,6 @@ void MovementController::updatePID(int state){
 
   switch(state){
     case 1:  //straight 
-    // Follow a wall that exists...
-
 /* PID stuff that is not used
       input = ((double)SensorController::leftEncoder.read())
           /SensorController::rightEncoder.read();
@@ -51,13 +51,16 @@ void MovementController::updatePID(int state){
       SensorController::setpoint = 0; // Sensor values are normalized so want 0
       SensorController::input = SensorController::irSmooth[RIGHT];
 */
-
-      if (SensorController::irSmooth[RIGHT] < 2*11){//2*SensorController::sensorSigma[RIGHT] ) {
-        movementSpeedAdj = 0.75*SensorController::irSmooth[RIGHT];
-      } else if (SensorController::irSmooth[LEFT] < 2*11){//2*SensorController::sensorSigma[LEFT]){
-        movementSpeedAdj = 0.75*SensorController::irSmooth[LEFT];
+      // Follow a wall that exists  
+      if (SensorController::irSmooth[RIGHT] < 2*11 && SensorController::irSmooth[RIGHT] > -2*11){//2*SensorController::sensorSigma[RIGHT] ) {
+        moveSpeedLeft  = movementSpeed + 0.75*SensorController::irSmooth[RIGHT];
+        moveSpeedRight = movementSpeed - 0.75*SensorController::irSmooth[RIGHT];
+      } else if (SensorController::irSmooth[LEFT] < 2*11 && SensorController::irSmooth[LEFT] > -2*11){//2*SensorController::sensorSigma[LEFT]){
+        moveSpeedLeft  = movementSpeed - 0.75*SensorController::irSmooth[LEFT];
+        moveSpeedRight = movementSpeed + 0.75*SensorController::irSmooth[LEFT];
       } else{
-        movementSpeedAdj = 0;
+        moveSpeedRight = movementSpeed;
+        moveSpeedLeft  = movementSpeed;
       }
       
       break;
@@ -86,20 +89,17 @@ void MovementController::goStraight(int * state){
   // Serial.print("/");
   // Serial.println(SensorController::output);
 
+  // double leftSpeed = moveSpeedRight + movementSpeedAdj;
+  // double rightSpeed = movementSpeed - movementSpeedAdj;
 
+  // Serial.print("Motor Speed left/right: ");
+  // Serial.print(leftSpeed);
+  // Serial.print(" / ");
+  // Serial.println(rightSpeed);
+  // Serial.println("");
 
-  
-  double leftSpeed = movementSpeed + movementSpeedAdj;
-  double rightSpeed = movementSpeed - movementSpeedAdj;
-
- // Serial.print("Motor Speed left/right: ");
- // Serial.print(leftSpeed);
- // Serial.print(" / ");
- // Serial.println(rightSpeed);
- // Serial.println("");
-
-  left->setState(1, leftSpeed);
-  right->setState(1, rightSpeed);
+  left->setState(1, moveSpeedLeft);
+  right->setState(1, moveSpeedRight);
   
   if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
     *state = STOP;
