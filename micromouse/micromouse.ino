@@ -6,12 +6,18 @@
 ***************/
 
 #define ENCODER_USE_INTERRUPTS
+#include <StandardCplusplus.h>
 #include <PID_v1.h>
 #include <Encoder.h>
 #include "SensorController.h"
 #include "MovementController.h"
 #include "Maze.h"
 
+
+
+
+void detectWalls(){
+}
 
 void decision(int * state){
   Serial.println("Deciding");
@@ -104,6 +110,7 @@ void setup(){
   MovementController::pidIR->SetMode(AUTOMATIC);
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
+  Maze::setupTest();
   delay(2000);
   Serial.print("Calibrating...");
   SensorController::calibrate();

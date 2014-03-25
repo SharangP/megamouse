@@ -18,7 +18,6 @@ class Cell {
 	public:
 		Cell();
 		Cell(int x, int y);
-		int value;
 		int x;
 		int y;
 };
@@ -61,7 +60,7 @@ void showWalls(){
 				cout<<"|";
 			else
 				cout<<" ";
-			if ( (walls[i][j] & SOUTH ) != 0 ) 
+			if ( (walls[i][j] & SOUTH ) != 0 )
 				cout<<"_";
 			else
 				cout<<" ";
@@ -153,7 +152,7 @@ void initializeWalls(){
 		walls[MAZE_SIZE-1][MAZE_SIZE-1-j]+= SOUTH;
 		walls[MAZE_SIZE-1-j][MAZE_SIZE-1] +=EAST;
 	}
-	
+
 	// for(int i = 0; i < MAZE_SIZE; i++){
 	// 	for (int j = 0; j <MAZE_SIZE; j++){
 	// 		walls[i][j] = MAZE_SIZE-1;
@@ -196,7 +195,7 @@ vector<Cell*> getNeighbors(Cell* cell){
 
 	if( (walls[row][col] & NORTH) == 0){
 		neighbors.push_back(&nodes[row-1][col]);
-	} 
+	}
 	if( (walls[row][col] & SOUTH )== 0){
 		neighbors.push_back(&nodes[row+1][col]);
 	}
@@ -220,12 +219,12 @@ void recursiveFlood(vector<Cell *> currentLevel, int level){
 
 	while(!currentLevel.empty()){
 		Cell* tmp = currentLevel.back();
-		
+
 		if (distanceValue[tmp->x][tmp->y] == 255){
 
 			distanceValue[tmp->x][tmp->y] = level;
 			// Find all neighbors not blocked by walls and put into Next Level
-			
+
 			vector<Cell*> neighbors = getNeighbors(tmp);
 			while (!neighbors.empty()){
 				nextLevel.push_back(neighbors.back());
@@ -286,7 +285,7 @@ void genWalls(){
 	// while(!drillers.empty()){
 	// 	int dir = pow(2, rand() % 4 );
 	// 	Cell *drill = drillers.back();
-	// 	drillers.pop_back();	
+	// 	drillers.pop_back();
 
 	// 	if (drill->x == 0 || drill->x == MAZE_SIZE-1 || drill->y == 0 || drill->y == MAZE_SIZE-1){
 	// 		continue;
@@ -315,7 +314,7 @@ void genWalls(){
 				int wallDir = pow(2, (rand() % 4)) * ( (rand() % 100)>40	 ); // Pow exists in arduino
 				if ( (walls[n][m] & wallDir ) == 0 ){
 					addWalls(n,m,wallDir);
-				} 
+				}
 			}
 		}
 	}
@@ -347,7 +346,7 @@ void setupMaze(){
 	addWalls(1, 1, SOUTH);
 	addWalls(1, 2, SOUTH);
 	addWalls(1, 3, SOUTH);
-	
+
 	addWalls(2, 0, EAST);
 	addWalls(2, 2, SOUTH);
 	addWalls(2, 3, SOUTH);

@@ -42,28 +42,6 @@ void MovementController::updatePID(int state){
 
   switch(state){
     case STRAIGHT:  //straight
-/* PID stuff that is not used
-      input = ((double)SensorController::leftEncoder.read())
-          /SensorController::rightEncoder.read();
-
-      //SensorController::input = abs(SensorController::irSmooth[LEFT]
-      //    - SensorController::irSmooth[RIGHT]);
-      SensorController::setpoint = 0; // Sensor values are normalized so want 0
-      SensorController::input = SensorController::irSmooth[RIGHT];
-*/
-      // Follow a wall that exists
-      // if (SensorController::irSmooth[RIGHT] < 2*SensorController::sensorSigma[RIGHT] && SensorController::irSmooth[RIGHT] > -2*SensorController::sensorSigma[RIGHT] ) {
-      //   moveSpeedLeft  = movementSpeed + 0.75*SensorController::irSmooth[RIGHT];
-      //   moveSpeedRight = movementSpeed - 0.75*SensorController::irSmooth[RIGHT];
-      // } else if (SensorController::irSmooth[LEFT] < 2*SensorController::sensorSigma[LEFT] && SensorController::irSmooth[LEFT] > -2*SensorController::sensorSigma[LEFT]){
-      //   moveSpeedLeft  = movementSpeed - 0.75*SensorController::irSmooth[LEFT];
-      //   moveSpeedRight = movementSpeed + 0.75*SensorController::irSmooth[LEFT];
-      // } else{
-      //   moveSpeedRight = movementSpeed;
-      //   moveSpeedLeft  = movementSpeed;
-      // }
-
-      //int whichWall = LEFT*(SensorController::irSmooth[RIGHT] > SensorController::irSmooth[LEFT]) + RIGHT*(SensorController::irSmooth[RIGHT] < SensorController::irSmooth[LEFT])
 
       switch(Maze::nextSquare()){
         case 1: //no walls

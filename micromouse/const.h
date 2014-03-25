@@ -14,7 +14,7 @@
 
 #define LEFTTHRESH       261
 #define RIGHTTHRESH      257
-#define CENTERTHRESH     630//328
+#define CENTERTHRESH     328
 
 #define LEFT_IR    3
 #define CENTER_IR  4
@@ -36,4 +36,13 @@
 
 #define SQUARE_SIZE 1300 // 1200
 #define SLOWEST 15
+
+#define NORTH 1
+#define SOUTH 2
+#define WEST  4
+#define EAST  8
+#define MAZE_SIZE 5
+
+
+
 #endif
