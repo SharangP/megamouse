@@ -10,7 +10,7 @@
 #define SOUTH 2
 #define WEST  4
 #define EAST  8
-#define MAZE_SIZE 16
+#define MAZE_SIZE 5
 
 using namespace std;
 
@@ -159,13 +159,13 @@ void initializeWalls(){
 	// 		walls[i][j] = MAZE_SIZE-1;
 	// 	}
 	// }
-	addWalls(7,7, NORTH);
-	addWalls(7,7, WEST);
-	addWalls(8,7, WEST);
-	addWalls(8,7, SOUTH);
-	addWalls(8,8,SOUTH);
-	addWalls(8,8,EAST);
-	addWalls(7,8, EAST);
+	// addWalls(7,7, NORTH);
+	// addWalls(7,7, WEST);
+	// addWalls(8,7, WEST);
+	// addWalls(8,7, SOUTH);
+	// addWalls(8,8,SOUTH);
+	// addWalls(8,8,EAST);
+	// addWalls(7,8, EAST);
 
 
 
@@ -255,10 +255,10 @@ void floodGraph(){
 	}
 	vector<Cell*> currentLevel;
 
-	currentLevel.push_back(&nodes[7][7]);
-	currentLevel.push_back(&nodes[7][8]);
-	currentLevel.push_back(&nodes[8][8]);
-	currentLevel.push_back(&nodes[8][7]);
+	currentLevel.push_back(&nodes[2][2]);
+	// currentLevel.push_back(&nodes[7][8]);
+	// currentLevel.push_back(&nodes[8][8]);
+	// currentLevel.push_back(&nodes[8][7]);
 	int level = 0;
 
 	recursiveFlood(currentLevel, level);
@@ -328,10 +328,45 @@ void genWalls(){
 
 }
 
+
+// int grid[5][5] ={
+// 	{NORTH+WEST+EAST,	NORTH,	NORTH,	NORTH,	NORTH+EAST},
+// 	{WEST,		0,	0,	0,	EAST},
+// 	{WEST+EAST,		0,	0,	NORTH+SOUTH+EAST,	EAST},
+// 	{WEST+EAST,		0,	0,	0,	EAST},
+// 	{SOUTH+WEST+EAST,	SOUTH,	SOUTH,	SOUTH,	SOUTH+EAST}
+// }
+
+void setupMaze(){
+
+	addWalls(0, 0, EAST);
+	addWalls(0, 2, SOUTH);
+	addWalls(0, 3, SOUTH);
+	addWalls(0, 4, SOUTH);
+
+	addWalls(1, 1, SOUTH);
+	addWalls(1, 2, SOUTH);
+	addWalls(1, 3, SOUTH);
+	
+	addWalls(2, 0, EAST);
+	addWalls(2, 2, SOUTH);
+	addWalls(2, 3, SOUTH);
+	addWalls(2, 4, WEST);
+
+	addWalls(3, 0, EAST);
+	addWalls(3, 2, EAST);
+	addWalls(3, 4, SOUTH);
+
+	addWalls(4, 0, EAST);
+	addWalls(4, 1, EAST);
+
+}
+
 int main(){
 	initializeWalls();
 	initializeGraph();
-	genWalls();
+	// genWalls();
+	setupMaze();
 
 	floodGraph();
 	printDistance();
