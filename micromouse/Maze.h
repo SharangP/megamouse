@@ -27,6 +27,7 @@ namespace Maze{
 
 
   extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
+  void printWalls();
   extern int distanceValue[MAZE_SIZE][MAZE_SIZE];
   extern int walls[MAZE_SIZE][MAZE_SIZE];
   extern int curDir;
@@ -51,6 +52,12 @@ namespace Maze{
   void setupTest();
 
   boolean fullyExplored();
+
+
+  /*debug functions*/
+  void printDistance();
+  void showWalls();
+  void printWalls();
 }
 
 #endif

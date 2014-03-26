@@ -67,7 +67,38 @@ void Maze::peek(){
 }
 
 int Maze::decide(){
-  return 0;
+  vector<Cell*> neighbors = getNeighbors(&curPos);
+  Cell* nextMove = &curPos;
+
+  // Serial.println(neighbors.size());
+
+  while (!neighbors.empty()){
+    Cell *tmpCell = neighbors.back();
+    Serial.println(distanceValue[tmpCell->x][tmpCell->y]);
+    Serial.println(distanceValue[nextMove->x][nextMove->y]);
+    if (distanceValue[tmpCell->x][tmpCell->y] < distanceValue[nextMove->x][nextMove->y]){
+      nextMove = tmpCell;
+    }
+    neighbors.pop_back();
+  }
+
+  if (nextMove == &curPos){
+    return 0;
+  }
+
+  int dir;
+  int offsetX = curPos.x - nextMove->x;
+  int offsetY = curPos.y - nextMove->y;
+
+  if (offsetX == 1)
+    return NORTH;
+  else if( offsetX == -1)
+    return SOUTH;
+
+  if(offsetY == 1)
+    return EAST;
+  else if (offsetY == -1)
+    return WEST;
 }
 
 //check whether the maze has been fully explored
@@ -212,12 +243,14 @@ vector<Maze::Cell*> Maze::getNeighbors(Maze::Cell* cell){
 
 /* updates distanceValue using floodFill*/
 void Maze::recursiveFlood(vector<Maze::Cell *> currentLevel, int level){
-
-
+  // Serial.println("A call");
     vector<Cell*> nextLevel;
 
     while(!currentLevel.empty()){
+
         Cell* tmp = currentLevel.back();
+
+        Serial.println(distanceValue[tmp->x][tmp->y]);
 
         if (distanceValue[tmp->x][tmp->y] == 255){
 
@@ -229,7 +262,10 @@ void Maze::recursiveFlood(vector<Maze::Cell *> currentLevel, int level){
                 nextLevel.push_back(neighbors.back());
                 neighbors.pop_back();
             }
+
         }
+        Serial.print("-----");
+        Serial.println(distanceValue[tmp->x][tmp->y]);
         currentLevel.pop_back();
 
     }
@@ -286,11 +322,74 @@ void Maze::createTest(){
     addWalls(4, 1, EAST);
 }
 
+
+/* Debug Function*/
+
+/* Prints the distance from cell to center */
+void Maze::printDistance(){
+
+  for (int i = 0; i<MAZE_SIZE; i++ ) {
+    for (int j = 0; j<MAZE_SIZE; j++){
+      // cout.width(3);
+      Serial.print(distanceValue[i][j]);
+      Serial.print(" ");
+    }
+    Serial.println("");
+  }
+  Serial.println("");
+}
+
+/* Displays the numeric representation of maze*/
+void Maze::printWalls(){
+  for (int i = 0; i<MAZE_SIZE; i++ ) {
+    for (int j = 0; j<MAZE_SIZE; j++){
+      Serial.print(walls[i][j]);
+      Serial.print(" ");
+    }
+    Serial.println("");
+  }
+  Serial.println("");
+}
+
+
+
+/* Visual Representation of maze*/
+void Maze::showWalls(){
+  for ( int m = 0; m < MAZE_SIZE; m++){
+      Serial.print(" _");
+    }
+  Serial.println("");
+
+  for (int i = 0; i<MAZE_SIZE; i++ ) {
+    for (int j = 0; j<MAZE_SIZE; j++){
+      if ( (walls[i][j] & WEST ) != 0 )
+        Serial.print("|");
+      else
+        Serial.print(" ");
+      if ( (walls[i][j] & SOUTH ) != 0 )
+        Serial.print("_");
+      else
+        Serial.print(" ");
+    }
+    Serial.print("|");
+    Serial.println("");
+  }
+  Serial.println("");
+}
+
+
+
 void Maze::setupTest(){
     initializeWalls();
     initializeGraph();
     createTest();
     floodGraph();
+
+    showWalls();
+    printWalls();
+    printDistance();
+    Serial.println("");
+    Serial.println("");
 }
 
 

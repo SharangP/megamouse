@@ -24,14 +24,19 @@ void decision(int * state){
   Maze::peek();
   int decision = Maze::decide();
   delay(500);
-
-
-
-  if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
-    *state = TURN;
+  Serial.println(decision);
+  if(decision && Maze::curDir){
+    *state = STRAIGHT;
   } else{
-     *state = STRAIGHT;
+    *state = IDLE;
   }
+
+
+  // if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
+  //   *state = TURN;
+  // } else{
+  //    *state = STRAIGHT;
+  // }
 
   return;
 }
@@ -76,15 +81,6 @@ void exploreMaze(){
       case STOP: // Stop
           // If you haven't stopped before, stop.
           if(MovementController::left->state != 0 && MovementController::right->state != 0){
-
-            // Serial.print("Left Encoder: ");
-            // Serial.println(SensorController::leftEncoder.read()); // This is always 1...
-            // Serial.print("Right Encoder: ");
-            // Serial.println(SensorController::rightEncoder.read());
-            // Serial.print("Left Speed: ");
-            // Serial.println(MovementController::left->power);
-            // Serial.print("Right Speed: ");
-            // Serial.println(MovementController::right->power);
             MovementController::brake();
             SensorController::leftEncoder.write(0);
             SensorController::rightEncoder.write(0);
