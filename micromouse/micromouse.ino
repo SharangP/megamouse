@@ -6,6 +6,7 @@
 ***************/
 
 #define ENCODER_USE_INTERRUPTS
+#include <StandardCplusplus.h>
 #include <PID_v1.h>
 #include <Encoder.h>
 #include "SensorController.h"
@@ -13,9 +14,19 @@
 #include "Maze.h"
 
 
+
+
+void detectWalls(){
+}
+
 void decision(int * state){
   Serial.println("Deciding");
+  Maze::peek();
+  int decision = Maze::decide();
   delay(500);
+
+
+
   if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
     *state = TURN;
   } else{
@@ -41,16 +52,15 @@ void exploreMaze(){
     switch(state){
       case DECIDE: //Make decision, reset encoder values
         decision(&state);
-          break;
+        break;
 
       case STRAIGHT:
-      if (SensorController::rightEncoder.read() >= SQUARE_SIZE || SensorController::leftEncoder.read()>=SQUARE_SIZE){
+        MovementController::goStraight();
+        if (SensorController::rightEncoder.read() >= SQUARE_SIZE
+              || SensorController::leftEncoder.read() >= SQUARE_SIZE
+              || SensorController::irSmooth[CENTER] >= TOOCLOSE){
           state = STOP;
-        } else if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
-          state = STOP;
-        }
-        else {
-          MovementController::goStraight(&state); //decode output -> motors, keep track of execution of current state
+          Maze::incrementPos(); // Increment location on maze
         }
         break;
 
@@ -59,8 +69,10 @@ void exploreMaze(){
         if ((abs(SensorController::leftEncoder.read()) + abs(SensorController::rightEncoder.read())) >= 1300){
             //MovementController::brake();
             state= STOP;
+            //TODO: DONT FORGET TO UPDATE THE curDir!. Something like Maze::curDir = ROTATE(Maze::curDir, 1, 3, or 0) based on turn
         }
         break;
+
       case STOP: // Stop
           // If you haven't stopped before, stop.
           if(MovementController::left->state != 0 && MovementController::right->state != 0){
@@ -81,9 +93,9 @@ void exploreMaze(){
             // state = TURN;
          }
        break;
-       case IDLE:
-         break;
 
+      case IDLE:
+         break;
     }
 
     // Change motor speeds depending on current state
@@ -104,6 +116,7 @@ void setup(){
   MovementController::pidIR->SetMode(AUTOMATIC);
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
+  Maze::setupTest();
   delay(2000);
   Serial.print("Calibrating...");
   SensorController::calibrate();

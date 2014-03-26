@@ -33,6 +33,7 @@ PID * MovementController::pidIR = new PID(&SensorController::input,
                                         &SensorController::setpoint,
                                         10, 10, 5, DIRECT);
 
+
 void MovementController::updatePID(int state){
 
   //TODO: Use pidEncoder and pidIR values (outputs) to inform locomotion
@@ -41,36 +42,15 @@ void MovementController::updatePID(int state){
   //TODO: move forward/turn one block at a time
 
   switch(state){
+
     case STRAIGHT:  //straight
-/* PID stuff that is not used
-      input = ((double)SensorController::leftEncoder.read())
-          /SensorController::rightEncoder.read();
 
-      //SensorController::input = abs(SensorController::irSmooth[LEFT]
-      //    - SensorController::irSmooth[RIGHT]);
-      SensorController::setpoint = 0; // Sensor values are normalized so want 0
-      SensorController::input = SensorController::irSmooth[RIGHT];
-*/
-      // Follow a wall that exists
-      // if (SensorController::irSmooth[RIGHT] < 2*SensorController::sensorSigma[RIGHT] && SensorController::irSmooth[RIGHT] > -2*SensorController::sensorSigma[RIGHT] ) {
-      //   moveSpeedLeft  = movementSpeed + 0.75*SensorController::irSmooth[RIGHT];
-      //   moveSpeedRight = movementSpeed - 0.75*SensorController::irSmooth[RIGHT];
-      // } else if (SensorController::irSmooth[LEFT] < 2*SensorController::sensorSigma[LEFT] && SensorController::irSmooth[LEFT] > -2*SensorController::sensorSigma[LEFT]){
-      //   moveSpeedLeft  = movementSpeed - 0.75*SensorController::irSmooth[LEFT];
-      //   moveSpeedRight = movementSpeed + 0.75*SensorController::irSmooth[LEFT];
-      // } else{
-      //   moveSpeedRight = movementSpeed;
-      //   moveSpeedLeft  = movementSpeed;
-      // }
-
-      //int whichWall = LEFT*(SensorController::irSmooth[RIGHT] > SensorController::irSmooth[LEFT]) + RIGHT*(SensorController::irSmooth[RIGHT] < SensorController::irSmooth[LEFT])
-
-      switch(Maze::nextSquare()){
-        case 1: //no walls
+      switch(Maze::checkWalls()){
+        case 0: //no walls
           moveSpeedRight = movementSpeed;
           moveSpeedLeft  = movementSpeed;
           break;
-        case 2: //right wall only - follow right
+        case 1: //right wall only - follow right
           if (SensorController::irSmooth[LEFT] < -2*SensorController::sensorSigma[LEFT]) {
             moveSpeedLeft  = movementSpeed + 10;// 1*SensorController::irSmooth[RIGHT];
             moveSpeedRight = movementSpeed - 10;//1*SensorController::irSmooth[RIGHT];
@@ -82,11 +62,11 @@ void MovementController::updatePID(int state){
             moveSpeedLeft  = movementSpeed;
           }
           break;
-        case 3: //left walls
+        case 2: //left wall
           //break;
           //do the same thing as both walls
-        case 4: //both walls - follow left
-        if (SensorController::irSmooth[RIGHT] < -2*SensorController::sensorSigma[RIGHT]) {
+        case 3: //both walls - follow left
+          if (SensorController::irSmooth[RIGHT] < -2*SensorController::sensorSigma[RIGHT]) {
             moveSpeedLeft  = movementSpeed + 10;// 1*SensorController::irSmooth[RIGHT];
             moveSpeedRight = movementSpeed - 10;//1*SensorController::irSmooth[RIGHT];
           } else if (SensorController::irSmooth[RIGHT] > 2*SensorController::sensorSigma[RIGHT]) {
@@ -114,7 +94,7 @@ void MovementController::updatePID(int state){
   // pidIR->Compute();
 }
 
-void MovementController::goStraight(int * state){
+void MovementController::goStraight(){
   // decode the output
   // Must take into account of IR sensor values.
   // double leftSpeed = output*movementSpeed;
@@ -142,12 +122,7 @@ void MovementController::goStraight(int * state){
 
   left->setState(1, moveSpeedLeft);
   right->setState(1, moveSpeedRight);
-
-  // if( SensorController::irSmooth[CENTER] > CENTERTHRESH ){
-  //   *state = STOP;
-  // }
 }
-
 
 
 void MovementController::goLeft(){
