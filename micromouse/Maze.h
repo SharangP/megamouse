@@ -10,9 +10,8 @@
 
 #include "Arduino.h"
 #include "const.h"
-// #include <StandardCplusplus.h>
-// #include <vector>
-#include <QueueArray.h>
+#include <StandardCplusplus.h>
+#include <vector>
 #include "SensorController.h"
 
 using namespace std;
@@ -27,7 +26,7 @@ namespace Maze{
 };
 
 
-  extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
+  //extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
   void printWalls();
   extern int distanceValue[MAZE_SIZE][MAZE_SIZE];
   extern int walls[MAZE_SIZE][MAZE_SIZE];
@@ -39,7 +38,7 @@ namespace Maze{
   void addWalls(int row, int col, int direction);
   void removeWalls(int row, int col, int direction);
   void initializeWalls();
-  void initializeGraph();
+  // void initializeGraph();
   Cell nextPos();
   void incrementPos();
   int checkWalls();
@@ -47,9 +46,9 @@ namespace Maze{
   int decide();
 
   // vector<Cell*> getNeighbors(Cell* cell);
-  QueueArray<Cell*> getNeighbors(Cell* cell);
+  vector<Cell*> getNeighbors(Cell* cell);
 
-  void recursiveFlood(QueueArray<Cell *> currentLevel, int level);
+  void recursiveFlood(vector<Cell *> currentLevel, int level);
   void floodGraph();
   void createTest();
   void setupTest();

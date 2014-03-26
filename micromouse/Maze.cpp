@@ -13,7 +13,7 @@
 
 int Maze::curDir = NORTH;
 Maze::Cell Maze::curPos = Maze::Cell(MAZE_SIZE-1, 0);
-Maze::Cell Maze::nodes[MAZE_SIZE][MAZE_SIZE];
+// Maze::Cell Maze::nodes[MAZE_SIZE][MAZE_SIZE];
 int Maze::distanceValue[MAZE_SIZE][MAZE_SIZE] = {{0}};
 int Maze::walls[MAZE_SIZE][MAZE_SIZE] ={{0}};
 
@@ -67,19 +67,19 @@ void Maze::peek(){
 }
 
 int Maze::decide(){
-  QueueArray<Cell*> neighbors = getNeighbors(&curPos);
+  vector<Cell*> neighbors = getNeighbors(&curPos);
   Cell* nextMove = &curPos;
 
   // Serial.println(neighbors.size());
 
-  while (!neighbors.isEmpty()){
-    Cell *tmpCell = neighbors.dequeue();
-    Serial.println(distanceValue[tmpCell->x][tmpCell->y]);
-    Serial.println(distanceValue[nextMove->x][nextMove->y]);
+  while (!neighbors.empty()){
+    Cell *tmpCell = neighbors.back();
+    // Serial.println(distanceValue[tmpCell->x][tmpCell->y]);
+    // Serial.println(distanceValue[nextMove->x][nextMove->y]);
     if (distanceValue[tmpCell->x][tmpCell->y] < distanceValue[nextMove->x][nextMove->y]){
       nextMove = tmpCell;
     }
-    // neighbors.pop_back();
+    neighbors.pop_back();
   }
 
   if (nextMove == &curPos){
@@ -202,106 +202,87 @@ void Maze::removeWalls(int row, int col, int direction){
 
 
 /*Fills node list with tuples (Probably not needed)*/
-void Maze::initializeGraph(){
-    for (int i = 0; i<MAZE_SIZE; i++){
-        for (int j =0 ; j<MAZE_SIZE; j++){
-             nodes[i][j] = Cell(i, j);
-        }
-    }
-}
+// void Maze::initializeGraph(){
+//     for (int i = 0; i<MAZE_SIZE; i++){
+//         for (int j =0 ; j<MAZE_SIZE; j++){
+//              nodes[i][j] = Cell(i, j);
+//         }
+//     }
+// }
 
 
-/* Returns QueueArray of neighbors not blocked by walls*/
-QueueArray<Maze::Cell*> Maze::getNeighbors(Maze::Cell* cell){
-    QueueArray<Cell*> neighbors;
-    int row = cell->x;
-    int col = cell->y;
-    if ( walls[row][col] == 0 ){
-        neighbors.enqueue(&nodes[row][col-1]);
-        neighbors.enqueue(&nodes[row][col+1]);
-        neighbors.enqueue(&nodes[row+1][col]);
-        neighbors.enqueue(&nodes[row-1][col]);
-        return neighbors;
-    }
-
-    if( (walls[row][col] & NORTH) == 0){
-        neighbors.enqueue(&nodes[row-1][col]);
-    }
-    if( (walls[row][col] & SOUTH )== 0){
-        neighbors.enqueue(&nodes[row+1][col]);
-    }
-    if( (walls[row][col] & EAST )== 0){
-        neighbors.enqueue(&nodes[row][col+1]);
-    }
-    if( (walls[row][col] & WEST )== 0){
-        neighbors.enqueue(&nodes[row][col-1]);
-    }
-
+/* Returns vector of neighbors not blocked by walls*/
+vector<Maze::Cell*> Maze::getNeighbors(Maze::Cell* cell){
+  vector<Cell*> neighbors;
+  int row = cell->x;
+  int col = cell->y;
+  if ( walls[row][col] == 0 ){
+    // neighbors.push_back(&nodes[row][col-1]);
+    // neighbors.push_back(&nodes[row][col+1]);
+    // neighbors.push_back(&nodes[row+1][col]);
+    // neighbors.push_back(&nodes[row-1][col]);
+    neighbors.push_back( new Cell(row, col-1));
+    neighbors.push_back( new Cell(row, col+1));
+    neighbors.push_back( new Cell(row+1, col));
+    neighbors.push_back( new Cell(row-1, col));
     return neighbors;
+  }
+
+  if( (walls[row][col] & NORTH) == 0){
+    // neighbors.push_back(&nodes[row-1][col]);
+    neighbors.push_back( new Cell(row-1, col));
+  }
+  if( (walls[row][col] & SOUTH )== 0){
+    // neighbors.push_back(&nodes[row+1][col]);
+    neighbors.push_back( new Cell(row+1, col));
+
+  }
+  if( (walls[row][col] & EAST )== 0){
+    // neighbors.push_back(&nodes[row][col+1]);
+        neighbors.push_back( new Cell(row, col+1));
+
+  }
+  if( (walls[row][col] & WEST )== 0){
+    // neighbors.push_back(&nodes[row][col-1]);
+    neighbors.push_back( new Cell(row, col-1));
+  }
+
+  return neighbors;
 }
 
 
 /* updates distanceValue using floodFill*/
-void Maze::recursiveFlood(QueueArray<Maze::Cell *> currentLevel, int level){
+void Maze::recursiveFlood(vector<Maze::Cell *> currentLevel, int level){
 
-    // Serial.print("A call: ");
-    // Serial.print(level);
-    // Serial.print(" with a size of ");
-    // Serial.println(currentLevel.count());
 
-    QueueArray<Cell*> nextLevel;
+  vector<Cell*> nextLevel;
 
-    // Serial.print("Current level (");
-    // Serial.print(level);
-    // Serial.print(") has ");
-    // Serial.print(currentLevel.size());
-    // Serial.println(" Adj Cells");
-    // Serial.println("____ENTERING WHILE LOOP____");
-    while(!currentLevel.isEmpty()){
+  while(!currentLevel.empty()){
+    Cell* tmp = currentLevel.back();
 
-        // Serial.println(currentLevel.count());
+    if (distanceValue[tmp->x][tmp->y] == 255){
 
-        Cell* tmp = currentLevel.dequeue();
+      distanceValue[tmp->x][tmp->y] = level;
+      // Find all neighbors not blocked by walls and put into Next Level
 
-        // Serial.println(distanceValue[tmp->x][tmp->y]);
-
-        if (distanceValue[tmp->x][tmp->y] == 255){
-
-            // Serial.print("Setting ");
-            // Serial.print(tmp->x); Serial.print(", "); Serial.print(tmp->y);
-            // Serial.print(" to ");
-            // Serial.print(level);
-
-            distanceValue[tmp->x][tmp->y] = level;
-            // Find all neighbors not blocked by walls and put into Next Level
-
-            QueueArray<Cell*> neighbors = getNeighbors(tmp);
-
-            // Serial.print(" with "); Serial.print(neighbors.size()); Serial.println(" neighbors");
-
-            while (!neighbors.isEmpty()){
-                nextLevel.enqueue(neighbors.dequeue());
-                // neighbors.pop_back();
-            }
-            // Serial.println("Neighbors Empty");
-
-        }
-        // currentLevel.pop_back();
+      vector<Cell*> neighbors = getNeighbors(tmp);
+      while (!neighbors.empty()){
+        nextLevel.push_back(neighbors.back());
+        neighbors.pop_back();
+      }
     }
-    // Serial.println("Current Level is empty");
+    currentLevel.pop_back();
 
-      // Serial.print("Next level has ");
-      // Serial.print(nextLevel.size());
-      // Serial.println(" Adj Cells");
+  }
 
-    if(!nextLevel.isEmpty()){
-        level++;
-        currentLevel = nextLevel;
-        recursiveFlood(currentLevel, level);
-    }
-    else{
-        return;
-    }
+  if(!nextLevel.empty()){
+    level++;
+    currentLevel = nextLevel;
+    recursiveFlood(currentLevel, level);
+  }
+  else{
+    return;
+  }
 }
 
 /*Flood fill initial setup*/
@@ -311,9 +292,16 @@ void Maze::floodGraph(){
             distanceValue[i][j] = 255;
         }
     }
-    QueueArray<Cell*> currentLevel;
+    vector<Cell*> currentLevel;
 
-    currentLevel.enqueue(&nodes[2][2]);
+    // currentLevel.push_back(&nodes[2][2]);
+    currentLevel.push_back( new Cell(4,4));
+    // currentLevel.push_back( new Cell(7,7));
+    // currentLevel.push_back( new Cell(7,8));
+    // currentLevel.push_back( new Cell(8,8));
+    // currentLevel.push_back( new Cell(8,7));
+
+    // currentLevel.push_back(&nodes[7][7]);
     // currentLevel.push_back(&nodes[7][8]);
     // currentLevel.push_back(&nodes[8][8]);
     // currentLevel.push_back(&nodes[8][7]);
@@ -411,7 +399,7 @@ void Maze::setupTest(){
     // Serial.print("Initializing Walls...");
     initializeWalls();
     // Serial.print("Init Graph...");
-    initializeGraph();
+    // initializeGraph();
     // Serial.print("Create test...");
     // createTest();
     // Serial.println("Flooding...");
@@ -429,9 +417,5 @@ void Maze::setupTest(){
     Serial.println("");
 
 }
-
-
-
-
 
 #endif

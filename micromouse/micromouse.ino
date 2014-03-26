@@ -6,10 +6,9 @@
 ***************/
 
 #define ENCODER_USE_INTERRUPTS
-// #include <StandardCplusplus.h>
+#include <StandardCplusplus.h>
 #include <PID_v1.h>
 #include <Encoder.h>
-#include <QueueArray.h>
 #include "SensorController.h"
 #include "MovementController.h"
 #include "Maze.h"
@@ -27,7 +26,7 @@ void decision(int * state){
   delay(500);
   Serial.println(decision);
   if(decision && Maze::curDir){
-    *state = STRAIGHT;
+    *state = IDLE;
   } else{
     *state = IDLE;
   }
