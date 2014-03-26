@@ -7,9 +7,9 @@
 #include <cstdlib>
 #include <cmath>
 #define NORTH 1
-#define SOUTH 2
-#define WEST  4
-#define EAST  8
+#define EAST 2
+#define SOUTH  4
+#define WEST  8
 #define MAZE_SIZE 5
 
 using namespace std;
