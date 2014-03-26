@@ -27,7 +27,8 @@ namespace Maze{
   extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
   extern int distanceValue[MAZE_SIZE][MAZE_SIZE];
   extern int walls[MAZE_SIZE][MAZE_SIZE];
-
+  extern int curDir;
+  extern Cell curPos;
 
 
   // Maze(); //initialize maze to have no walls except border
@@ -41,7 +42,8 @@ namespace Maze{
   void createTest();
   void setupTest();
 
-  int nextSquare(); //figure out what walls the next square has
+  int peek(); //figure out what walls the next square has
+  int decide(); //decide where to go next
   boolean fullyExplored();
 }
 

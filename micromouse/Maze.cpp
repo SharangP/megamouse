@@ -10,9 +10,97 @@
 
 #include "Maze.h"
 
+int Maze::curDir = NORTH;
+int Maze::curPos = Cell(MAZE_SIZE-1, 0);
+
 //figure out what walls the next square has
-int Maze::nextSquare(){
-    return 2;
+int Maze::peek(){
+  // Don't check for walls outside of border
+
+  int offsetX = 0;
+  int offsetY = 0;
+  int wallLoc = 0;
+  if(SensorController::irSmooth[LEFT] > -4*SensorController::sensorSigma[LEFT]){
+    switch(curDir){
+      case NORTH:
+        wallLoc = EAST;
+        offsetX = -1;
+        offsetY = 0;
+        break;
+      case SOUTH:
+        wallLoc = WEST;
+        offsetX = 1;
+        offsetY = 0;
+        break;
+      case WEST:
+        wallLoc = NORTH;
+        offsetX = 0;
+        offsetY = -1;
+        break;
+      case EAST:
+        wallLoc = SOUTH;
+        offsetX = 0;
+        offsetY = -1;
+        break;
+    }
+    addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
+  }
+  if(SensorController::irSmooth[RIGHT] > -4*SensorController::sensorSigma[RIGHT]){
+    switch(curDir){
+      case NORTH:
+        wallLoc = WEST;
+        offsetX = -1;
+        offsetY = 0;
+        break;
+      case SOUTH:
+        wallLoc = EAST;
+        offsetX = 1;
+        offsetY = 0;
+        break;
+      case WEST:
+        wallLoc = SOUTH;
+        offsetX = 0;
+        offsetY = -1;
+        break;
+      case EAST:
+        wallLoc = NORTH;
+        offsetX = 0;
+        offsetY = 1;
+        break;
+    }
+    addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
+  }
+  if(SensorController::irSmooth[CENTER] > -4*SensorController::sensorSigma[CENTER]){
+    switch(curDir){
+      case NORTH:
+        wallLoc = NORTH;
+        offsetX = -1;
+        offsetY = 0;
+        break;
+      case SOUTH:
+        wallLoc = SOUTH;
+        offsetX = 1;
+        offsetY = 0;
+        break;
+      case WEST:
+        wallLoc = WEST;
+        offsetX = 0;
+        offsetY = -1;
+        break;
+      case EAST:
+        wallLoc = EAST;
+        offsetX = 0;
+        offsetY = 1;
+        break;
+    }
+    addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
+  }
+  //look right
+  //look straight
+}
+
+int Maze::decide(){
+  return 0;
 }
 
 //check whether the maze has been fully explored
@@ -22,7 +110,7 @@ boolean Maze::fullyExplored(){
 
 
 Maze::Cell::Cell(int x, int y){
-    this->x = x;
+  this->x = x;
     this->y = y;
 }
 
