@@ -34,7 +34,7 @@ namespace MovementController {
   extern PID * pidIR;
 
   void updatePID(int state);
-  void goStraight(int* state);
+  void goStraight();
   void goLeft();
   void goRight();
   void goBack();

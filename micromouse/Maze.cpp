@@ -10,97 +10,60 @@
 
 #include "Maze.h"
 
+
 int Maze::curDir = NORTH;
 Maze::Cell Maze::curPos = Maze::Cell(MAZE_SIZE-1, 0);
+Maze::Cell Maze::nodes[MAZE_SIZE][MAZE_SIZE];
+int Maze::distanceValue[MAZE_SIZE][MAZE_SIZE] = {{0}};
+int Maze::walls[MAZE_SIZE][MAZE_SIZE] ={{0}};
+
+
+Maze::Cell::Cell(int x, int y){
+  this->x = x;
+  this->y = y;
+}
+
+Maze::Cell::Cell(){}
 
 
 //figure out what walls the next square has
 void Maze::peek(){
-  // Don't check for walls outside of border
+  //TODO: Don't check for walls outside of border
   int offsetX = 0;
   int offsetY = 0;
   int wallLoc = 0;
 
+  switch(curDir){
+    case NORTH:
+      offsetX = -1;
+      offsetY = 0;
+      break;
+    case SOUTH:
+      offsetX = 1;
+      offsetY = 0;
+      break;
+    case WEST:
+      offsetX = 0;
+      offsetY = -1;
+      break;
+    case EAST:
+      offsetX = 0;
+      offsetY = -1;
+      break;
+  }
 
   if(SensorController::irSmooth[LEFT] > -4*SensorController::sensorSigma[LEFT]){
-
-    //wallLoc = curDIR
-    switch(curDir){
-      case NORTH:
-        wallLoc = EAST;
-        offsetX = -1;
-        offsetY = 0;
-        break;
-      case SOUTH:
-        wallLoc = WEST;
-        offsetX = 1;
-        offsetY = 0;
-        break;
-      case WEST:
-        wallLoc = NORTH;
-        offsetX = 0;
-        offsetY = -1;
-        break;
-      case EAST:
-        wallLoc = SOUTH;
-        offsetX = 0;
-        offsetY = -1;
-        break;
-    }
+    wallLoc = ROTATE(curDir,1);
     addWalls(curPos.x + offsetX, curPos.y + offsetY, wallLoc);
   }
   if(SensorController::irSmooth[RIGHT] > -4*SensorController::sensorSigma[RIGHT]){
-    switch(curDir){
-      case NORTH:
-        wallLoc = WEST;
-        offsetX = -1;
-        offsetY = 0;
-        break;
-      case SOUTH:
-        wallLoc = EAST;
-        offsetX = 1;
-        offsetY = 0;
-        break;
-      case WEST:
-        wallLoc = SOUTH;
-        offsetX = 0;
-        offsetY = -1;
-        break;
-      case EAST:
-        wallLoc = NORTH;
-        offsetX = 0;
-        offsetY = 1;
-        break;
-    }
+    wallLoc = ROTATE(curDir,3);
     addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
   }
   if(SensorController::irSmooth[CENTER] > -4*SensorController::sensorSigma[CENTER]){
-    switch(curDir){
-      case NORTH:
-        wallLoc = NORTH;
-        offsetX = -1;
-        offsetY = 0;
-        break;
-      case SOUTH:
-        wallLoc = SOUTH;
-        offsetX = 1;
-        offsetY = 0;
-        break;
-      case WEST:
-        wallLoc = WEST;
-        offsetX = 0;
-        offsetY = -1;
-        break;
-      case EAST:
-        wallLoc = EAST;
-        offsetX = 0;
-        offsetY = 1;
-        break;
-    }
+    wallLoc = curDir;
     addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
   }
-  //look right
-  //look straight
 }
 
 int Maze::decide(){
@@ -112,40 +75,47 @@ boolean Maze::fullyExplored(){
   return false;
 }
 
-
-
-void Maze::incrementPos(){
+Maze::Cell Maze::nextPos(){
   int offsetY = 0;
   int offsetX = 0;
   switch(curDir){
     case NORTH:
-
+      offsetX = -1;
+      offsetY = 0;
       break;
     case SOUTH:
+      offsetX = 1;
+      offsetY = 0;
       break;
     case WEST:
+      offsetX = 0;
+      offsetY = -1;
       break;
     case EAST:
+      offsetX = 0;
+      offsetY = -1;
       break;
   }
-
-}
-Maze::Cell::Cell(int x, int y){
-  this->x = x;
-    this->y = y;
+  return Cell(curPos.x + offsetX,curPos.y + offsetY);
 }
 
-Maze::Cell::Cell(){}
+void Maze::incrementPos(){
+  Cell newPos = nextPos();
+  curPos.x = newPos.x;
+  curPos.y = newPos.y;
+}
 
-Maze::Cell Maze::nodes[MAZE_SIZE][MAZE_SIZE];
-int Maze::distanceValue[MAZE_SIZE][MAZE_SIZE] = {{0}};
-int Maze::walls[MAZE_SIZE][MAZE_SIZE] ={{0}};
+int Maze::checkWalls(){
+  Cell newPos = nextPos();
+  int nextWalls = walls[newPos.x][newPos.y];
+  int leftWall = !!(ROTATE(curDir, 1) & nextWalls);
+  int rightWall = !!(ROTATE(curDir, 3) & nextWalls);
+
+  return rightWall + (leftWall << 1);
+}
 
 /*Adds wall at (row,col) in direction*/
 void Maze::addWalls(int row, int col, int direction){
-
- 5
-
     walls[row][col] += direction;
     switch(direction){
         case NORTH:
@@ -238,10 +208,6 @@ vector<Maze::Cell*> Maze::getNeighbors(Maze::Cell* cell){
 
     return neighbors;
 }
-
-
-
-
 
 
 /* updates distanceValue using floodFill*/

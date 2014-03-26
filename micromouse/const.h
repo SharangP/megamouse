@@ -15,6 +15,7 @@
 #define LEFTTHRESH       261
 #define RIGHTTHRESH      257
 #define CENTERTHRESH     328
+#define TOOCLOSE         600
 
 #define LEFT_IR    3
 #define CENTER_IR  4
@@ -44,7 +45,6 @@
 #define MAZE_SIZE 5
 
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
-
 
 
 #endif
