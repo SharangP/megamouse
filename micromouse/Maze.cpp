@@ -11,16 +11,20 @@
 #include "Maze.h"
 
 int Maze::curDir = NORTH;
-int Maze::curPos = Cell(MAZE_SIZE-1, 0);
+Maze::Cell Maze::curPos = Maze::Cell(MAZE_SIZE-1, 0);
+
 
 //figure out what walls the next square has
-int Maze::peek(){
+void Maze::peek(){
   // Don't check for walls outside of border
-
   int offsetX = 0;
   int offsetY = 0;
   int wallLoc = 0;
+
+
   if(SensorController::irSmooth[LEFT] > -4*SensorController::sensorSigma[LEFT]){
+
+    //wallLoc = curDIR
     switch(curDir){
       case NORTH:
         wallLoc = EAST;
@@ -43,7 +47,7 @@ int Maze::peek(){
         offsetY = -1;
         break;
     }
-    addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
+    addWalls(curPos.x + offsetX, curPos.y + offsetY, wallLoc);
   }
   if(SensorController::irSmooth[RIGHT] > -4*SensorController::sensorSigma[RIGHT]){
     switch(curDir){
@@ -109,6 +113,23 @@ boolean Maze::fullyExplored(){
 }
 
 
+
+void Maze::incrementPos(){
+  int offsetY = 0;
+  int offsetX = 0;
+  switch(curDir){
+    case NORTH:
+
+      break;
+    case SOUTH:
+      break;
+    case WEST:
+      break;
+    case EAST:
+      break;
+  }
+
+}
 Maze::Cell::Cell(int x, int y){
   this->x = x;
     this->y = y;
@@ -123,9 +144,7 @@ int Maze::walls[MAZE_SIZE][MAZE_SIZE] ={{0}};
 /*Adds wall at (row,col) in direction*/
 void Maze::addWalls(int row, int col, int direction){
 
-    if ( (walls[row][col] & direction ) !=0) {
-        return;
-    }
+ 5
 
     walls[row][col] += direction;
     switch(direction){

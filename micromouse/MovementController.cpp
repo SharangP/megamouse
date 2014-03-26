@@ -43,7 +43,7 @@ void MovementController::updatePID(int state){
   switch(state){
     case STRAIGHT:  //straight
 
-      switch(Maze::nextSquare()){
+      switch(Maze::peek()){
         case 1: //no walls
           moveSpeedRight = movementSpeed;
           moveSpeedLeft  = movementSpeed;

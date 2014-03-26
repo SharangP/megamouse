@@ -21,6 +21,8 @@ void detectWalls(){
 
 void decision(int * state){
   Serial.println("Deciding");
+  Maze::peek();
+  int decision = Maze::decide();
   delay(500);
   if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
     *state = TURN;
@@ -52,6 +54,7 @@ void exploreMaze(){
       case STRAIGHT:
       if (SensorController::rightEncoder.read() >= SQUARE_SIZE || SensorController::leftEncoder.read()>=SQUARE_SIZE){
           state = STOP;
+          Maze::incrementPos(); // Increment location on maze
         } else if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
           state = STOP;
         }

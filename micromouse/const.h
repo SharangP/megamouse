@@ -38,10 +38,12 @@
 #define SLOWEST 15
 
 #define NORTH 1
-#define SOUTH 2
-#define WEST  4
-#define EAST  8
+#define EAST 2
+#define SOUTH  4
+#define WEST  8
 #define MAZE_SIZE 5
+
+#define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 
 
 

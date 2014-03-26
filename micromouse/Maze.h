@@ -12,6 +12,7 @@
 #include "const.h"
 #include <StandardCplusplus.h>
 #include <vector>
+#include "SensorController.h"
 
 using namespace std;
 namespace Maze{
@@ -42,7 +43,7 @@ namespace Maze{
   void createTest();
   void setupTest();
 
-  int peek(); //figure out what walls the next square has
+  void peek(); //Look ahead and add walls if necessary
   int decide(); //decide where to go next
   boolean fullyExplored();
 }
