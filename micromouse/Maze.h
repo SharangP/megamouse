@@ -10,8 +10,9 @@
 
 #include "Arduino.h"
 #include "const.h"
-#include <StandardCplusplus.h>
-#include <vector>
+// #include <StandardCplusplus.h>
+// #include <vector>
+#include <QueueArray.h>
 #include "SensorController.h"
 
 using namespace std;
@@ -45,8 +46,10 @@ namespace Maze{
   void peek(); //Look ahead and add walls if necessary
   int decide();
 
-  vector<Cell*> getNeighbors(Cell* cell);
-  void recursiveFlood(vector<Cell *> currentLevel, int level);
+  // vector<Cell*> getNeighbors(Cell* cell);
+  QueueArray<Cell*> getNeighbors(Cell* cell);
+
+  void recursiveFlood(QueueArray<Cell *> currentLevel, int level);
   void floodGraph();
   void createTest();
   void setupTest();
