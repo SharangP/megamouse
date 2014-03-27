@@ -33,8 +33,11 @@
 #define STRAIGHT    1
 #define TURN_RIGHT  2
 #define TURN_LEFT   3
-#define STOP        4
-#define IDLE        5
+#define TURN_AROUND   4
+#define STOP        5
+#define IDLE        6
+
+#define TURN_ENCODER_THRESH 0
 
 #define SQUARE_SIZE 1300 // 1200
 #define SLOWEST 15

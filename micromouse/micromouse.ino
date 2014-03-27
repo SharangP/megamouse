@@ -18,29 +18,14 @@
 void decision(int * state){
   Serial.println("Deciding");
 
-  Maze::detectWalls();
+  //Maze::detectWalls();
   // Serial.println("New Maze Layout");
   // Maze::showWalls();
-  int decision = Maze::decide();
-
-  // int decision = NORTH;
+  *state = Maze::decide();
 
   delay(500);
   Serial.print("Current decision: ");
-  Serial.println(decision);
-
-  if(decision == Maze::curDir){
-    *state = STRAIGHT;
-  } else{
-    *state = DECIDE;
-  }
-
-
-  if (SensorController::irSmooth[CENTER] >= TOOCLOSE) {
-    *state = TURN_RIGHT;
-  } else{
-    *state = STRAIGHT;
-  }
+  Serial.println(*state);
 
   return;
 }
@@ -76,18 +61,27 @@ void exploreMaze(){
       case TURN_RIGHT: // Turn
         MovementController::turn(RIGHT);
         if ((abs(SensorController::leftEncoder.read())
-            + abs(SensorController::rightEncoder.read())) >= 1500){
+            + abs(SensorController::rightEncoder.read())) >= TURN_ENCODER_THRESH){
             state= STOP;
-            Maze::curDir = ROTATE(Maze::curDir, 3);
+            Maze::curDir = ROTATE(Maze::curDir, 1);
         }
         break;
 
       case TURN_LEFT: // Turn
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
-            + abs(SensorController::rightEncoder.read())) >= 1500){
+            + abs(SensorController::rightEncoder.read())) >= TURN_ENCODER_THRESH){
             state= STOP;
-            Maze::curDir = ROTATE(Maze::curDir, 1);
+            Maze::curDir = ROTATE(Maze::curDir, 3);
+        }
+        break;
+
+      case TURN_AROUND: // Turn
+        MovementController::turn(LEFT);
+        if ((abs(SensorController::leftEncoder.read())
+            + abs(SensorController::rightEncoder.read())) >= 2*TURN_ENCODER_THRESH){
+            state= STOP;
+            Maze::curDir = ROTATE(Maze::curDir, 2);
         }
         break;
 
@@ -99,7 +93,6 @@ void exploreMaze(){
             SensorController::rightEncoder.write(0);
             delay(10);
             state = DECIDE;
-            // state = TURN;
          }
        break;
 

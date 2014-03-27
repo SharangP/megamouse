@@ -79,26 +79,47 @@ int Maze::decide(){
   }
 
   int dir;
-  int offsetX = curPos.x - nextMove.x;
-  int offsetY = curPos.y - nextMove.y;
 
-  // Serial.println("----OFFSETS----");
-  // Serial.println(offsetX);
-  // Serial.println(offsetY);
+  if (curPos.x > nextMove.x)
+    dir = NORTH;
+  else if(curPos.x < nextMove.x)
+    dir = SOUTH;
 
-  if (offsetX == 1)
-    return NORTH;
-  else if( offsetX == -1)
-    return SOUTH;
+  if(curPos.y > nextMove.y)
+    dir = WEST;
+  else if (curPos.y < nextMove.y)
+    dir = EAST;
 
-  if(offsetY == 1)
-    return WEST;
-  else if (offsetY == -1)
-    return EAST;
+  // Serial.println("Dir and curdir in decide");
+  // Serial.println(dir);
+  // Serial.println(curDir);
+  // Serial.println("curDir rotations");
+  // Serial.println(ROTATE(curDir, 1));
+  // Serial.println(ROTATE(curDir, 2));
+  // Serial.println(ROTATE(curDir, 3));
+
+
+  if(dir == curDir){
+    return STRAIGHT;
+  }
+  if((ROTATE(curDir, 1) & dir)){
+    return TURN_RIGHT;
+  }
+  if((ROTATE(curDir, 3) & dir)){
+    return TURN_LEFT;
+  }
+  if((ROTATE(curDir, 2) & dir)){
+    return TURN_AROUND;
+  }
+
+  return IDLE;
 }
 
 //check whether the maze has been fully explored
 boolean Maze::fullyExplored(){
+  if(curPos.x == 2 && curPos.y == 2){
+    return true;
+  }
   return false;
 }
 
@@ -120,7 +141,7 @@ Maze::Cell Maze::nextPos(){
       break;
     case EAST:
       offsetX = 0;
-      offsetY = -1;
+      offsetY = 1;
       break;
   }
   return Cell(curPos.x + offsetX,curPos.y + offsetY);
