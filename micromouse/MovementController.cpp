@@ -23,15 +23,15 @@ double MovementController::setpoint = 1;
 Motor * MovementController::right = new Motor(7, 8, 9);
 Motor * MovementController::left  = new Motor(4, 5, 6);
 
-// PID * MovementController::pidEncoder = new PID(&MovementController::input,
-//                                         &MovementController::output,
-//                                         &MovementController::setpoint,
-//                                         2, 3, 1, DIRECT);
+PID * MovementController::pidEncoder = new PID(&MovementController::input,
+                                        &MovementController::output,
+                                        &MovementController::setpoint,
+                                        2, 3, 1, DIRECT);
 
-// PID * MovementController::pidIR = new PID(&SensorController::input,
-//                                         &SensorController::output,
-//                                         &SensorController::setpoint,
-//                                         10, 10, 5, DIRECT);
+PID * MovementController::pidIR = new PID(&SensorController::input,
+                                        &SensorController::output,
+                                        &SensorController::setpoint,
+                                        10, 10, 5, DIRECT);
 
 
 void MovementController::updatePID(int state){
@@ -42,8 +42,6 @@ void MovementController::updatePID(int state){
   switch(state){
 
     case STRAIGHT:  //straight
-
-      //TODO: TEST WALL FOLLOWING AGAIN
 
       switch(Maze::checkWalls()){
         case 0: //no walls
@@ -83,6 +81,7 @@ void MovementController::updatePID(int state){
           break;
       }
 
+      //wtf is this?
       moveSpeedRight = (moveSpeedRight - SLOWEST)/SQUARE_SIZE * (SQUARE_SIZE - SensorController::rightEncoder.read()) + SLOWEST;
       moveSpeedLeft  = (moveSpeedLeft  - SLOWEST)/SQUARE_SIZE * (SQUARE_SIZE - SensorController::leftEncoder.read())  + SLOWEST;
 

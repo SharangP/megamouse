@@ -19,7 +19,7 @@ void decision(int * state){
   Serial.println("Deciding");
 
   //TODO: test wall detection by looking @ showWalls as mouse explores
-  // Maze::detectWalls();
+  Maze::detectWalls();
   // Serial.println("New Maze Layout");
   // Maze::showWalls();
   // *state = Maze::decide();

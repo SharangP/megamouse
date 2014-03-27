@@ -30,8 +30,8 @@ namespace MovementController {
   extern Motor * right;
   extern Motor * left;
 
-  // extern PID * pidEncoder;
-  // extern PID * pidIR;
+  extern PID * pidEncoder;
+  extern PID * pidIR;
 
   void updatePID(int state);
   void goStraight();

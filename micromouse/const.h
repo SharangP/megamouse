@@ -46,10 +46,10 @@
 #define EAST 2
 #define SOUTH  4
 #define WEST  8
-#define MAZE_SIZE 5
+#define MAZE_SIZE 16
 
-#define ADJUST_POWER 15
-#define ADJUST_THRESH 0.25
+#define ADJUST_POWER 20
+#define ADJUST_THRESH 0.5
 
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 

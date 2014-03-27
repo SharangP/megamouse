@@ -61,7 +61,7 @@ int Maze::decide(){
   // Serial.print(" / "); Serial.println(curDir);
   Cell nextMove = curPos;
   Cell tmpCell;
-  
+
   for(int i = 0; i < neighbors.size(); i++){
     tmpCell = neighbors[i];
     if (distanceValue[tmpCell.x][tmpCell.y] < distanceValue[nextMove.x][nextMove.y]){
@@ -144,7 +144,12 @@ int Maze::checkWalls(){
   int nextWalls = walls[newPos.x][newPos.y];
   int leftWall = !!(ROTATE(curDir, 3) & nextWalls);
   int rightWall = !!(ROTATE(curDir, 1) & nextWalls);
-  return rightWall + (leftWall << 1);
+  int rtnWall = rightWall + (leftWall << 1);
+
+  // Serial.print("checkWall output: ");
+  // Serial.println(rtnWall);
+
+  return rtnWall;
 }
 
 /*Adds wall at (row,col) in direction*/
@@ -415,11 +420,11 @@ void Maze::showWalls(){
 
 
 void Maze::initialize(){
-  // initializeWalls();
-  // showWalls();
+  initializeWalls();
+  showWalls();
   // initializeGraph();
 
-  setupTest();
+  // setupTest();
 }
 
 
