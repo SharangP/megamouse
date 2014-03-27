@@ -50,7 +50,7 @@ void Maze::detectWalls(){
       addWalls(newPos.x, newPos.y, wallLoc);
     }
   }
-  // floodGraph();
+  floodGraph();
 }
 
 

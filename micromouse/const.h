@@ -29,13 +29,13 @@
 #define SAMPLE_PERIOD 32
 #define ALPHA 0.5
 
-#define DECIDE      0
-#define STRAIGHT    1
-#define TURN_RIGHT  2
-#define TURN_LEFT   3
+#define DECIDE        0
+#define STRAIGHT      1
+#define TURN_RIGHT    2
+#define TURN_LEFT     3
 #define TURN_AROUND   4
-#define STOP        5
-#define IDLE        6
+#define STOP        	5
+#define IDLE        	6
 
 #define TURN_ENCODER_THRESH 1500
 
@@ -46,7 +46,7 @@
 #define EAST 2
 #define SOUTH  4
 #define WEST  8
-#define MAZE_SIZE 16
+#define MAZE_SIZE 5
 
 #define ADJUST_POWER 20
 #define ADJUST_THRESH 0.5

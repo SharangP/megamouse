@@ -43,6 +43,8 @@ void MovementController::updatePID(int state){
 
     case STRAIGHT:  //straight
 
+      //TODO: need a non-constant method of adjusting power
+
       switch(Maze::checkWalls()){
         case 0: //no walls
           moveSpeedRight = movementSpeed;
