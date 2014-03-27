@@ -34,6 +34,7 @@ namespace MovementController {
   extern PID * pidIR;
 
   void updatePID(int state);
+  float adjustValue(float mean, float sigma, float curVal);
   void goStraight();
   void goBack();
   void brake();

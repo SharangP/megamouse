@@ -18,6 +18,14 @@
 void decision(int * state){
   Serial.println("Deciding");
 
+  for(int i = 0; i < 10; i++){
+    delay(400);
+    Serial.print(10-i);
+    Serial.print(" ");
+  }
+
+  Serial.println("");
+
   //TODO: test wall detection by looking @ showWalls as mouse explores
   Maze::detectWalls();
   Serial.println("New Maze Layout");
@@ -25,8 +33,9 @@ void decision(int * state){
   Maze::printDistance();
   *state = Maze::decide();
 
-  delay(500);
-  Serial.print("Current decision: ");
+  *state = STRAIGHT;
+  
+  Serial.print("Current decision: "); 
   Serial.println(*state);
 
   return;

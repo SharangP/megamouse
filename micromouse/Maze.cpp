@@ -33,21 +33,27 @@ void Maze::detectWalls(){
   Cell newPos = nextPos();
   int wallLoc = 0;
   if( !( walls[curPos.x][curPos.y] & curDir ) ){
-    if(SensorController::irSmooth[LEFT] > -SensorController::sensorSigma[LEFT]){
-      Serial.println("Left sensor found the right wall");
-      wallLoc = ROTATE(curDir,1);
-      addWalls(newPos.x, newPos.y, wallLoc);
-    }
-    if(SensorController::irSmooth[RIGHT] > -SensorController::sensorSigma[RIGHT]){
-      Serial.println("Rigth sensor found the left wall");
-      wallLoc = ROTATE(curDir,3);
-      addWalls(newPos.x, newPos.y, wallLoc);
-    }
-    //WE NEVER NORMALIZE THE CENTER
-    if(SensorController::irSmooth[CENTER] > CENTERTHRESH){
-      Serial.println("Found Center Wall");
+    if(SensorController::irSmooth[CENTER] > CENTERTHRESH_CLOSE){
+      Serial.println("Found wall right in front of me");
       wallLoc = curDir;
-      addWalls(newPos.x, newPos.y, wallLoc);
+      addWalls(curPos.x, curPos.y, wallLoc);
+    }
+    else {
+      if(SensorController::irSmooth[CENTER] > CENTERTHRESH_FAR){
+        Serial.println("Found wall in square in front of me");
+        wallLoc = curDir;
+        addWalls(newPos.x, newPos.y, wallLoc);
+      }
+      if(SensorController::irSmooth[LEFT] > -DETECT_THRESH*SensorController::sensorSigma[LEFT]){
+        Serial.println("Left sensor found the right wall");
+        wallLoc = ROTATE(curDir,1);
+        addWalls(newPos.x, newPos.y, wallLoc);
+      }
+      if(SensorController::irSmooth[RIGHT] > -DETECT_THRESH*SensorController::sensorSigma[RIGHT]){
+        Serial.println("Rigth sensor found the left wall");
+        wallLoc = ROTATE(curDir,3);
+        addWalls(newPos.x, newPos.y, wallLoc);
+      }
     }
   }
   floodGraph();
@@ -366,6 +372,23 @@ void Maze::createTest(){
 
 /* Debug Function*/
 
+void Maze::printDir(){
+  switch(curDir){
+    case NORTH:
+      Serial.print("^");
+      break;
+    case EAST:
+      Serial.print(">");
+      break;
+    case SOUTH:
+      Serial.print(",");
+      break;
+    case WEST:
+      Serial.print("<");
+      break;
+  }
+}
+
 /* Prints the distance from cell to center */
 void Maze::printDistance(){
 
@@ -405,12 +428,19 @@ void Maze::showWalls(){
     for (int j = 0; j<MAZE_SIZE; j++){
       if ( (walls[i][j] & WEST ) != 0 )
         Serial.print("|");
-      else
+      else if(i == curPos.x && j == curPos.y){
+        printDir();
+      } else{
         Serial.print(" ");
+      }
+
       if ( (walls[i][j] & SOUTH ) != 0 )
         Serial.print("_");
-      else
+      else if(i == curPos.x && j == curPos.y){
+        printDir();
+      } else{
         Serial.print(" ");
+      }
     }
     Serial.print("|");
     Serial.println("");

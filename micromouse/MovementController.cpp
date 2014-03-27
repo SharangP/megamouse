@@ -11,7 +11,7 @@
 #include "MovementController.h"
 
 
-double MovementController::movementSpeed = 80;
+double MovementController::movementSpeed = BASE_POWER;
 double MovementController::moveSpeedRight = MovementController::movementSpeed;
 double MovementController::moveSpeedLeft = MovementController::movementSpeed;
 double MovementController::movementSpeedAdj = 0;
@@ -83,12 +83,14 @@ void MovementController::updatePID(int state){
           break;
       }
 
-      //wtf is this?
+      //ramp down speed linearly
       moveSpeedRight = (moveSpeedRight - SLOWEST)/SQUARE_SIZE * (SQUARE_SIZE - SensorController::rightEncoder.read()) + SLOWEST;
       moveSpeedLeft  = (moveSpeedLeft  - SLOWEST)/SQUARE_SIZE * (SQUARE_SIZE - SensorController::leftEncoder.read())  + SLOWEST;
 
       break;
 
+    //TODO: ramp down turn
+    //TODO: fine tune turning
     case TURN_RIGHT:
       break;
     case TURN_LEFT:

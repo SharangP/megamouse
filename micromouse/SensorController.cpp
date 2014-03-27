@@ -80,8 +80,8 @@ void SensorController::calibrate(){
     // sensorSigma[CENTER] += sq(samples[CENTER][i] - sensorMean[CENTER]);
   }
   // Serial.print("Final Calculation..");
-  sensorSigma[LEFT]   = sqrt(sensorSigma[LEFT]/nSamples);
-  sensorSigma[RIGHT]  = sqrt(sensorSigma[RIGHT]/nSamples);
+  sensorSigma[LEFT]   = max(sqrt(sensorSigma[LEFT]/nSamples), BASE_IR_SIGMA);
+  sensorSigma[RIGHT]  = max(sqrt(sensorSigma[RIGHT]/nSamples), BASE_IR_SIGMA);
   // sensorSigma[CENTER] = sqrt(sensorSigma[CENTER]/nSamples);
 
   Serial.println("");

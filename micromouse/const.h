@@ -12,10 +12,13 @@
 #define RIGHT    1
 #define CENTER   2
 
-#define LEFTTHRESH       261
-#define RIGHTTHRESH      257
-#define CENTERTHRESH     240//328
-#define TOOCLOSE         600
+#define LEFTTHRESH       		261
+#define RIGHTTHRESH      		257
+#define CENTERTHRESH_CLOSE  500
+#define CENTERTHRESH_FAR		240//328
+#define TOOCLOSE         		600
+
+#define BASE_IR_SIGMA		10
 
 #define LEFT_IR    3
 #define CENTER_IR  4
@@ -38,9 +41,9 @@
 #define IDLE        	6
 
 #define TURN_ENCODER_THRESH 1500
+#define DETECT_THRESH 			1
 
-#define SQUARE_SIZE 1300 // 1200
-#define SLOWEST 15
+#define SQUARE_SIZE 1300 // 1200R
 
 #define NORTH 1
 #define EAST 2
@@ -48,8 +51,10 @@
 #define WEST  8
 #define MAZE_SIZE 5
 
-#define ADJUST_POWER 20
-#define ADJUST_THRESH 0.5
+#define BASE_POWER			60
+#define ADJUST_POWER 		20
+#define SLOWEST 				15
+#define ADJUST_THRESH 	0.5
 
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 
