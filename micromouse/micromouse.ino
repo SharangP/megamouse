@@ -36,7 +36,7 @@ void decision(int * state){
 
 
   if (SensorController::irSmooth[CENTER] >= TOOCLOSE) {
-    *state = TURN;
+    *state = TURN_RIGHT;
   } else{
     *state = STRAIGHT;
   }
@@ -72,13 +72,21 @@ void exploreMaze(){
         }
         break;
 
-      case TURN: // Turn
+      case TURN_RIGHT: // Turn
         MovementController::turn(RIGHT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read())) >= 1500){
-            //MovementController::brake();
             state= STOP;
-            //TODO: DONT FORGET TO UPDATE THE curDir!. Something like Maze::curDir = ROTATE(Maze::curDir, 1, 3, or 0) based on turn
+            Maze::curDir = ROTATE(Maze::curDir, 3);
+        }
+        break;
+
+      case TURN_LEFT: // Turn
+        MovementController::turn(LEFT);
+        if ((abs(SensorController::leftEncoder.read())
+            + abs(SensorController::rightEncoder.read())) >= 1500){
+            state= STOP;
+            Maze::curDir = ROTATE(Maze::curDir, 1);
         }
         break;
 

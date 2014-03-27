@@ -45,7 +45,7 @@ void Maze::detectWalls(){
     }
     //WE NEVER NORMALIZE THE CENTER
     if(SensorController::irSmooth[CENTER] > CENTERTHRESH){
-      // Serial.println("Found Center Wall");
+      Serial.println("Found Center Wall");
       wallLoc = curDir;
       addWalls(newPos.x, newPos.y, wallLoc);
     }

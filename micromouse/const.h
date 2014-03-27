@@ -29,11 +29,12 @@
 #define SAMPLE_PERIOD 32
 #define ALPHA 0.5
 
-#define DECIDE    0
-#define STRAIGHT  1
-#define TURN      2
-#define STOP      3
-#define IDLE      4
+#define DECIDE      0
+#define STRAIGHT    1
+#define TURN_RIGHT  2
+#define TURN_LEFT   3
+#define STOP        4
+#define IDLE        5
 
 #define SQUARE_SIZE 1300 // 1200
 #define SLOWEST 15

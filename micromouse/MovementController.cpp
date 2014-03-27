@@ -11,7 +11,7 @@
 #include "MovementController.h"
 
 
-double MovementController::movementSpeed = 60;
+double MovementController::movementSpeed = 80;
 double MovementController::moveSpeedRight = MovementController::movementSpeed;
 double MovementController::moveSpeedLeft = MovementController::movementSpeed;
 double MovementController::movementSpeedAdj = 0;
@@ -88,7 +88,9 @@ void MovementController::updatePID(int state){
 
       break;
 
-    case TURN:
+    case TURN_RIGHT:
+      break;
+    case TURN_LEFT:
       break;
     default:
       //?
