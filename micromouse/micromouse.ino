@@ -86,7 +86,7 @@ void exploreMaze(){
         break;
 
       case STOP: // Stop
-          // If you haven't stopped before, stop.
+          // If you haven't stopped already, stop.
           if(MovementController::left->state != 0 && MovementController::right->state != 0){
             MovementController::brake();
             SensorController::leftEncoder.write(0);
@@ -122,41 +122,21 @@ void setup(){
   Maze::initialize();
   Serial.println("Maze initialized..");
 
-  // delay(3000);
-  // SensorController::calibrate();
-  // delay(3000);
+  delay(3000);
+  SensorController::calibrate();
+  delay(3000);
 }
 
 void loop(){
 
-  MovementController::brake();
+  //MovementController::brake();
 
   // wait till youre ready
-  while(!Serial.available()){}
+  //while(!Serial.available()){}
 
-  SensorController::leftEncoder.write(0);
-  SensorController::rightEncoder.write(0);
+  //SensorController::leftEncoder.write(0);
+  //SensorController::rightEncoder.write(0);
    // Maze::initialize();
-
-  // Maze::setupTest();
-
-  // delay(3000);
-  // SensorController::calibrate();
-  // delay(3000);
-
-  // SensorController::sample();
-  // SensorController::printSensors();
-  // delay(SAMPLE_PERIOD);
-
-  // Maze::Cell nextPos = Maze::nextPos();
-  // Serial.print("Next Pos X: ");
-  // Serial.print(nextPos.x);
-  // Serial.print(" Y: ");
-  // Serial.println(nextPos.y);
-
-   // Serial.println("Initial Maze Layout");
-   // Maze::showWalls();
-   // Maze::printWalls();
 
   // Maze::detectWalls();
   // Maze::checkWalls();

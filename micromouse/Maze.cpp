@@ -56,19 +56,14 @@ void Maze::detectWalls(){
 
 int Maze::decide(){
   vector<Cell> neighbors = getNeighbors(curPos);
-  Serial.print("CurPos/CurDir: ");
-  Serial.print(curPos.x);Serial.print(", "); Serial.print(curPos.y);
-  Serial.print(" / "); Serial.println(curDir);
+  // Serial.print("CurPos/CurDir: ");
+  // Serial.print(curPos.x);Serial.print(", "); Serial.print(curPos.y);
+  // Serial.print(" / "); Serial.println(curDir);
   Cell nextMove = curPos;
-
-  Serial.println(neighbors.size());
-
   Cell tmpCell;
+  
   for(int i = 0; i < neighbors.size(); i++){
     tmpCell = neighbors[i];
-    // Serial.println(" Neighbor: ");
-    // Serial.println(distanceValue[tmpCell.x][tmpCell.y]);
-    // Serial.println(distanceValue[nextMove.x][nextMove.y]);
     if (distanceValue[tmpCell.x][tmpCell.y] < distanceValue[nextMove.x][nextMove.y]){
       nextMove = tmpCell;
     }
@@ -89,15 +84,6 @@ int Maze::decide(){
     dir = WEST;
   else if (curPos.y < nextMove.y)
     dir = EAST;
-
-  // Serial.println("Dir and curdir in decide");
-  // Serial.println(dir);
-  // Serial.println(curDir);
-  // Serial.println("curDir rotations");
-  // Serial.println(ROTATE(curDir, 1));
-  // Serial.println(ROTATE(curDir, 2));
-  // Serial.println(ROTATE(curDir, 3));
-
 
   if(dir == curDir){
     return STRAIGHT;
@@ -156,23 +142,13 @@ void Maze::incrementPos(){
 int Maze::checkWalls(){
   Cell newPos = nextPos();
   int nextWalls = walls[newPos.x][newPos.y];
-
-  // Serial.print("Next Walls: ");
-  // Serial.println(nextWalls);
-
   int leftWall = !!(ROTATE(curDir, 3) & nextWalls);
   int rightWall = !!(ROTATE(curDir, 1) & nextWalls);
-
-  int nWalls = rightWall + (leftWall << 1);
-
-  // Serial.println(nWalls);
-  return nWalls;
+  return rightWall + (leftWall << 1);
 }
 
 /*Adds wall at (row,col) in direction*/
 void Maze::addWalls(int row, int col, int direction){
-  //TODO: SAMEER CHECK THIS SHIT
-    // walls[row][col] += direction;
     walls[row][col] = walls[row][col] | direction;
     switch(direction){
         case NORTH:
@@ -254,24 +230,20 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
 
 
   if( (walls[row][col] & NORTH) == 0){
-    // Serial.println("in NORTH");
     // neighbors.push_back(&nodes[row-1][col]);
     neighbors.push_back( Cell(row-1, col));
   }
   if( (walls[row][col] & SOUTH )== 0){
-    // Serial.println("in SOUTH");
     // neighbors.push_back(&nodes[row+1][col]);
     neighbors.push_back( Cell(row+1, col));
 
   }
   if( (walls[row][col] & EAST )== 0){
-    // Serial.println("in EAST");
     // neighbors.push_back(&nodes[row][col+1]);
         neighbors.push_back( Cell(row, col+1));
 
   }
   if( (walls[row][col] & WEST )== 0){
-    // Serial.println("in WEST");
     // neighbors.push_back(&nodes[row][col-1]);
     neighbors.push_back( Cell(row, col-1));
   }
@@ -461,21 +433,17 @@ void Maze::setupTest(){
     createTest();
     // Serial.println("Flooding...");
     showWalls();
-    printWalls();
+    //printWalls();
     floodGraph();
     // Serial.println("Flooded...");
 
     // showWalls();
     // printWalls();
 
-    printDistance();
+    //printDistance();
 
-
-    // listArray<Cell*> n = getNeighbors(new Cell(1,1));
-    // Serial.println(n.size());
-
-    Serial.println("");
-    Serial.println("");
+    //Serial.println("");
+    //Serial.println("");
 
 }
 

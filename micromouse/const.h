@@ -37,7 +37,7 @@
 #define STOP        5
 #define IDLE        6
 
-#define TURN_ENCODER_THRESH 0
+#define TURN_ENCODER_THRESH 1500
 
 #define SQUARE_SIZE 1300 // 1200
 #define SLOWEST 15
