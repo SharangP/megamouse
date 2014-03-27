@@ -15,28 +15,31 @@
 
 
 
-
-void detectWalls(){
-}
-
 void decision(int * state){
   Serial.println("Deciding");
-  Maze::peek();
-  int decision = Maze::decide();
+  
+  Maze::detectWalls();
+  Serial.println("New Maze Layout");
+  Maze::showWalls();
+  // int decision = Maze::decide();
+
+  int decision = NORTH;
+
   delay(500);
   Serial.println(decision);
-  if(decision && Maze::curDir){
+
+  if(decision == Maze::curDir){
     *state = STRAIGHT;
   } else{
     *state = IDLE;
   }
 
 
-  // if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
-  //   *state = TURN;
-  // } else{
-  //    *state = STRAIGHT;
-  // }
+  if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
+    *state = TURN;
+  } else{
+    *state = STRAIGHT;
+  }
 
   return;
 }
@@ -112,22 +115,42 @@ void setup(){
   MovementController::pidIR->SetMode(AUTOMATIC);
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
-  Maze::setupTest();
-  delay(2000);
+  
+  //Maze::setupTest();
+  Maze::initialize();
+
+  delay(3000);
   Serial.print("Calibrating...");
   SensorController::calibrate();
   Serial.println("Done Calibrating!");
+  delay(3000);
+
 }
 
 void loop(){
 
-  // SensorController::sample();
-  // SensorController::printSensors();
+  SensorController::sample();
+  SensorController::printSensors();
   // delay(SAMPLE_PERIOD);
 
+  // Maze::Cell nextPos = Maze::nextPos();
+  // Serial.print("Next Pos X: ");
+  // Serial.print(nextPos.x);
+  // Serial.print(" Y: ");
+  // Serial.println(nextPos.y);
+
+  Serial.println("Initial Maze Layout");
+  Maze::showWalls();
+
+  // Maze::detectWalls();
+  // Maze::checkWalls();
+  // Maze::incrementPos();
+
   exploreMaze();
-  returnToStart();
-  solveMaze();
+  //returnToStart();
+  //solveMaze();
   //gg wp
-  delay(100000);
+
+  Serial.println("Waiting...");
+  delay(3000);
 }

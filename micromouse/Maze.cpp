@@ -27,44 +27,30 @@ Maze::Cell::Cell(){}
 
 
 //figure out what walls the next square has
-void Maze::peek(){
+void Maze::detectWalls(){
   //TODO: Don't check for walls outside of border
-  int offsetX = 0;
-  int offsetY = 0;
+
+  Cell newPos = nextPos();
   int wallLoc = 0;
 
-  switch(curDir){
-    case NORTH:
-      offsetX = -1;
-      offsetY = 0;
-      break;
-    case SOUTH:
-      offsetX = 1;
-      offsetY = 0;
-      break;
-    case WEST:
-      offsetX = 0;
-      offsetY = -1;
-      break;
-    case EAST:
-      offsetX = 0;
-      offsetY = -1;
-      break;
-  }
-
-  if(SensorController::irSmooth[LEFT] > -4*SensorController::sensorSigma[LEFT]){
+  if(SensorController::irSmooth[LEFT] > -SensorController::sensorSigma[LEFT]){
+    Serial.println("Left sensor found the right wall");
     wallLoc = ROTATE(curDir,1);
-    addWalls(curPos.x + offsetX, curPos.y + offsetY, wallLoc);
+    addWalls(newPos.x, newPos.y, wallLoc);
   }
-  if(SensorController::irSmooth[RIGHT] > -4*SensorController::sensorSigma[RIGHT]){
+  if(SensorController::irSmooth[RIGHT] > -SensorController::sensorSigma[RIGHT]){
+    Serial.println("Rigth sensor found the left wall");
     wallLoc = ROTATE(curDir,3);
-    addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
+    addWalls(newPos.x, newPos.y, wallLoc);
   }
-  if(SensorController::irSmooth[CENTER] > -4*SensorController::sensorSigma[CENTER]){
+  //WE NEVER NORMALIZE THE CENTER
+  if(SensorController::irSmooth[CENTER] > CENTERTHRESH){
+    // Serial.println("Found Center Wall");
     wallLoc = curDir;
-    addWalls(curPos.x+ offsetX, curPos.y + offsetY, wallLoc);
+    addWalls(newPos.x, newPos.y, wallLoc);
   }
 }
+
 
 int Maze::decide(){
   vector<Cell*> neighbors = getNeighbors(&curPos);
@@ -139,27 +125,36 @@ void Maze::incrementPos(){
 int Maze::checkWalls(){
   Cell newPos = nextPos();
   int nextWalls = walls[newPos.x][newPos.y];
-  int leftWall = !!(ROTATE(curDir, 1) & nextWalls);
-  int rightWall = !!(ROTATE(curDir, 3) & nextWalls);
 
-  return rightWall + (leftWall << 1);
+  Serial.print("Next Walls: ");
+  Serial.println(nextWalls);
+
+  int leftWall = !!(ROTATE(curDir, 3) & nextWalls);
+  int rightWall = !!(ROTATE(curDir, 1) & nextWalls);
+
+  int nWalls = rightWall + (leftWall << 1);
+  
+  Serial.println(nWalls);
+  return nWalls;
 }
 
 /*Adds wall at (row,col) in direction*/
 void Maze::addWalls(int row, int col, int direction){
-    walls[row][col] += direction;
+  //TODO: SAMEER CHECK THIS SHIT
+    // walls[row][col] += direction;
+    walls[row][col] = walls[row][col] | direction;
     switch(direction){
         case NORTH:
-            walls[row-1][col] += SOUTH;
+            walls[row-1][col] = walls[row-1][col] | SOUTH;
             break;
         case SOUTH:
-            walls[row+1][col] += NORTH;
+            walls[row+1][col] = walls[row+1][col] | NORTH;
             break;
         case EAST:
-            walls[row][col+1] += WEST;
+            walls[row][col+1] = walls[row][col+1] | WEST;
             break;
         case WEST:
-            walls[row][col-1] += EAST;
+            walls[row][col-1] = walls[row][col-1] | EAST;
             break;
         default:
             break;
@@ -195,9 +190,11 @@ void Maze::removeWalls(int row, int col, int direction){
     for (int j = 0; j < MAZE_SIZE; j++) {
         walls[0][j] += NORTH;
         walls[j][0] += WEST;
-        walls[MAZE_SIZE-1][MAZE_SIZE-1-j]+= SOUTH;
-        walls[MAZE_SIZE-1-j][MAZE_SIZE-1] +=EAST;
+        walls[MAZE_SIZE-1][MAZE_SIZE-1-j] += SOUTH;
+        walls[MAZE_SIZE-1-j][MAZE_SIZE-1] += EAST;
     }
+    //we also know that we start with 3 sides
+    walls[MAZE_SIZE-1][0] += EAST;
 }
 
 
@@ -377,6 +374,11 @@ void Maze::showWalls(){
   Serial.println("");
 }
 
+
+void Maze::initialize(){
+  initializeWalls();
+  initializeGraph();
+}
 
 
 void Maze::setupTest(){

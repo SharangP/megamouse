@@ -44,6 +44,9 @@
 #define WEST  8
 #define MAZE_SIZE 5
 
+#define ADJUST_POWER 15
+#define ADJUST_THRESH 0.25
+
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 
 

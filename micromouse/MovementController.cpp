@@ -11,7 +11,7 @@
 #include "MovementController.h"
 
 
-double MovementController::movementSpeed = 70;
+double MovementController::movementSpeed = 60;
 double MovementController::moveSpeedRight = MovementController::movementSpeed;
 double MovementController::moveSpeedLeft = MovementController::movementSpeed;
 double MovementController::movementSpeedAdj = 0;
@@ -51,12 +51,14 @@ void MovementController::updatePID(int state){
           moveSpeedLeft  = movementSpeed;
           break;
         case 1: //right wall only - follow right
-          if (SensorController::irSmooth[LEFT] < -2*SensorController::sensorSigma[LEFT]) {
-            moveSpeedLeft  = movementSpeed + 10;// 1*SensorController::irSmooth[RIGHT];
-            moveSpeedRight = movementSpeed - 10;//1*SensorController::irSmooth[RIGHT];
-          } else if (SensorController::irSmooth[LEFT] > 2*SensorController::sensorSigma[LEFT]) {
-            moveSpeedLeft  = movementSpeed - 10;// 1*SensorController::irSmooth[RIGHT];
-            moveSpeedRight = movementSpeed + 10;//1*SensorController::irSmooth[RIGHT];
+          if (SensorController::irSmooth[LEFT]
+              < -ADJUST_THRESH*SensorController::sensorSigma[LEFT]) {
+            moveSpeedLeft  = movementSpeed + ADJUST_POWER;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed - ADJUST_POWER;//1*SensorController::irSmooth[RIGHT];
+          } else if (SensorController::irSmooth[LEFT]
+              > ADJUST_THRESH*SensorController::sensorSigma[LEFT]) {
+            moveSpeedLeft  = movementSpeed - ADJUST_POWER;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed + ADJUST_POWER;//1*SensorController::irSmooth[RIGHT];
           } else {
             moveSpeedRight = movementSpeed;
             moveSpeedLeft  = movementSpeed;
@@ -66,12 +68,14 @@ void MovementController::updatePID(int state){
           //break;
           //do the same thing as both walls
         case 3: //both walls - follow left
-          if (SensorController::irSmooth[RIGHT] < -2*SensorController::sensorSigma[RIGHT]) {
-            moveSpeedLeft  = movementSpeed + 10;// 1*SensorController::irSmooth[RIGHT];
-            moveSpeedRight = movementSpeed - 10;//1*SensorController::irSmooth[RIGHT];
-          } else if (SensorController::irSmooth[RIGHT] > 2*SensorController::sensorSigma[RIGHT]) {
-            moveSpeedLeft  = movementSpeed - 10;// 1*SensorController::irSmooth[RIGHT];
-            moveSpeedRight = movementSpeed + 10;//1*SensorController::irSmooth[RIGHT];
+          if (SensorController::irSmooth[RIGHT]
+              < -ADJUST_THRESH*SensorController::sensorSigma[RIGHT]) {
+            moveSpeedLeft  = movementSpeed - ADJUST_POWER;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed + ADJUST_POWER;//1*SensorController::irSmooth[RIGHT];
+          } else if (SensorController::irSmooth[RIGHT]
+            > ADJUST_THRESH*SensorController::sensorSigma[RIGHT]) {
+            moveSpeedLeft  = movementSpeed + ADJUST_POWER;// 1*SensorController::irSmooth[RIGHT];
+            moveSpeedRight = movementSpeed - ADJUST_POWER;//1*SensorController::irSmooth[RIGHT];
           } else {
             moveSpeedRight = movementSpeed;
             moveSpeedLeft  = movementSpeed;
@@ -114,11 +118,11 @@ void MovementController::goStraight(){
   // double leftSpeed = moveSpeedRight + movementSpeedAdj;
   // double rightSpeed = movementSpeed - movementSpeedAdj;
 
-  // Serial.print("Motor Speed left/right: ");
-  // Serial.print(leftSpeed);
-  // Serial.print(" / ");
-  // Serial.println(rightSpeed);
-  // Serial.println("");
+  Serial.print("Motor Speed left/right: ");
+  Serial.print(moveSpeedLeft);
+  Serial.print(" / ");
+  Serial.println(moveSpeedRight);
+  Serial.println("");
 
   left->setState(1, moveSpeedLeft);
   right->setState(1, moveSpeedRight);

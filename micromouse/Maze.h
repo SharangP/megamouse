@@ -37,17 +37,21 @@ namespace Maze{
   // Maze(); //initialize maze to have no walls except border
   void addWalls(int row, int col, int direction);
   void removeWalls(int row, int col, int direction);
+  
+  void initialize();
   void initializeWalls();
   void initializeGraph();
+
   Cell nextPos();
   void incrementPos();
   int checkWalls();
-  void peek(); //Look ahead and add walls if necessary
+  void detectWalls(); //Look ahead and add walls if necessary
   int decide();
 
   vector<Cell*> getNeighbors(Cell* cell);
   void recursiveFlood(vector<Cell *> currentLevel, int level);
   void floodGraph();
+
   void createTest();
   void setupTest();
 
