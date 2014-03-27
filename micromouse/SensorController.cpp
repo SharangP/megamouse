@@ -48,6 +48,8 @@ void SensorController::printSensors(){
 
 //estimate parameters of each ir sensor's distribution
 void SensorController::calibrate(){
+  Serial.print("Calibrating...");
+
   int i;
   const int nSamples = 50;  // 100 samples failed
   double samples[3][nSamples];
@@ -91,6 +93,8 @@ void SensorController::calibrate(){
   Serial.print(sensorMean[RIGHT]);
   Serial.print(" / ");
   Serial.println(sensorMean[LEFT]);
+
+  Serial.println("Done Calibrating!");
 }
 
 

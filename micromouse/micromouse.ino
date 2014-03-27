@@ -35,7 +35,7 @@ void decision(int * state){
   }
 
 
-  if (SensorController::irSmooth[CENTER] >= CENTERTHRESH) {
+  if (SensorController::irSmooth[CENTER] >= TOOCLOSE) {
     *state = TURN;
   } else{
     *state = STRAIGHT;
@@ -74,7 +74,8 @@ void exploreMaze(){
 
       case TURN: // Turn
         MovementController::turn(RIGHT);
-        if ((abs(SensorController::leftEncoder.read()) + abs(SensorController::rightEncoder.read())) >= 1300){
+        if ((abs(SensorController::leftEncoder.read())
+            + abs(SensorController::rightEncoder.read())) >= 1500){
             //MovementController::brake();
             state= STOP;
             //TODO: DONT FORGET TO UPDATE THE curDir!. Something like Maze::curDir = ROTATE(Maze::curDir, 1, 3, or 0) based on turn
@@ -116,21 +117,30 @@ void setup(){
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
   
-  //Maze::setupTest();
-  Maze::initialize();
+  // Maze::initialize();
 
-  delay(3000);
-  Serial.print("Calibrating...");
-  SensorController::calibrate();
-  Serial.println("Done Calibrating!");
-  delay(3000);
-
+  // delay(3000);
+  // SensorController::calibrate();
+  // delay(3000);
 }
 
 void loop(){
 
-  SensorController::sample();
-  SensorController::printSensors();
+  MovementController::brake();
+
+  // wait till youre ready
+  while(!Serial.available()){}
+
+  SensorController::leftEncoder.write(1);
+  SensorController::rightEncoder.write(1);
+  Maze::initialize();
+
+  delay(3000);
+  SensorController::calibrate();
+  delay(3000);
+
+  // SensorController::sample();
+  // SensorController::printSensors();
   // delay(SAMPLE_PERIOD);
 
   // Maze::Cell nextPos = Maze::nextPos();
@@ -141,6 +151,7 @@ void loop(){
 
   Serial.println("Initial Maze Layout");
   Maze::showWalls();
+  Maze::printWalls();
 
   // Maze::detectWalls();
   // Maze::checkWalls();

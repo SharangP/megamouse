@@ -14,7 +14,7 @@
 
 #define LEFTTHRESH       261
 #define RIGHTTHRESH      257
-#define CENTERTHRESH     328
+#define CENTERTHRESH     240//328
 #define TOOCLOSE         600
 
 #define LEFT_IR    3

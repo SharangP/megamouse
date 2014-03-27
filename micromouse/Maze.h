@@ -26,7 +26,7 @@ namespace Maze{
 };
 
 
-  extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
+  //extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
   void printWalls();
   extern int distanceValue[MAZE_SIZE][MAZE_SIZE];
   extern int walls[MAZE_SIZE][MAZE_SIZE];
@@ -40,15 +40,16 @@ namespace Maze{
   
   void initialize();
   void initializeWalls();
-  void initializeGraph();
-
+  // void initializeGraph();
   Cell nextPos();
   void incrementPos();
   int checkWalls();
   void detectWalls(); //Look ahead and add walls if necessary
   int decide();
 
+  // vector<Cell*> getNeighbors(Cell* cell);
   vector<Cell*> getNeighbors(Cell* cell);
+
   void recursiveFlood(vector<Cell *> currentLevel, int level);
   void floodGraph();
 

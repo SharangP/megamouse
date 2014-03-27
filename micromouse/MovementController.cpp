@@ -118,11 +118,11 @@ void MovementController::goStraight(){
   // double leftSpeed = moveSpeedRight + movementSpeedAdj;
   // double rightSpeed = movementSpeed - movementSpeedAdj;
 
-  Serial.print("Motor Speed left/right: ");
-  Serial.print(moveSpeedLeft);
-  Serial.print(" / ");
-  Serial.println(moveSpeedRight);
-  Serial.println("");
+  // Serial.print("Motor Speed left/right: ");
+  // Serial.print(moveSpeedLeft);
+  // Serial.print(" / ");
+  // Serial.println(moveSpeedRight);
+  // Serial.println("");
 
   left->setState(1, moveSpeedLeft);
   right->setState(1, moveSpeedRight);
