@@ -182,32 +182,38 @@ void initializeGraph(){
 
 
 /* Returns list of neighbors not blocked by walls*/
-vector<Cell*> getNeighbors(Cell* cell){
-	vector<Cell*> neighbors;
-	int row = cell->x;
-	int col = cell->y;
+vector<Cell> getNeighbors(Cell cell){
+	vector<Cell> neighbors;
+	int row = cell.x;
+	int col = cell.y;
 	if ( walls[row][col] == 0 ){
-		neighbors.push_back(&nodes[row][col-1]);
-		neighbors.push_back(&nodes[row][col+1]);
-		neighbors.push_back(&nodes[row+1][col]);
-		neighbors.push_back(&nodes[row-1][col]);
-		return neighbors;
-	}
+		neighbors.push_back( Cell(row, col-1));
+	    neighbors.push_back( Cell(row, col+1));
+	    neighbors.push_back( Cell(row+1, col));
+	    neighbors.push_back( Cell(row-1, col));
+	    return neighbors;
+	  }
 
-	if( (walls[row][col] & NORTH) == 0){
-		neighbors.push_back(&nodes[row-1][col]);
-	}
-	if( (walls[row][col] & SOUTH )== 0){
-		neighbors.push_back(&nodes[row+1][col]);
-	}
-	if( (walls[row][col] & EAST )== 0){
-		neighbors.push_back(&nodes[row][col+1]);
-	}
-	if( (walls[row][col] & WEST )== 0){
-		neighbors.push_back(&nodes[row][col-1]);
-	}
+	  if( (walls[row][col] & NORTH) == 0){
+	    // neighbors.push_back(&nodes[row-1][col]);
+	    neighbors.push_back( Cell(row-1, col));
+	  }
+	  if( (walls[row][col] & SOUTH )== 0){
+	    // neighbors.push_back(&nodes[row+1][col]);
+	    neighbors.push_back( Cell(row+1, col));
 
-	return neighbors;
+	  }
+	  if( (walls[row][col] & EAST )== 0){
+	    // neighbors.push_back(&nodes[row][col+1]);
+	        neighbors.push_back( Cell(row, col+1));
+
+	  }
+	  if( (walls[row][col] & WEST )== 0){
+	    // neighbors.push_back(&nodes[row][col-1]);
+	    neighbors.push_back( Cell(row, col-1));
+	  }
+
+	  return neighbors;
 }
 
 
@@ -247,36 +253,36 @@ vector<Cell*> getNeighbors(Cell* cell){
 // }
 
 /*Flood fill initial setup*/
-void floodGraph(){
-	for(int i = 0; i < MAZE_SIZE; i++){
-		for (int j = 0; j <MAZE_SIZE; j++){
-			distanceValue[i][j] = 255;
-		}
-	}
-	list<Cell*> currentLevel;
+// void floodGraph(){
+// 	for(int i = 0; i < MAZE_SIZE; i++){
+// 		for (int j = 0; j <MAZE_SIZE; j++){
+// 			distanceValue[i][j] = 255;
+// 		}
+// 	}
+// 	list<Cell*> currentLevel;
 
-	currentLevel.push_back(&nodes[2][2]);
-	// currentLevel.push_back(&nodes[7][8]);
-	// currentLevel.push_back(&nodes[8][8]);
-	// currentLevel.push_back(&nodes[8][7]);
-	int level = 0;
+// 	currentLevel.push_back(&nodes[2][2]);
+// 	// currentLevel.push_back(&nodes[7][8]);
+// 	// currentLevel.push_back(&nodes[8][8]);
+// 	// currentLevel.push_back(&nodes[8][7]);
+// 	int level = 0;
 
-	recursiveFlood(currentLevel, level);
-}
+// 	recursiveFlood(currentLevel, level);
+// }
 
-bool isBorder(int direction){
-	switch(direction){
-		case NORTH:
-			break;
-		case SOUTH:
-			break;
-		case EAST:
-			break;
-		case WEST:
-			break;
-	}
-	return false;
-}
+// bool isBorder(int direction){
+// 	switch(direction){
+// 		case NORTH:
+// 			break;
+// 		case SOUTH:
+// 			break;
+// 		case EAST:
+// 			break;
+// 		case WEST:
+// 			break;
+// 	}
+// 	return false;
+// }
 
 /*randomly generates a maze*/
 void genWalls(){
@@ -380,12 +386,16 @@ void betterFlood(){
       vector<Cell> neighbors = getNeighbors(Q.front());
 
       for( int i = 0 ; i < neighbors.size(); i++){
-        distanceValue[neighbors[i].x][neighbors[i].y] = dist;
-        Q.push_back(neighbors[i]);
+      	if ( distanceValue[neighbors[i].x][neighbors[i].y] == 255 ){
+	        distanceValue[neighbors[i].x][neighbors[i].y] = dist;
+			Q.push_back(neighbors[i]);
+      	}
+
       }
 
       Q.pop_front();
     }
+}
 
 int main(){
 	initializeWalls();

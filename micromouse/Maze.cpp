@@ -50,43 +50,52 @@ void Maze::detectWalls(){
       addWalls(newPos.x, newPos.y, wallLoc);
     }
   }
+  // floodGraph();
 }
 
 
-// int Maze::decide(){
-//   list<Cell*> neighbors = getNeighbors(&curPos);
-//   Cell* nextMove = &curPos;
+int Maze::decide(){
+  vector<Cell> neighbors = getNeighbors(curPos);
+  Serial.print("CurPos/CurDir: ");
+  Serial.print(curPos.x);Serial.print(", "); Serial.print(curPos.y);
+  Serial.print(" / "); Serial.println(curDir);
+  Cell nextMove = curPos;
 
-//   // Serial.println(neighbors.size());
+  Serial.println(neighbors.size());
 
-//   while (!neighbors.empty()){
-//     Cell *tmpCell = neighbors.back();
-//     // Serial.println(distanceValue[tmpCell->x][tmpCell->y]);
-//     // Serial.println(distanceValue[nextMove->x][nextMove->y]);
-//     if (distanceValue[tmpCell->x][tmpCell->y] < distanceValue[nextMove->x][nextMove->y]){
-//       nextMove = tmpCell;
-//     }
-//     neighbors.pop_back();
-//   }
+  Cell tmpCell;
+  for(int i = 0; i < neighbors.size(); i++){
+    tmpCell = neighbors[i];
+    // Serial.println(" Neighbor: ");
+    // Serial.println(distanceValue[tmpCell.x][tmpCell.y]);
+    // Serial.println(distanceValue[nextMove.x][nextMove.y]);
+    if (distanceValue[tmpCell.x][tmpCell.y] < distanceValue[nextMove.x][nextMove.y]){
+      nextMove = tmpCell;
+    }
+  }
 
-//   if (nextMove == &curPos){
-//     return 0;
-//   }
+  if (nextMove.x == curPos.x && nextMove.y == curPos.y){
+    return 0;
+  }
 
-//   int dir;
-//   int offsetX = curPos.x - nextMove->x;
-//   int offsetY = curPos.y - nextMove->y;
+  int dir;
+  int offsetX = curPos.x - nextMove.x;
+  int offsetY = curPos.y - nextMove.y;
 
-//   if (offsetX == 1)
-//     return NORTH;
-//   else if( offsetX == -1)
-//     return SOUTH;
+  // Serial.println("----OFFSETS----");
+  // Serial.println(offsetX);
+  // Serial.println(offsetY);
 
-//   if(offsetY == 1)
-//     return EAST;
-//   else if (offsetY == -1)
-//     return WEST;
-// }
+  if (offsetX == 1)
+    return NORTH;
+  else if( offsetX == -1)
+    return SOUTH;
+
+  if(offsetY == 1)
+    return WEST;
+  else if (offsetY == -1)
+    return EAST;
+}
 
 //check whether the maze has been fully explored
 boolean Maze::fullyExplored(){
@@ -215,10 +224,6 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
   int row = cell.x;
   int col = cell.y;
   if ( walls[row][col] == 0 ){
-    // neighbors.push_back(&nodes[row][col-1]);
-    // neighbors.push_back(&nodes[row][col+1]);
-    // neighbors.push_back(&nodes[row+1][col]);
-    // neighbors.push_back(&nodes[row-1][col]);
     neighbors.push_back( Cell(row, col-1));
     neighbors.push_back( Cell(row, col+1));
     neighbors.push_back( Cell(row+1, col));
@@ -226,21 +231,26 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
     return neighbors;
   }
 
+
   if( (walls[row][col] & NORTH) == 0){
+    // Serial.println("in NORTH");
     // neighbors.push_back(&nodes[row-1][col]);
     neighbors.push_back( Cell(row-1, col));
   }
   if( (walls[row][col] & SOUTH )== 0){
+    // Serial.println("in SOUTH");
     // neighbors.push_back(&nodes[row+1][col]);
     neighbors.push_back( Cell(row+1, col));
 
   }
   if( (walls[row][col] & EAST )== 0){
+    // Serial.println("in EAST");
     // neighbors.push_back(&nodes[row][col+1]);
         neighbors.push_back( Cell(row, col+1));
 
   }
   if( (walls[row][col] & WEST )== 0){
+    // Serial.println("in WEST");
     // neighbors.push_back(&nodes[row][col-1]);
     neighbors.push_back( Cell(row, col-1));
   }
@@ -305,8 +315,10 @@ void Maze::floodGraph(){
       vector<Cell> neighbors = getNeighbors(Q.front());
 
       for( int i = 0 ; i < neighbors.size(); i++){
-        distanceValue[neighbors[i].x][neighbors[i].y] = dist;
-        Q.push_back(neighbors[i]);
+        if ( distanceValue[neighbors[i].x][neighbors[i].y] == 255 ){
+          distanceValue[neighbors[i].x][neighbors[i].y] = dist;
+          Q.push_back(neighbors[i]);
+        }
       }
 
       Q.pop_front();
@@ -336,9 +348,9 @@ void Maze::createTest(){
     addWalls(0, 3, SOUTH);
     addWalls(0, 4, SOUTH);
 
-    // addWalls(1, 1, SOUTH);
-    // addWalls(1, 2, SOUTH);
-    // addWalls(1, 3, SOUTH);
+    addWalls(1, 1, SOUTH);
+    addWalls(1, 2, SOUTH);
+    addWalls(1, 3, SOUTH);
 
     addWalls(2, 0, EAST);
     addWalls(2, 2, SOUTH);
@@ -349,8 +361,8 @@ void Maze::createTest(){
     addWalls(3, 2, EAST);
     addWalls(3, 4, SOUTH);
 
-    // addWalls(4, 0, EAST);
-    // addWalls(4, 1, EAST);
+    addWalls(4, 0, EAST);
+    addWalls(4, 1, EAST);
 }
 
 
@@ -410,8 +422,11 @@ void Maze::showWalls(){
 
 
 void Maze::initialize(){
-  initializeWalls();
+  // initializeWalls();
+  // showWalls();
   // initializeGraph();
+
+  setupTest();
 }
 
 
@@ -426,7 +441,6 @@ void Maze::setupTest(){
     // Serial.println("Flooding...");
     showWalls();
     printWalls();
-
     floodGraph();
     // Serial.println("Flooded...");
 
