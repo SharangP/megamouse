@@ -19,27 +19,28 @@ void decision(int * state){
   Serial.println("Deciding");
 
   Maze::detectWalls();
-  Serial.println("New Maze Layout");
-  Maze::showWalls();
-  // int decision = Maze::decide();
+  // Serial.println("New Maze Layout");
+  // Maze::showWalls();
+  int decision = Maze::decide();
 
-  int decision = NORTH;
+  // int decision = NORTH;
 
   delay(500);
+  Serial.print("Current decision: ");
   Serial.println(decision);
 
   if(decision == Maze::curDir){
     *state = STRAIGHT;
   } else{
-    *state = IDLE;
+    *state = DECIDE;
   }
 
 
-  if (SensorController::irSmooth[CENTER] >= TOOCLOSE) {
-    *state = TURN;
-  } else{
-    *state = STRAIGHT;
-  }
+  // if (SensorController::irSmooth[CENTER] >= TOOCLOSE) {
+  //   *state = TURN;
+  // } else{
+  //   *state = STRAIGHT;
+  // }
 
   return;
 }
@@ -117,7 +118,8 @@ void setup(){
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
 
-  // Maze::initialize();
+  Maze::initialize();
+  Serial.println("Maze initialized..");
 
   // delay(3000);
   // SensorController::calibrate();
@@ -131,11 +133,11 @@ void loop(){
   // wait till youre ready
   while(!Serial.available()){}
 
-  SensorController::leftEncoder.write(1);
-  SensorController::rightEncoder.write(1);
+  SensorController::leftEncoder.write(0);
+  SensorController::rightEncoder.write(0);
    // Maze::initialize();
 
-  Maze::setupTest();
+  // Maze::setupTest();
 
   // delay(3000);
   // SensorController::calibrate();
@@ -159,7 +161,7 @@ void loop(){
   // Maze::checkWalls();
   // Maze::incrementPos();
 
-  // exploreMaze();
+  exploreMaze();
   //returnToStart();
   //solveMaze();
   //gg wp
