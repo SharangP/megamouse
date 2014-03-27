@@ -18,10 +18,13 @@
 void decision(int * state){
   Serial.println("Deciding");
 
-  //Maze::detectWalls();
+  //TODO: test wall detection by looking @ showWalls as mouse explores
+  // Maze::detectWalls();
   // Serial.println("New Maze Layout");
   // Maze::showWalls();
-  *state = Maze::decide();
+  // *state = Maze::decide();
+
+  *state = STRAIGHT;
 
   delay(500);
   Serial.print("Current decision: ");
@@ -61,27 +64,30 @@ void exploreMaze(){
       case TURN_RIGHT: // Turn
         MovementController::turn(RIGHT);
         if ((abs(SensorController::leftEncoder.read())
-            + abs(SensorController::rightEncoder.read())) >= TURN_ENCODER_THRESH){
-            state= STOP;
-            Maze::curDir = ROTATE(Maze::curDir, 1);
+            + abs(SensorController::rightEncoder.read()))
+            >= TURN_ENCODER_THRESH){
+          state= STOP;
+          Maze::curDir = ROTATE(Maze::curDir, 1);
         }
         break;
 
-      case TURN_LEFT: // Turn
+      case TURN_LEFT: // Turn LEFT
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
-            + abs(SensorController::rightEncoder.read())) >= TURN_ENCODER_THRESH){
-            state= STOP;
-            Maze::curDir = ROTATE(Maze::curDir, 3);
+            + abs(SensorController::rightEncoder.read()))
+            >= TURN_ENCODER_THRESH){
+          state= STOP;
+          Maze::curDir = ROTATE(Maze::curDir, 3);
         }
         break;
 
-      case TURN_AROUND: // Turn
+      case TURN_AROUND: // Turn Around
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
-            + abs(SensorController::rightEncoder.read())) >= 2*TURN_ENCODER_THRESH){
-            state= STOP;
-            Maze::curDir = ROTATE(Maze::curDir, 2);
+            + abs(SensorController::rightEncoder.read()))
+            >= 2*TURN_ENCODER_THRESH){
+          state= STOP;
+          Maze::curDir = ROTATE(Maze::curDir, 2);
         }
         break;
 

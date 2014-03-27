@@ -23,15 +23,15 @@ double MovementController::setpoint = 1;
 Motor * MovementController::right = new Motor(7, 8, 9);
 Motor * MovementController::left  = new Motor(4, 5, 6);
 
-PID * MovementController::pidEncoder = new PID(&MovementController::input,
-                                        &MovementController::output,
-                                        &MovementController::setpoint,
-                                        2, 3, 1, DIRECT);
+// PID * MovementController::pidEncoder = new PID(&MovementController::input,
+//                                         &MovementController::output,
+//                                         &MovementController::setpoint,
+//                                         2, 3, 1, DIRECT);
 
-PID * MovementController::pidIR = new PID(&SensorController::input,
-                                        &SensorController::output,
-                                        &SensorController::setpoint,
-                                        10, 10, 5, DIRECT);
+// PID * MovementController::pidIR = new PID(&SensorController::input,
+//                                         &SensorController::output,
+//                                         &SensorController::setpoint,
+//                                         10, 10, 5, DIRECT);
 
 
 void MovementController::updatePID(int state){
@@ -39,11 +39,11 @@ void MovementController::updatePID(int state){
   //TODO: Use pidEncoder and pidIR values (outputs) to inform locomotion
   //change left and right powers to go straight/turn etc. as needed
 
-  //TODO: move forward/turn one block at a time
-
   switch(state){
 
     case STRAIGHT:  //straight
+
+      //TODO: TEST WALL FOLLOWING AGAIN
 
       switch(Maze::checkWalls()){
         case 0: //no walls
@@ -130,24 +130,15 @@ void MovementController::goStraight(){
   right->setState(1, moveSpeedRight);
 }
 
-
-void MovementController::goLeft(){
-}
-
-void MovementController::goRight(){
-}
-
 void MovementController::goBack(){
   Serial.println("Going back...");
   right->setState(2,100);
   left->setState(2,100);
-  delay(1000);
 }
 
 void MovementController::turn(int dir){
   right->setState(1*(dir==LEFT) + 2*(dir==RIGHT),75);
   left->setState(2*(dir==LEFT) + 1*(dir==RIGHT),75);
-  //delay(750);
 }
 
 void MovementController::brake(){
@@ -162,5 +153,16 @@ void MovementController::brake(){
 }
 
 void MovementController::accel(int startPow, int endPow, int time){}
+
+//TODO: Write this function
+void MovementController::calibrate(){
+  //called when there is a wall in front?
+  //move a distance away from the wall
+  //s.t. you know that when you turn around you'll know exactly where you are
+  
+  //may need to calibrate front sensor based on left and right
+  //because every type of wall will be different
+}
+
 
 #endif
