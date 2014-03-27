@@ -17,7 +17,7 @@
 
 void decision(int * state){
   Serial.println("Deciding");
-  
+
   Maze::detectWalls();
   Serial.println("New Maze Layout");
   Maze::showWalls();
@@ -124,7 +124,7 @@ void setup(){
   MovementController::pidIR->SetMode(AUTOMATIC);
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
-  
+
   // Maze::initialize();
 
   // delay(3000);
@@ -141,11 +141,13 @@ void loop(){
 
   SensorController::leftEncoder.write(1);
   SensorController::rightEncoder.write(1);
-  Maze::initialize();
+   // Maze::initialize();
 
-  delay(3000);
-  SensorController::calibrate();
-  delay(3000);
+  Maze::setupTest();
+
+  // delay(3000);
+  // SensorController::calibrate();
+  // delay(3000);
 
   // SensorController::sample();
   // SensorController::printSensors();
@@ -157,15 +159,15 @@ void loop(){
   // Serial.print(" Y: ");
   // Serial.println(nextPos.y);
 
-  Serial.println("Initial Maze Layout");
-  Maze::showWalls();
-  Maze::printWalls();
+   // Serial.println("Initial Maze Layout");
+   // Maze::showWalls();
+   // Maze::printWalls();
 
   // Maze::detectWalls();
   // Maze::checkWalls();
   // Maze::incrementPos();
 
-  exploreMaze();
+  // exploreMaze();
   //returnToStart();
   //solveMaze();
   //gg wp

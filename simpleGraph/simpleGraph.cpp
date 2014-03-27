@@ -3,6 +3,7 @@
  */
 
 #include <iostream>
+#include <list>
 #include <vector>
 #include <cstdlib>
 #include <cmath>
@@ -180,7 +181,7 @@ void initializeGraph(){
 }
 
 
-/* Returns vector of neighbors not blocked by walls*/
+/* Returns list of neighbors not blocked by walls*/
 vector<Cell*> getNeighbors(Cell* cell){
 	vector<Cell*> neighbors;
 	int row = cell->x;
@@ -211,39 +212,39 @@ vector<Cell*> getNeighbors(Cell* cell){
 
 
 
-/* updates distanceValue using floodFill*/
-void recursiveFlood(vector<Cell *> currentLevel, int level){
+// /* updates distanceValue using floodFill*/
+// void recursiveFlood(list<Cell *> currentLevel, int level){
 
 
-	vector<Cell*> nextLevel;
+// 	list<Cell*> nextLevel;
 
-	while(!currentLevel.empty()){
-		Cell* tmp = currentLevel.back();
+// 	while(!currentLevel.empty()){
+// 		Cell* tmp = currentLevel.back();
 
-		if (distanceValue[tmp->x][tmp->y] == 255){
+// 		if (distanceValue[tmp->x][tmp->y] == 255){
 
-			distanceValue[tmp->x][tmp->y] = level;
-			// Find all neighbors not blocked by walls and put into Next Level
+// 			distanceValue[tmp->x][tmp->y] = level;
+// 			// Find all neighbors not blocked by walls and put into Next Level
 
-			vector<Cell*> neighbors = getNeighbors(tmp);
-			while (!neighbors.empty()){
-				nextLevel.push_back(neighbors.back());
-				neighbors.pop_back();
-			}
-		}
-		currentLevel.pop_back();
+// 			list<Cell*> neighbors = getNeighbors(tmp);
+// 			while (!neighbors.empty()){
+// 				nextLevel.push_back(neighbors.back());
+// 				neighbors.pop_back();
+// 			}
+// 		}
+// 		currentLevel.pop_back();
 
-	}
+// 	}
 
-	if(!nextLevel.empty()){
-		level++;
-		currentLevel = nextLevel;
-		recursiveFlood(currentLevel, level);
-	}
-	else{
-		return;
-	}
-}
+// 	if(!nextLevel.empty()){
+// 		level++;
+// 		currentLevel = nextLevel;
+// 		recursiveFlood(currentLevel, level);
+// 	}
+// 	else{
+// 		return;
+// 	}
+// }
 
 /*Flood fill initial setup*/
 void floodGraph(){
@@ -252,7 +253,7 @@ void floodGraph(){
 			distanceValue[i][j] = 255;
 		}
 	}
-	vector<Cell*> currentLevel;
+	list<Cell*> currentLevel;
 
 	currentLevel.push_back(&nodes[2][2]);
 	// currentLevel.push_back(&nodes[7][8]);
@@ -279,7 +280,7 @@ bool isBorder(int direction){
 
 /*randomly generates a maze*/
 void genWalls(){
-	// vector<Cell*> drillers;
+	// list<Cell*> drillers;
 	// drillers.push_back(&nodes[7][7]);
 
 	// while(!drillers.empty()){
@@ -361,13 +362,38 @@ void setupMaze(){
 
 }
 
+
+void betterFlood(){
+    for(int i = 0; i < MAZE_SIZE; i++){
+        for (int j = 0; j <MAZE_SIZE; j++){
+            distanceValue[i][j] = 255;
+        }
+    }
+    list<Cell> Q;
+    int dist = 0;
+    Q.push_back( Cell(2,2));
+    distanceValue[2][2] = dist;
+
+    while(!Q.empty()){
+      dist = distanceValue[Q.front().x][Q.front().y]+1;
+
+      vector<Cell> neighbors = getNeighbors(Q.front());
+
+      for( int i = 0 ; i < neighbors.size(); i++){
+        distanceValue[neighbors[i].x][neighbors[i].y] = dist;
+        Q.push_back(neighbors[i]);
+      }
+
+      Q.pop_front();
+    }
+
 int main(){
 	initializeWalls();
 	initializeGraph();
 	// genWalls();
 	setupMaze();
 
-	floodGraph();
+	betterFlood();
 	printDistance();
 	printWalls();
 	showWalls();
