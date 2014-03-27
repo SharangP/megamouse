@@ -12,6 +12,7 @@
 #include "const.h"
 #include <StandardCplusplus.h>
 #include <vector>
+#include <list>
 #include "SensorController.h"
 
 using namespace std;
@@ -47,10 +48,10 @@ namespace Maze{
   void detectWalls(); //Look ahead and add walls if necessary
   int decide();
 
-  // vector<Cell*> getNeighbors(Cell* cell);
+  // list<Cell*> getNeighbors(Cell* cell);
   vector<Cell> getNeighbors(Cell cell);
 
-  void recursiveFlood(vector<Cell > currentLevel, int level);
+  void recursiveFlood(list<Cell > currentLevel, int level);
   void floodGraph();
 
   void createTest();
