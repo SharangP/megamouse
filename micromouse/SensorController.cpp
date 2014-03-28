@@ -23,18 +23,22 @@ Encoder SensorController::leftEncoder = Encoder(LEFT_ENCODER_1, LEFT_ENCODER_2);
 Encoder SensorController::rightEncoder = Encoder(RIGHT_ENCODER_1, RIGHT_ENCODER_2);
 
 
-void SensorController::sample(){
-  int l = analogRead(LEFT_IR);
-  int r = analogRead(RIGHT_IR);
-  int c = analogRead(CENTER_IR);
+void SensorController::sample(int nSamples){
+  for(int i = 0; i < nSamples; i++){
+    int l = analogRead(LEFT_IR);
+    int r = analogRead(RIGHT_IR);
+    int c = analogRead(CENTER_IR);
 
-  l = (l - sensorMean[LEFT])/sensorSigma[LEFT];
-  r = (r - sensorMean[RIGHT])/sensorSigma[RIGHT];
-  // irSmooth[CENTER] = (irSmooth[CENTER] - sensorMean[CENTER])/sensorSigma[CENTER];
+    l = (l - sensorMean[LEFT])/sensorSigma[LEFT];
+    r = (r - sensorMean[RIGHT])/sensorSigma[RIGHT];
+    // irSmooth[CENTER] = (irSmooth[CENTER] - sensorMean[CENTER])/sensorSigma[CENTER];
 
-  irSmooth[LEFT]   = ALPHA*l + (1 - ALPHA)*irSmooth[LEFT];
-  irSmooth[RIGHT]  = ALPHA*r + (1 - ALPHA)*irSmooth[RIGHT];
-  irSmooth[CENTER] = ALPHA*c + (1 - ALPHA)*irSmooth[CENTER];
+    irSmooth[LEFT]   = ALPHA*l + (1 - ALPHA)*irSmooth[LEFT];
+    irSmooth[RIGHT]  = ALPHA*r + (1 - ALPHA)*irSmooth[RIGHT];
+    irSmooth[CENTER] = ALPHA*c + (1 - ALPHA)*irSmooth[CENTER];
+
+    delay(SAMPLE_PERIOD);
+  }
 }
 
 void SensorController::printSensors(){

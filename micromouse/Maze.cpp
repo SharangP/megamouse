@@ -31,6 +31,7 @@ void Maze::detectWalls(){
   SensorController::printSensors();
   Cell newPos = nextPos();
   int wallLoc = 0;
+
   if( !( walls[curPos.x][curPos.y] & curDir ) ){
     if(SensorController::irSmooth[CENTER] > CENTERTHRESH_CLOSE){
       Serial.println("Found wall right in front of me");
@@ -139,6 +140,13 @@ void Maze::save(){
   }
 
   EEPROM.write(MAZE_SIZE*MAZE_SIZE, fullyExplored());
+  delay(5);
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE + 1, (byte)curPos.x);
+  delay(5);
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE + 2, (byte)curPos.y);
+  delay(5);
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE + 3, (byte)curDir);
+  delay(5);
 }
 
 void Maze::load(){
@@ -146,6 +154,16 @@ void Maze::load(){
   for (int i = 0; i < MAZE_SIZE; i++)
     for (int j = 0; j < MAZE_SIZE; j++)
       walls[i][j] = EEPROM.read(MAZE_SIZE*i+j % 512);
+
+  int cpx = EEPROM.read((MAZE_SIZE*MAZE_SIZE + 1) % 512);
+  int cpy = EEPROM.read((MAZE_SIZE*MAZE_SIZE + 2) % 512);
+  int cd = EEPROM.read((MAZE_SIZE*MAZE_SIZE + 3) % 512);
+  Serial.print("Current Pos/Dir when last idle: ");
+  Serial.print(cpx);
+  Serial.print(" , ");
+  Serial.print(cpy);
+  Serial.print(" / ");
+  Serial.println(cd);
 }
 
 Maze::Cell Maze::nextPos(){
@@ -178,7 +196,7 @@ void Maze::incrementPos(){
   curPos.y = newPos.y;
 }
 
-int Maze::checkWalls(){
+int Maze::checkWalls(boolean next){
   Cell newPos = nextPos();
   int nextWalls = walls[newPos.x][newPos.y];
   int leftWall = !!(ROTATE(curDir, 3) & nextWalls);

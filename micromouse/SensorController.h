@@ -26,7 +26,7 @@ namespace SensorController {
   extern Encoder leftEncoder;
   extern Encoder rightEncoder;
   
-  void sample();
+  void sample(int nSamples);
   void printSensors();
   void calibrate();
 }

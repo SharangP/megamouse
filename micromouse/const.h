@@ -15,9 +15,10 @@
 #define LEFTTHRESH       		261
 #define RIGHTTHRESH      		257
 #define CENTERTHRESH_CLOSE  	500
-#define CENTERTHRESH_FAR		220//240//328
+#define CENTERTHRESH_FAR		210//240//328
 #define CENTERTHRESH_TOOCLOSE   600
 #define ALL_TOOCLOSE			450 //less than this value
+#define STRAIGHTEN_THRESH       8
 
 #define BASE_IR_SIGMA		10
 
@@ -31,7 +32,7 @@
 #define RIGHT_ENCODER_2  10
 
 #define BRAKE_PERIOD	45
-#define SAMPLE_PERIOD 	32
+#define SAMPLE_PERIOD 	16
 #define ALPHA 			0.75
 
 #define DECIDE        	0
@@ -44,11 +45,10 @@
 #define REVERSED		7
 
 #define TURN_ENCODER_THRESH 		1550
-#define TURN_AROUND_ENCODER_THRESH 	3000
+#define TURN_AROUND_ENCODER_THRESH 	2600
 #define DETECT_THRESH 				1
 
-#define SQUARE_SIZE 	1275 // 1200
-#define CALIBRATE_DIST	100
+#define SQUARE_SIZE 	1225 // 1200
 
 #define NORTH 		1
 #define EAST 		2

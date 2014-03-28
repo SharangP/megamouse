@@ -7,6 +7,7 @@
 
 #define ENCODER_USE_INTERRUPTS
 #include <StandardCplusplus.h>
+#include <Math.h>
 #include <EEPROM.h>
 #include <PID_v1.h>
 #include <Encoder.h>
@@ -14,10 +15,10 @@
 #include "MovementController.h"
 #include "Maze.h"
 
-#define nMoves 2
+#define nMoves 3
 
 int sup = 0;
-int moves[nMoves] = {TURN_AROUND, TURN_AROUND};//{TURN_LEFT, TURN_RIGHT, STRAIGHT};
+int moves[nMoves] = {TURN_AROUND, STRAIGHT, TURN_AROUND};
 
 int solvingMode = false;
 
@@ -25,7 +26,7 @@ int solvingMode = false;
 void decision(int * state){
   Serial.println("Deciding");
 
-  // delay(SAMPLE_PERIOD);
+  delay(SAMPLE_PERIOD);
   for(int i = 0; i < 10; i++){
     delay(200);
     Serial.print(10-i);
@@ -62,9 +63,10 @@ void decision(int * state){
 void exploreMaze(){
   int state = DECIDE;
   boolean turn_went_straight = false;
+  int turn_around_dir = -1;
 
   while (!Maze::fullyExplored()){
-    SensorController::sample();
+    SensorController::sample(2);
 
     switch(state){
       case DECIDE: //Make decision, reset encoder values
@@ -117,32 +119,65 @@ void exploreMaze(){
 
       case TURN_AROUND: // Turn Around
 
-        //TODO: two options:
+        //TODO: three options:
         //  1. add conditions to turn
         //    - encoder condition && all ir must be less than ALL_TOOCLOSE
         //  2. k turn.
         //    - back up left motor 1/4 turn
         //    - turn left
         //    - back up left motor 1/4 turn
+        // *3. turn left if closer to right side, turn right if closer to left side
 
+        if(turn_around_dir == -1){ //decide which way to turn around
+          if(SensorController::irSmooth[LEFT] > SensorController::irSmooth[RIGHT])
+            turn_around_dir = RIGHT;
+          else
+            turn_around_dir = LEFT;
+        }
 
-        MovementController::turn(LEFT);
-        if (((abs(SensorController::leftEncoder.read())
-            + abs(SensorController::rightEncoder.read()))
-            >= TURN_AROUND_ENCODER_THRESH)
-            && (SensorController::irSmooth[LEFT] < ALL_TOOCLOSE)
-            && (SensorController::irSmooth[RIGHT] < ALL_TOOCLOSE)
-            && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
+        if(turn_around_dir == LEFT){
+          MovementController::turn(LEFT);
+          if (((abs(SensorController::leftEncoder.read())
+              + abs(SensorController::rightEncoder.read()))
+              >= TURN_AROUND_ENCODER_THRESH)  ){
+              // && (SensorController::irSmooth[LEFT] < ALL_TOOCLOSE)
+              // && (SensorController::irSmooth[RIGHT] < ALL_TOOCLOSE)
+              // && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
 
-          MovementController::brake(state);
-          state = DECIDE;
-          Maze::curDir = ROTATE(Maze::curDir, 2);
+            MovementController::brake(turn_around_dir);
+            MovementController::straighten();
+            turn_around_dir = -1;
+            state = DECIDE;
+            Maze::curDir = ROTATE(Maze::curDir, 2);
+          }
+        }
+        else if (turn_around_dir == RIGHT){
+          MovementController::turn(RIGHT);
+          if (((abs(SensorController::leftEncoder.read())
+              + abs(SensorController::rightEncoder.read()))
+              >= TURN_AROUND_ENCODER_THRESH)  ){
+              // && (SensorController::irSmooth[LEFT] < ALL_TOOCLOSE)
+              // && (SensorController::irSmooth[RIGHT] < ALL_TOOCLOSE)
+              // && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
+
+            MovementController::brake(turn_around_dir);
+            MovementController::straighten();
+            turn_around_dir = -1;
+            state = DECIDE;
+            Maze::curDir = ROTATE(Maze::curDir, 2);
+          }
         }
         break;
 
       case IDLE:
         //Maze::clear();
         Maze::save();
+        boolean on = false;
+        while(true){
+          on = !on;
+          digitalWrite(13, on);
+          delay(200);
+        }
         break;
     }
 
@@ -157,6 +192,7 @@ void returnToStart(){}
 
 void setup(){
   Serial.begin(9600);
+  pinMode(13, OUTPUT);
   Serial.println("Micromouse Running...");
   // MovementController::pidEncoder->SetMode(AUTOMATIC);
   // MovementController::pidIR->SetMode(AUTOMATIC);

@@ -48,7 +48,7 @@ void MovementController::updatePID(int state){
   switch(state){
 
     case STRAIGHT:  //straight
-      switch(Maze::checkWalls()){
+      switch(Maze::checkWalls(true)){ //base straight movement off walls in next square
         case 0: //no walls
           moveSpeedRight = BASE_POWER;
           moveSpeedLeft  = BASE_POWER;
@@ -92,7 +92,7 @@ void MovementController::updatePID(int state){
         moveSpeedLeft  = TURN_POWER+15;
       // }
       break;
-    
+
     case TURN_LEFT:
         // turnSum = abs(SensorController::rightEncoder.read()) + abs(SensorController::leftEncoder.read());
         // moveSpeedRight = (BASE_POWER+20- SLOWEST)/TURN_ENCODER_THRESH * (TURN_ENCODER_THRESH-turnSum) + SLOWEST;
@@ -215,6 +215,66 @@ void MovementController::brake(int state){
 
 void MovementController::accel(int startPow, int endPow, int time){}
 
+void MovementController::straighten(){
+  //straighten after a turn or turning around depending on what walls exist1
+
+  double ap;
+
+  switch(Maze::checkWalls(true)){
+    case 0: //no walls
+      while(adjustPower(RIGHT) > 0){
+        turn(RIGHT);
+        SensorController::sample(1);
+        brake(TURN_RIGHT);
+      }
+      while(adjustPower(LEFT) > 0){
+        turn(LEFT);
+        SensorController::sample(1);
+        brake(TURN_LEFT);
+      }
+
+
+      break;
+    case 1: //right wall only - follow right
+      ap = adjustPower(LEFT); //in negative you're too far from the right wall
+
+
+      while((ap < 0) && (fabs(ap) > STRAIGHTEN_THRESH)){
+        turn(LEFT);
+        SensorController::sample(1);
+        brake(TURN_LEFT);
+        ap = adjustPower(LEFT);
+      }
+      while((ap > 0) && (fabs(ap) > STRAIGHTEN_THRESH)){
+        turn(RIGHT);
+        SensorController::sample(1);
+        brake(TURN_RIGHT);
+        ap = adjustPower(LEFT);
+      }
+      break;
+    case 2: //left wall
+      //break;
+      //do the same thing as both walls
+      //TODO: actually use both walls!
+    case 3: //both walls - follow left
+      ap = adjustPower(RIGHT); //if negative you're too far from the left wall
+
+      while((ap < 0) && (fabs(ap) > STRAIGHTEN_THRESH)){
+        turn(RIGHT);
+        SensorController::sample(1);
+        brake(TURN_RIGHT);
+        ap = adjustPower(RIGHT);
+      }
+      while((ap > 0) && (fabs(ap) > STRAIGHTEN_THRESH)){
+        turn(LEFT);
+        SensorController::sample(1);
+        brake(TURN_LEFT);
+        ap = adjustPower(RIGHT);
+      }
+      break;
+  }
+}
+
 void MovementController::calibrate(){
   //called when there is a wall in front?
   //move a distance away from the wall
@@ -225,7 +285,7 @@ void MovementController::calibrate(){
     && (SensorController::irSmooth[RIGHT] < ALL_TOOCLOSE)
     && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
     go(2, 5, 50);
-    SensorController::sample();
+    SensorController::sample(1);
   }
   brake(REVERSED);
 

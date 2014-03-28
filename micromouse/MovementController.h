@@ -15,7 +15,7 @@
 #include "Maze.h"
 #include <Encoder.h>
 #include <PID_v1.h>
-
+#include <Math.h>
 
 namespace MovementController {
 
@@ -40,6 +40,7 @@ namespace MovementController {
   void brake(int state);
   void turn(int dir);
   void accel(int startPow, int endPow, int time);
+  void straighten();
   void calibrate();
 }
 
