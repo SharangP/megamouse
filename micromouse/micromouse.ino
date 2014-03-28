@@ -7,6 +7,7 @@
 
 #define ENCODER_USE_INTERRUPTS
 #include <StandardCplusplus.h>
+#include <EEPROM.h>
 #include <PID_v1.h>
 #include <Encoder.h>
 #include "SensorController.h"
@@ -17,6 +18,9 @@
 
 int sup = 0;
 int moves[nMoves] = {TURN_AROUND, TURN_AROUND};//{TURN_LEFT, TURN_RIGHT, STRAIGHT};
+
+int solvingMode = false;
+
 
 void decision(int * state){
   Serial.println("Deciding");
@@ -30,7 +34,9 @@ void decision(int * state){
 
   Serial.println("");
 
-  Maze::detectWalls();
+  if(!solvingMode)
+    Maze::detectWalls();
+
   Serial.println("New Maze Layout");
   Maze::showWalls();
   Maze::printDistance();
@@ -134,8 +140,10 @@ void exploreMaze(){
         }
         break;
 
-      case IDLE: //fucked
-         break;
+      case IDLE:
+        Maze::clear();
+        Maze::save();
+        break;
     }
 
     // Change motor speeds depending on current state
@@ -145,8 +153,6 @@ void exploreMaze(){
 }
 
 void returnToStart(){}
-
-void solveMaze(){}
 
 
 void setup(){
@@ -162,13 +168,24 @@ void setup(){
 
   delay(3000);
   SensorController::calibrate();
-  delay(3000);
 }
 
 void loop(){
+  for(int i = 0; i < 10; i++){
+    if(Serial.available()){
+      Maze::load();
+      Serial.println("Printing Maze from EEProm");
+      Maze::showWalls();
+      solvingMode = Maze::checkSolved();
+      if(!solvingMode)
+        Maze::initialize();
+      break;
+    }
+    delay(200);
+  }
+
   exploreMaze();
   //returnToStart();
-  //solveMaze();
   //gg wp
 
   Serial.println("Waiting...");

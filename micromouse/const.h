@@ -15,7 +15,7 @@
 #define LEFTTHRESH       		261
 #define RIGHTTHRESH      		257
 #define CENTERTHRESH_CLOSE  	500
-#define CENTERTHRESH_FAR		240//328
+#define CENTERTHRESH_FAR		220//240//328
 #define CENTERTHRESH_TOOCLOSE   600
 #define ALL_TOOCLOSE			450 //less than this value
 
@@ -50,15 +50,17 @@
 #define SQUARE_SIZE 	1275 // 1200
 #define CALIBRATE_DIST	100
 
-#define NORTH 1
-#define EAST 2
-#define SOUTH  4
-#define WEST  8
-#define MAZE_SIZE 5
+#define NORTH 		1
+#define EAST 		2
+#define SOUTH  		4
+#define WEST  		8
+#define MAZE_SIZE 	5
+#define CENTER_X 	2
+#define CENTER_Y 	2
 
 #define BASE_POWER			60
 #define TURN_POWER			75
-#define ADJUST_POWER 		50
+#define ADJUST_POWER 		45
 #define SLOWEST 			15
 
 

@@ -109,10 +109,39 @@ int Maze::decide(){
 
 //check whether the maze has been fully explored
 boolean Maze::fullyExplored(){
-  if(curPos.x == 2 && curPos.y == 2){
+  if(curPos.x == CENTER_X && curPos.y == CENTER_Y){
     return true;
   }
   return false;
+}
+
+void Maze::clear(){
+  //clear EEprom
+  for (int i = 0; i < 512; i++)
+    EEPROM.write(i, 0);
+}
+
+boolean Maze::checkSolved(){
+  //check whether the solved bit in EEprom
+  //and the solve mode switch are set
+  return EEPROM.read(MAZE_SIZE*MAZE_SIZE);
+}
+
+void Maze::save(){
+  //save the maze to EEprom
+  //save whether you've solved it
+  for (int i = 0; i < MAZE_SIZE; i++)
+    for (int j = 0; j < MAZE_SIZE; j++)
+      EEPROM.write(MAZE_SIZE*i+j, walls[i][j]);
+
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE, fullyExplored());
+}
+
+void Maze::load(){
+  //load maze from EEprom
+  for (int i = 0; i < MAZE_SIZE; i++)
+    for (int j = 0; j < MAZE_SIZE; j++)
+      walls[i][j] = EEPROM.read(MAZE_SIZE*i+j);
 }
 
 Maze::Cell Maze::nextPos(){

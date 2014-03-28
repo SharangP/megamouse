@@ -9,12 +9,14 @@
 #define MAZE_H
 
 #include "Arduino.h"
-#include "const.h"
+#include <EEPROM.h>
 #include <StandardCplusplus.h>
 #include <vector>
 #include <list>
 #include "SensorController.h"
 #include "MovementController.h"
+#include "const.h"
+
 
 using namespace std;
 
@@ -56,6 +58,10 @@ namespace Maze{
   void floodGraph();
 
   boolean fullyExplored();
+  void clear();
+  boolean checkSolved();
+  void save();
+  void load();
 
   void createTest();
   void setupTest();
