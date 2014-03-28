@@ -51,7 +51,7 @@ void decision(int * state){
   //   sup++;
   // }
 
-  Serial.print("Current decision: "); 
+  Serial.print("Current decision: ");
   Serial.println(*state);
 
   return;
@@ -141,7 +141,7 @@ void exploreMaze(){
         break;
 
       case IDLE:
-        Maze::clear();
+        //Maze::clear();
         Maze::save();
         break;
     }
@@ -173,6 +173,8 @@ void setup(){
 void loop(){
   for(int i = 0; i < 10; i++){
     if(Serial.available()){
+      // Maze::save(); //checking whether we can read back a normal maze;
+
       Maze::load();
       Serial.println("Printing Maze from EEProm");
       Maze::showWalls();
