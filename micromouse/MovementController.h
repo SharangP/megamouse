@@ -19,8 +19,6 @@
 
 namespace MovementController {
 
-  extern double movementSpeed;
-  extern double movementSpeedAdj;
   extern double moveSpeedRight;
   extern double moveSpeedLeft;
   extern double input;
@@ -30,14 +28,15 @@ namespace MovementController {
   extern Motor * right;
   extern Motor * left;
 
-  extern PID * pidEncoder;
-  extern PID * pidIR;
+  // extern PID * pidEncoder;
+  // extern PID * pidIR;
 
   void updatePID(int state);
-  float adjustValue(float mean, float sigma, float curVal);
+  double adjustPower(int follow);
   void goStraight();
+  void forward(int duration);
   void goBack();
-  void brake();
+  void brake(int state);
   void turn(int dir);
   void accel(int startPow, int endPow, int time);
   void calibrate();

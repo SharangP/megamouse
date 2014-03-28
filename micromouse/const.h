@@ -52,6 +52,7 @@
 #define MAZE_SIZE 5
 
 #define BASE_POWER			60
+#define TURN_POWER			75
 #define ADJUST_POWER 		20
 #define SLOWEST 				15
 #define ADJUST_THRESH 	0.5
