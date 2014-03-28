@@ -30,9 +30,9 @@
 #define RIGHT_ENCODER_1  2
 #define RIGHT_ENCODER_2  10
 
-#define BRAKE_PERIOD	40
-#define SAMPLE_PERIOD 	10//32
-#define ALPHA 			0.7
+#define BRAKE_PERIOD	45
+#define SAMPLE_PERIOD 	32
+#define ALPHA 			0.75
 
 #define DECIDE        	0
 #define STRAIGHT      	1

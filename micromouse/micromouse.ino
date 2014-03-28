@@ -66,8 +66,6 @@ void exploreMaze(){
         break;
 
       case STRAIGHT:
-        Serial.println("In straight!");
-        
         MovementController::goStraight();
         if (SensorController::rightEncoder.read() >= SQUARE_SIZE
               || SensorController::leftEncoder.read() >= SQUARE_SIZE
@@ -112,12 +110,23 @@ void exploreMaze(){
         break;
 
       case TURN_AROUND: // Turn Around
-        Serial.println("In turn around!");
+
+        //TODO: two options:
+        //  1. add conditions to turn
+        //    - encoder condition && all ir must be less than ALL_TOOCLOSE
+        //  2. k turn.
+        //    - back up left motor 1/4 turn
+        //    - turn left
+        //    - back up left motor 1/4 turn
+
 
         MovementController::turn(LEFT);
-        if ((abs(SensorController::leftEncoder.read())
+        if (((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))
-            >= TURN_AROUND_ENCODER_THRESH){
+            >= TURN_AROUND_ENCODER_THRESH)
+            && (SensorController::irSmooth[LEFT] < ALL_TOOCLOSE)
+            && (SensorController::irSmooth[RIGHT] < ALL_TOOCLOSE)
+            && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
 
           MovementController::brake(state);
           state = DECIDE;
