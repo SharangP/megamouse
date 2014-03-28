@@ -109,8 +109,8 @@ void MovementController::updatePID(int state){
       // }
       break;
     case TURN_AROUND: //turning around is just two left turns
-      // moveSpeedRight = TURN_POWER+10;
-      // moveSpeedLeft  = TURN_POWER-10;
+      moveSpeedRight = TURN_POWER;
+      moveSpeedLeft  = TURN_POWER;
       break;
 
     default:

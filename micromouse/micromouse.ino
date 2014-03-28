@@ -66,6 +66,8 @@ void exploreMaze(){
         break;
 
       case STRAIGHT:
+        Serial.println("In straight!");
+        
         MovementController::goStraight();
         if (SensorController::rightEncoder.read() >= SQUARE_SIZE
               || SensorController::leftEncoder.read() >= SQUARE_SIZE
