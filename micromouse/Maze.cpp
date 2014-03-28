@@ -196,6 +196,31 @@ void Maze::incrementPos(){
   curPos.y = newPos.y;
 }
 
+void Maze::decrementPos(){
+  int offsetY = 0;
+  int offsetX = 0;
+  switch(ROTATE(curDir,2)){
+    case NORTH:
+      offsetX = -1;
+      offsetY = 0;
+      break;
+    case SOUTH:
+      offsetX = 1;
+      offsetY = 0;
+      break;
+    case WEST:
+      offsetX = 0;
+      offsetY = -1;
+      break;
+    case EAST:
+      offsetX = 0;
+      offsetY = 1;
+      break;
+  }
+  curPos.x = curPos.x + offsetX;
+  curPos.y = curPos.y + offsetY;
+}
+
 int Maze::checkWalls(boolean next){
   Cell newPos = nextPos();
   int nextWalls = walls[newPos.x][newPos.y];

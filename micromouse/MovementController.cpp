@@ -75,6 +75,34 @@ void MovementController::updatePID(int state){
 
       break;
 
+    case REVERSED:
+      switch(Maze::checkWalls(true)){ //base straight movement off walls in next square
+        case 0: //no walls
+          moveSpeedRight = BASE_POWER_REVERSED;
+          moveSpeedLeft  = BASE_POWER_REVERSED;
+          break;
+        case 1: //right wall only - follow right
+          ap = adjustPower(LEFT);
+          moveSpeedLeft  = BASE_POWER_REVERSED + ap;
+          moveSpeedRight = BASE_POWER_REVERSED - ap;
+          break;
+        case 2: //left wall
+          //break;
+          //do the same thing as both walls
+          //TODO: actually use both walls!
+        case 3: //both walls - follow left
+          ap = adjustPower(RIGHT);
+          moveSpeedLeft  = BASE_POWER_REVERSED - ap;
+          moveSpeedRight = BASE_POWER_REVERSED + ap;
+          break;
+      }
+
+      //ramp down speed linearly
+      moveSpeedRight = (moveSpeedRight - SLOWEST)/SQUARE_SIZE_REVERSED * (SQUARE_SIZE_REVERSED - SensorController::rightEncoder.read()) + SLOWEST;
+      moveSpeedLeft  = (moveSpeedLeft  - SLOWEST)/SQUARE_SIZE_REVERSED * (SQUARE_SIZE_REVERSED - SensorController::leftEncoder.read())  + SLOWEST;
+
+      break;
+
     //TODO: ramp down turn
     //TODO: fine tune turning
     case TURN_RIGHT:
@@ -152,8 +180,8 @@ void MovementController::goStraight(){
 
 void MovementController::goBack(){
   Serial.println("Going back...");
-  right->setState(2,100);
-  left->setState(2,100);
+  right->setState(2, moveSpeedRight);
+  left->setState(2, moveSpeedLeft);
 }
 
 void MovementController::go(int forward, int duration, int power = BASE_POWER){

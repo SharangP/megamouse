@@ -48,6 +48,8 @@ namespace Maze{
   void initialize();
   Cell nextPos();
   void incrementPos();
+  void decrementPos();
+
   int checkWalls(boolean next);
   void detectWalls(); //Look ahead and add walls if necessary
   int decide();

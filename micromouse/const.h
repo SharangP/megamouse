@@ -48,7 +48,8 @@
 #define TURN_AROUND_ENCODER_THRESH 	2600
 #define DETECT_THRESH 				1
 
-#define SQUARE_SIZE 	1225 // 1200
+#define SQUARE_SIZE             1225 // 1200
+#define SQUARE_SIZE_REVERSED 	900 // 1200
 
 #define NORTH 		1
 #define EAST 		2
@@ -59,6 +60,7 @@
 #define CENTER_Y 	2
 
 #define BASE_POWER			60
+#define BASE_POWER_REVERSED 50
 #define TURN_POWER			75
 #define ADJUST_POWER 		45
 #define SLOWEST 			15

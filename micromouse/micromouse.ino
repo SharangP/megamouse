@@ -117,6 +117,16 @@ void exploreMaze(){
         }
         break;
 
+      case REVERSED:
+        MovementController::goBack();
+        if (SensorController::rightEncoder.read() <= -SQUARE_SIZE_REVERSED
+              || SensorController::leftEncoder.read() <= -SQUARE_SIZE_REVERSED){
+          MovementController::brake(state);
+          state = DECIDE;
+          Maze::decrementPos(); // Increment location on maze
+        }
+        break;
+
       case TURN_AROUND: // Turn Around
 
         //TODO: three options:
@@ -145,7 +155,7 @@ void exploreMaze(){
               // && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
 
             MovementController::brake(turn_around_dir);
-            MovementController::straighten();
+            // MovementController::straighten();
             turn_around_dir = -1;
             state = DECIDE;
             Maze::curDir = ROTATE(Maze::curDir, 2);
@@ -161,7 +171,7 @@ void exploreMaze(){
               // && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
 
             MovementController::brake(turn_around_dir);
-            MovementController::straighten();
+            // MovementController::straighten();
             turn_around_dir = -1;
             state = DECIDE;
             Maze::curDir = ROTATE(Maze::curDir, 2);
