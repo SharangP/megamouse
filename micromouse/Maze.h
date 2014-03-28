@@ -14,6 +14,7 @@
 #include <vector>
 #include <list>
 #include "SensorController.h"
+#include "MovementController.h"
 
 using namespace std;
 
@@ -43,8 +44,6 @@ namespace Maze{
   void removeWalls(int row, int col, int direction);
 
   void initialize();
-  void initializeWalls();
-  // void initializeGraph();
   Cell nextPos();
   void incrementPos();
   int checkWalls();
@@ -54,14 +53,12 @@ namespace Maze{
   // list<Cell*> getNeighbors(Cell* cell);
   vector<Cell> getNeighbors(Cell cell);
 
-  void recursiveFlood(list<Cell > currentLevel, int level);
   void floodGraph();
-
-  void createTest();
-  void setupTest();
 
   boolean fullyExplored();
 
+  void createTest();
+  void setupTest();
 
   /*debug functions*/
   void printDir();

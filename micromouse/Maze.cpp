@@ -13,7 +13,6 @@
 
 int Maze::curDir = NORTH;
 Maze::Cell Maze::curPos = Maze::Cell(MAZE_SIZE-1, 0);
-// Maze::Cell Maze::nodes[MAZE_SIZE][MAZE_SIZE];
 unsigned char Maze::distanceValue[MAZE_SIZE][MAZE_SIZE] = {{0}};
 unsigned char Maze::walls[MAZE_SIZE][MAZE_SIZE] ={{0}};
 
@@ -28,7 +27,7 @@ Maze::Cell::Cell(){}
 
 //figure out what walls the next square has
 void Maze::detectWalls(){
-  //TODO: Don't check for walls outside of border
+
   SensorController::printSensors();
   Cell newPos = nextPos();
   int wallLoc = 0;
@@ -37,6 +36,7 @@ void Maze::detectWalls(){
       Serial.println("Found wall right in front of me");
       wallLoc = curDir;
       addWalls(curPos.x, curPos.y, wallLoc);
+      MovementController::calibrate();
     }
     else {
       if(SensorController::irSmooth[CENTER] > CENTERTHRESH_FAR){
@@ -151,10 +151,6 @@ int Maze::checkWalls(){
   int leftWall = !!(ROTATE(curDir, 3) & nextWalls);
   int rightWall = !!(ROTATE(curDir, 1) & nextWalls);
   int rtnWall = rightWall + (leftWall << 1);
-
-  // Serial.print("checkWall output: ");
-  // Serial.println(rtnWall);
-
   return rtnWall;
 }
 
@@ -204,7 +200,7 @@ void Maze::removeWalls(int row, int col, int direction){
 }
 
 /*Sets maze borders*/
- void Maze::initializeWalls(){
+ void Maze::initialize(){
     for (int j = 0; j < MAZE_SIZE; j++) {
         walls[0][j] = walls[0][j] | NORTH;
         walls[j][0] = walls[j][0] | WEST;
@@ -213,18 +209,8 @@ void Maze::removeWalls(int row, int col, int direction){
     }
     //we also know that we start with 3 sides
     addWalls(MAZE_SIZE-1,0,EAST);
+    showWalls();
 }
-
-
-/*Fills node list with tuples (Probably not needed)*/
-// void Maze::initializeGraph(){
-//     for (int i = 0; i<MAZE_SIZE; i++){
-//         for (int j =0 ; j<MAZE_SIZE; j++){
-//              nodes[i][j] = Cell(i, j);
-//         }
-//     }
-// }
-
 
 /* Returns list of neighbors not blocked by walls*/
 vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
@@ -241,65 +227,23 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
 
 
   if( (walls[row][col] & NORTH) == 0){
-    // neighbors.push_back(&nodes[row-1][col]);
     neighbors.push_back( Cell(row-1, col));
   }
   if( (walls[row][col] & SOUTH )== 0){
-    // neighbors.push_back(&nodes[row+1][col]);
     neighbors.push_back( Cell(row+1, col));
 
   }
   if( (walls[row][col] & EAST )== 0){
-    // neighbors.push_back(&nodes[row][col+1]);
-        neighbors.push_back( Cell(row, col+1));
+    neighbors.push_back( Cell(row, col+1));
 
   }
   if( (walls[row][col] & WEST )== 0){
-    // neighbors.push_back(&nodes[row][col-1]);
     neighbors.push_back( Cell(row, col-1));
   }
 
   return neighbors;
 }
 
-
-/* updates distanceValue using floodFill*/
-// void Maze::recursiveFlood(list<Maze::Cell > currentLevel, int level){
-
-
-//   list<Cell> nextLevel;
-//   Cell tmp;
-//   while(!currentLevel.empty()){
-//     tmp = currentLevel.back();
-
-//     if (distanceValue[tmp.x][tmp.y] == 255){
-
-//       distanceValue[tmp.x][tmp.y] = level;
-//       // Find all neighbors not blocked by walls and put into Next Level
-
-//       vector<Cell> neighbors = getNeighbors(tmp);
-//       while (!neighbors.empty()){
-//         // if ( distanceValue[neighbors.back().x][neighbors.back().y] == 255){
-//           nextLevel.push_back(neighbors.back());
-//         // }
-//         neighbors.pop_back();
-//       }
-//       neighbors.~vector<Cell>();
-//     }
-//     currentLevel.pop_back();
-//   }
-//   tmp.~Cell();
-//   currentLevel.~vector<Cell>();
-
-//   if(!nextLevel.empty()){
-//     level++;
-//     // currentLevel = nextLevel;
-//     recursiveFlood(nextLevel, level);
-//   }
-//   else{
-//     return;
-//   }
-// }
 
 /*Flood fill initial setup*/
 void Maze::floodGraph(){
@@ -327,22 +271,6 @@ void Maze::floodGraph(){
 
       Q.pop_front();
     }
-
-    // currentLevel.push_back( Cell(7,7));
-    // currentLevel.push_back( Cell(7,8));
-    // currentLevel.push_back( Cell(8,8));
-    // currentLevel.push_back( Cell(8,7));
-
-    // currentLevel.push_back(&nodes[7][7]);
-    // currentLevel.push_back(&nodes[7][8]);
-    // currentLevel.push_back(&nodes[8][8]);
-    // currentLevel.push_back(&nodes[8][7]);
-    // int level = 0;
-
-    // Serial.print("Calling recursive.. with list of size: ");
-    // Serial.println(currentLevel.count());
-    // Serial.println("Calling recursiveFlood");
-    // recursiveFlood(currentLevel, level);
 }
 
 void Maze::createTest(){
@@ -449,21 +377,10 @@ void Maze::showWalls(){
 }
 
 
-void Maze::initialize(){
-  initializeWalls();
-  showWalls();
-  // initializeGraph();
-
-  // setupTest();
-}
-
-
 void Maze::setupTest(){
 
     // Serial.print("Initializing Walls...");
-    initializeWalls();
-    // Serial.print("Init Graph...");
-    // initializeGraph();
+    initialize();
     // Serial.print("Create test...");
     createTest();
     // Serial.println("Flooding...");

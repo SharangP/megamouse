@@ -13,14 +13,15 @@
 #include "MovementController.h"
 #include "Maze.h"
 
+#define nMoves 2
+
 int sup = 0;
-int moves[3] = {TURN_LEFT, TURN_RIGHT, STRAIGHT};
+int moves[nMoves] = {TURN_AROUND, TURN_AROUND};//{TURN_LEFT, TURN_RIGHT, STRAIGHT};
 
 void decision(int * state){
   Serial.println("Deciding");
 
-  //want some delay here to let sensor values settle?
-
+  // delay(SAMPLE_PERIOD);
   for(int i = 0; i < 10; i++){
     delay(200);
     Serial.print(10-i);
@@ -29,15 +30,20 @@ void decision(int * state){
 
   Serial.println("");
 
-  Maze::detectWalls();
-  Serial.println("New Maze Layout");
-  Maze::showWalls();
-  Maze::printDistance();
-  *state = Maze::decide();
+  // Maze::detectWalls();
+  // Serial.println("New Maze Layout");
+  // Maze::showWalls();
+  // Maze::printDistance();
+  // *state = Maze::decide();
 
-  // *state = moves[(sup % 3)];
-  // sup++;
-  // *state = STRAIGHT;
+  *state = moves[(sup % nMoves)];
+  sup++;
+  if (*state == STRAIGHT)
+    *state = STRAIGHT;
+  else{
+    *state = moves[(sup % nMoves)];
+    sup++;
+  }
 
   Serial.print("Current decision: "); 
   Serial.println(*state);
@@ -63,7 +69,7 @@ void exploreMaze(){
         MovementController::goStraight();
         if (SensorController::rightEncoder.read() >= SQUARE_SIZE
               || SensorController::leftEncoder.read() >= SQUARE_SIZE
-              || SensorController::irSmooth[CENTER] >= TOOCLOSE){
+              || SensorController::irSmooth[CENTER] >= CENTERTHRESH_TOOCLOSE){
           MovementController::brake(state);
           state = DECIDE;
           Maze::incrementPos(); // Increment location on maze
@@ -104,6 +110,8 @@ void exploreMaze(){
         break;
 
       case TURN_AROUND: // Turn Around
+        Serial.println("In turn around!");
+
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))

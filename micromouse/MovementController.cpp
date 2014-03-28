@@ -61,6 +61,7 @@ void MovementController::updatePID(int state){
         case 2: //left wall
           //break;
           //do the same thing as both walls
+          //TODO: actually use both walls!
         case 3: //both walls - follow left
           ap = adjustPower(RIGHT);
           moveSpeedLeft  = BASE_POWER + ap;
@@ -91,6 +92,8 @@ void MovementController::updatePID(int state){
         moveSpeedLeft  = TURN_POWER+15;
       // }
       break;
+    case TURN_AROUND: //turning around is just two left turns
+    
     case TURN_LEFT:
         // turnSum = abs(SensorController::rightEncoder.read()) + abs(SensorController::leftEncoder.read());
         // moveSpeedRight = (BASE_POWER+20- SLOWEST)/TURN_ENCODER_THRESH * (TURN_ENCODER_THRESH-turnSum) + SLOWEST;
@@ -106,6 +109,7 @@ void MovementController::updatePID(int state){
         moveSpeedLeft  = TURN_POWER;
       // }
       break;
+
     default:
       //?
       break;
@@ -149,10 +153,10 @@ void MovementController::goBack(){
   left->setState(2,100);
 }
 
-void MovementController::forward(int duration){
+void MovementController::go(int forward, int duration, int power = BASE_POWER){
   Serial.println("Going forward");
-  right->setState(1,BASE_POWER);
-  left->setState(1,BASE_POWER);
+  right->setState(forward, power);
+  left->setState(forward, power);
   delay(duration);
   right->setState(0,0);
   left->setState(0,0);
@@ -185,10 +189,14 @@ void MovementController::brake(int state){
       case TURN_RIGHT:
         right->setState(1,moveSpeedRight);
         left->setState(2,moveSpeedLeft);
-      break;
+        break;
+      case REVERSED:
+        right->setState(1,moveSpeedRight);
+        left->setState(1,moveSpeedLeft);
+        break;
     }
 
-    delay(50);
+    delay(BRAKE_PERIOD);
     right->setState(0,0);
     left->setState(0,0);
     digitalWrite(right->enablePin, LOW);
@@ -201,12 +209,25 @@ void MovementController::brake(int state){
 
 void MovementController::accel(int startPow, int endPow, int time){}
 
-//TODO: Write this function
 void MovementController::calibrate(){
   //called when there is a wall in front?
   //move a distance away from the wall
   //s.t. you know that when you turn around you'll know exactly where you are
-  
+
+  //way too close -> move back
+  while((SensorController::irSmooth[LEFT] < ALL_TOOCLOSE)
+    && (SensorController::irSmooth[RIGHT] < ALL_TOOCLOSE)
+    && (SensorController::irSmooth[CENTER] < ALL_TOOCLOSE)){
+    go(2, 5, 50);
+    SensorController::sample();
+  }
+  brake(REVERSED);
+
+  // while(SensorController::irSmooth[CENTER] > CENTERTHRESH_TOOCLOSE){
+  //   go(2, 5, 50);
+  //   SensorController::sample();
+  // }
+
   //may need to calibrate front sensor based on left and right
   //because every type of wall will be different
 }

@@ -14,9 +14,10 @@
 
 #define LEFTTHRESH       		261
 #define RIGHTTHRESH      		257
-#define CENTERTHRESH_CLOSE  500
+#define CENTERTHRESH_CLOSE  	500
 #define CENTERTHRESH_FAR		240//328
-#define TOOCLOSE         		600
+#define CENTERTHRESH_TOOCLOSE   600
+#define ALL_TOOCLOSE			450 //less than this value
 
 #define BASE_IR_SIGMA		10
 
@@ -29,21 +30,24 @@
 #define RIGHT_ENCODER_1  2
 #define RIGHT_ENCODER_2  10
 
-#define SAMPLE_PERIOD 32
-#define ALPHA 0.7
+#define BRAKE_PERIOD	40
+#define SAMPLE_PERIOD 	10//32
+#define ALPHA 			0.7
 
-#define DECIDE        0
-#define STRAIGHT      1
-#define TURN_RIGHT    2
-#define TURN_LEFT     3
-#define TURN_AROUND   4
+#define DECIDE        	0
+#define STRAIGHT      	1
+#define TURN_RIGHT    	2
+#define TURN_LEFT     	3
+#define TURN_AROUND   	4
 #define STOP        	5
 #define IDLE        	6
+#define REVERSED		7
 
 #define TURN_ENCODER_THRESH 1550
 #define DETECT_THRESH 		1
 
-#define SQUARE_SIZE 1275 // 1200
+#define SQUARE_SIZE 	1275 // 1200
+#define CALIBRATE_DIST	100
 
 #define NORTH 1
 #define EAST 2
@@ -53,8 +57,9 @@
 
 #define BASE_POWER			60
 #define TURN_POWER			75
-#define ADJUST_POWER 		35
+#define ADJUST_POWER 		50
 #define SLOWEST 			15
+
 
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 

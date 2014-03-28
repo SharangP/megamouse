@@ -33,8 +33,9 @@ namespace MovementController {
 
   void updatePID(int state);
   double adjustPower(int follow);
+
+  void go(int forward, int duration, int power);
   void goStraight();
-  void forward(int duration);
   void goBack();
   void brake(int state);
   void turn(int dir);
