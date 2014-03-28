@@ -30,20 +30,20 @@ void decision(int * state){
 
   Serial.println("");
 
-  // Maze::detectWalls();
-  // Serial.println("New Maze Layout");
-  // Maze::showWalls();
-  // Maze::printDistance();
-  // *state = Maze::decide();
+  Maze::detectWalls();
+  Serial.println("New Maze Layout");
+  Maze::showWalls();
+  Maze::printDistance();
+  *state = Maze::decide();
 
-  *state = moves[(sup % nMoves)];
-  sup++;
-  if (*state == STRAIGHT)
-    *state = STRAIGHT;
-  else{
-    *state = moves[(sup % nMoves)];
-    sup++;
-  }
+  // *state = moves[(sup % nMoves)];
+  // sup++;
+  // if (*state == STRAIGHT)
+  //   *state = STRAIGHT;
+  // else{
+  //   *state = moves[(sup % nMoves)];
+  //   sup++;
+  // }
 
   Serial.print("Current decision: "); 
   Serial.println(*state);
@@ -115,7 +115,7 @@ void exploreMaze(){
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))
-            >= 2*TURN_ENCODER_THRESH){
+            >= TURN_AROUND_ENCODER_THRESH){
 
           MovementController::brake(state);
           state = DECIDE;

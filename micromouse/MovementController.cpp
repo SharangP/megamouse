@@ -92,7 +92,6 @@ void MovementController::updatePID(int state){
         moveSpeedLeft  = TURN_POWER+15;
       // }
       break;
-    case TURN_AROUND: //turning around is just two left turns
     
     case TURN_LEFT:
         // turnSum = abs(SensorController::rightEncoder.read()) + abs(SensorController::leftEncoder.read());
@@ -108,6 +107,10 @@ void MovementController::updatePID(int state){
         moveSpeedRight = TURN_POWER+15;
         moveSpeedLeft  = TURN_POWER;
       // }
+      break;
+    case TURN_AROUND: //turning around is just two left turns
+      // moveSpeedRight = TURN_POWER+10;
+      // moveSpeedLeft  = TURN_POWER-10;
       break;
 
     default:

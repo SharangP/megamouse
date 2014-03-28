@@ -43,8 +43,9 @@
 #define IDLE        	6
 #define REVERSED		7
 
-#define TURN_ENCODER_THRESH 1550
-#define DETECT_THRESH 		1
+#define TURN_ENCODER_THRESH 		1550
+#define TURN_AROUND_ENCODER_THRESH 	3000
+#define DETECT_THRESH 				1
 
 #define SQUARE_SIZE 	1275 // 1200
 #define CALIBRATE_DIST	100
