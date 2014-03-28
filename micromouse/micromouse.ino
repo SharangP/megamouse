@@ -13,25 +13,31 @@
 #include "MovementController.h"
 #include "Maze.h"
 
-
+int sup = 0;
+int moves[3] = {TURN_LEFT, TURN_RIGHT, STRAIGHT};
 
 void decision(int * state){
   Serial.println("Deciding");
 
+  //want some delay here to let sensor values settle?
+
   for(int i = 0; i < 10; i++){
-    delay(100);
+    delay(200);
     Serial.print(10-i);
     Serial.print(" ");
   }
 
   Serial.println("");
 
-  //TODO: test wall detection by looking @ showWalls as mouse explores
   Maze::detectWalls();
   Serial.println("New Maze Layout");
   Maze::showWalls();
   Maze::printDistance();
   *state = Maze::decide();
+
+  // *state = moves[(sup % 3)];
+  // sup++;
+  // *state = STRAIGHT;
 
   Serial.print("Current decision: "); 
   Serial.println(*state);
@@ -47,11 +53,6 @@ void exploreMaze(){
 
   while (!Maze::fullyExplored()){
     SensorController::sample();
-
-      //decision
-        //update maze
-        //find shortest path to center
-        //make a move in that direction
 
     switch(state){
       case DECIDE: //Make decision, reset encoder values
@@ -114,18 +115,7 @@ void exploreMaze(){
         }
         break;
 
-      // case STOP: // Stop
-      //     // If you haven't stopped already, stop.
-      //     if(MovementController::left->state != 0 && MovementController::right->state != 0){
-      //       MovementController::brake(50);
-      //       SensorController::leftEncoder.write(0);
-      //       SensorController::rightEncoder.write(0);
-      //       delay(10);
-      //       state = DECIDE;
-      //    }
-      //  break;
-
-      case IDLE:
+      case IDLE: //fucked
          break;
     }
 
@@ -157,20 +147,6 @@ void setup(){
 }
 
 void loop(){
-
-  //MovementController::brake();
-
-  // wait till youre ready
-  //while(!Serial.available()){}
-
-  //SensorController::leftEncoder.write(0);
-  //SensorController::rightEncoder.write(0);
-   // Maze::initialize();
-
-  // Maze::detectWalls();
-  // Maze::checkWalls();
-  // Maze::incrementPos();
-
   exploreMaze();
   //returnToStart();
   //solveMaze();

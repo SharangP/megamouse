@@ -30,7 +30,7 @@
 #define RIGHT_ENCODER_2  10
 
 #define SAMPLE_PERIOD 32
-#define ALPHA 0.5
+#define ALPHA 0.7
 
 #define DECIDE        0
 #define STRAIGHT      1
@@ -40,10 +40,10 @@
 #define STOP        	5
 #define IDLE        	6
 
-#define TURN_ENCODER_THRESH 1500
-#define DETECT_THRESH 			1
+#define TURN_ENCODER_THRESH 1550
+#define DETECT_THRESH 		1
 
-#define SQUARE_SIZE 1300 // 1200R
+#define SQUARE_SIZE 1275 // 1200
 
 #define NORTH 1
 #define EAST 2
@@ -53,9 +53,8 @@
 
 #define BASE_POWER			60
 #define TURN_POWER			75
-#define ADJUST_POWER 		20
-#define SLOWEST 				15
-#define ADJUST_THRESH 	0.5
+#define ADJUST_POWER 		35
+#define SLOWEST 			15
 
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 

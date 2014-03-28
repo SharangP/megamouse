@@ -32,6 +32,10 @@ namespace Maze{
   extern unsigned char walls[MAZE_SIZE][MAZE_SIZE];
   extern int curDir;
   extern Cell curPos;
+  //TODO: idea: remember an x,y or big int for curPos
+  // and keep track of an analog position in the maze
+  // that can be converted to a grid location but also
+  // be used for figuring out how far to go straight each time
 
 
   // Maze(); //initialize maze to have no walls except border

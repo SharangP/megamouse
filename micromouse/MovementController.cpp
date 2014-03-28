@@ -33,69 +33,38 @@ Motor * MovementController::left  = new Motor(4, 5, 6);
 
 
 double MovementController::adjustPower(int follow){
-  double mean = SensorController::sensorMean[follow];
+  // double mean = SensorController::sensorMean[follow];
   double sigma = SensorController::sensorSigma[follow];
   double current = SensorController::irSmooth[follow];
-  return (double)ADJUST_POWER;
- }
+  return ADJUST_POWER*current/sigma;
+}
 
 void MovementController::updatePID(int state){
+
+  double ap;
 
   //TODO: Use pidEncoder and pidIR values (outputs) to inform locomotion
   //change left and right powers to go straight/turn etc. as needed
   switch(state){
 
     case STRAIGHT:  //straight
-
-      //TODO: need a non-constant method of adjusting power
-
       switch(Maze::checkWalls()){
         case 0: //no walls
           moveSpeedRight = BASE_POWER;
           moveSpeedLeft  = BASE_POWER;
           break;
         case 1: //right wall only - follow right
-          if (SensorController::irSmooth[LEFT]
-              < -ADJUST_THRESH*SensorController::sensorSigma[LEFT]) {
-          
-            double ap = adjustPower(LEFT);
-
-            moveSpeedLeft  = BASE_POWER + ap;
-            moveSpeedRight = BASE_POWER - ap;
-          } else if (SensorController::irSmooth[LEFT]
-              > ADJUST_THRESH*SensorController::sensorSigma[LEFT]) {
-            
-            double ap = adjustPower(RIGHT);
-            
-            moveSpeedLeft  = BASE_POWER - ap;
-            moveSpeedRight = BASE_POWER + ap;
-          } else {
-            moveSpeedRight = BASE_POWER;
-            moveSpeedLeft  = BASE_POWER;
-          }
+          ap = adjustPower(LEFT);
+          moveSpeedLeft  = BASE_POWER - ap;
+          moveSpeedRight = BASE_POWER + ap;
           break;
         case 2: //left wall
           //break;
           //do the same thing as both walls
         case 3: //both walls - follow left
-          if (SensorController::irSmooth[RIGHT]
-              < -ADJUST_THRESH*SensorController::sensorSigma[RIGHT]) {
-            
-            double ap = adjustPower(LEFT);
-            
-            moveSpeedLeft  = BASE_POWER - ap;
-            moveSpeedRight = BASE_POWER + ap;
-          } else if (SensorController::irSmooth[RIGHT]
-            > ADJUST_THRESH*SensorController::sensorSigma[RIGHT]) {
-
-            double ap = adjustPower(LEFT);
-
-            moveSpeedLeft  = BASE_POWER + ap;
-            moveSpeedRight = BASE_POWER - ap;
-          } else {
-            moveSpeedRight = BASE_POWER;
-            moveSpeedLeft  = BASE_POWER;
-          }
+          ap = adjustPower(RIGHT);
+          moveSpeedLeft  = BASE_POWER + ap;
+          moveSpeedRight = BASE_POWER - ap;
           break;
       }
 
@@ -119,7 +88,7 @@ void MovementController::updatePID(int state){
       //   moveSpeedLeft  = TURN_POWER - 5;
       // } else {
         moveSpeedRight = TURN_POWER;
-        moveSpeedLeft  = TURN_POWER+10;
+        moveSpeedLeft  = TURN_POWER+15;
       // }
       break;
     case TURN_LEFT:
@@ -133,7 +102,7 @@ void MovementController::updatePID(int state){
       //   moveSpeedRight = TURN_RIGHT - 5;
       //   moveSpeedLeft  = TURN_POWER + 5;
       // } else {
-        moveSpeedRight = TURN_POWER+10;
+        moveSpeedRight = TURN_POWER+15;
         moveSpeedLeft  = TURN_POWER;
       // }
       break;
@@ -151,7 +120,6 @@ void MovementController::goStraight(){
   // double leftSpeed = output*BASE_POWER;
   // double rightSpeed = BASE_POWER;
 
-  //TODO: see what the output looks like!!
   //Serial.print("Encoder PID Output: ");
   //Serial.println(output);
 
@@ -197,7 +165,7 @@ void MovementController::forward(int duration){
 
 void MovementController::turn(int dir){
   right->setState(1*(dir==LEFT) + 2*(dir==RIGHT), moveSpeedRight);
-  left->setState(2*(dir==LEFT) + 1*(dir==RIGHT),moveSpeedLeft);
+  left->setState(2*(dir==LEFT) + 1*(dir==RIGHT), moveSpeedLeft);
 }
 
 void MovementController::brake(int state){
