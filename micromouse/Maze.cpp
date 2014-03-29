@@ -33,10 +33,22 @@ unsigned char Maze::getWalls(int x, int y){
 }
 
 void Maze::setWalls(int x, int y, int val){
-  if(y % 2)
+  Serial.print("Setting wall at ");
+  Serial.print(x);
+  Serial.print(",");
+  Serial.print(y);
+  Serial.print(" to ");
+  Serial.println(val);
+
+  if(y % 2){
     walls[x][y/2] = walls[x][y/2] | val;
-  else
+  }
+  else{
     walls[x][y/2] = walls[x][y/2] | (val << 4);
+  }
+
+  Serial.print("Wall at that pos is now: ");
+  Serial.println(walls[x][y/2]);
 }
 
 //figure out what walls the next square has
@@ -277,26 +289,28 @@ int Maze::checkWalls(boolean next){
 
 /*Adds wall at (row,col) in direction*/
 void Maze::addWalls(int row, int col, int direction){
-    setWalls(row, col, getWalls(row, col) | direction);
-    switch(direction){
-        case NORTH:
-            setWalls(row-1, col, getWalls(row-1, col) | SOUTH);
-            break;
-        case SOUTH:
-            setWalls(row+1, col, getWalls(row+1, col) | NORTH);
-            // walls[row+1][col] = walls[row+1][col] | NORTH;
-            break;
-        case EAST:
-            setWalls(row, col+1, getWalls(row, col+1) | WEST);
-            // walls[row][col+1] = walls[row][col+1] | WEST;
-            break;
-        case WEST:
-            setWalls(row, col-1, getWalls(row, col-1) | EAST);
-            // walls[row][col-1] = walls[row][col-1] | EAST;
-            break;
-        default:
-            break;
-    }
+  setWalls(row, col, getWalls(row, col) | direction);
+  switch(direction){
+    case NORTH:
+      if(row-1 > 0)
+        setWalls(row-1, col, getWalls(row-1, col) | SOUTH);
+      break;
+    case SOUTH:
+      if(row+1 < MAZE_SIZE)
+      setWalls(row+1, col, getWalls(row+1, col) | NORTH);
+              // walls[row+1][col] = walls[row+1][col] | NORTH;
+      break;
+    case EAST:
+      if(col+1 < MAZE_SIZE)
+      setWalls(row, col+1, getWalls(row, col+1) | WEST);
+              // walls[row][col+1] = walls[row][col+1] | WEST;
+      break;
+    case WEST:
+      if(col-1 > 0)
+      setWalls(row, col-1, getWalls(row, col-1) | EAST);
+              // walls[row][col-1] = walls[row][col-1] | EAST;
+      break;
+  }
 }
 
 /*Removes wall from row, col direction*/
