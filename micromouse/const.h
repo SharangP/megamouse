@@ -45,7 +45,7 @@
 #define REVERSED		7
 
 #define TURN_ENCODER_THRESH 		1550
-#define TURN_AROUND_ENCODER_THRESH 	2600
+#define TURN_AROUND_ENCODER_THRESH 	2800
 #define DETECT_THRESH 				1
 
 #define SQUARE_SIZE             1225 // 1200
@@ -55,9 +55,9 @@
 #define EAST 		2
 #define SOUTH  		4
 #define WEST  		8
-#define MAZE_SIZE 	8
-#define CENTER_X 	4//7
-#define CENTER_Y 	4//8
+#define MAZE_SIZE 	6 //16
+#define CENTER_X 	3//7
+#define CENTER_Y 	3//8
 
 #define BASE_POWER			60
 #define BASE_POWER_REVERSED 50

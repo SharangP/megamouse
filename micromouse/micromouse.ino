@@ -27,26 +27,29 @@ int sup = 0;
 int moves[nMoves] = {TURN_AROUND, STRAIGHT, TURN_AROUND};
 
 int solvingMode = false;
+  boolean turned_around = false;
 
 
 void decision(int * state){
   Serial.println("Deciding");
 
-  delay(SAMPLE_PERIOD);
-  for(int i = 0; i < 10; i++){
-    delay(50);
-    Serial.print(10-i);
-    Serial.print(" ");
-  }
+  // delay(SAMPLE_PERIOD);
+  // for(int i = 0; i < 10; i++){
+  //   delay(50);
+  //   Serial.print(10-i);
+  //   Serial.print(" ");
+  // }
 
   Serial.println("");
 
-  if(!solvingMode)
+  if(!solvingMode && !turned_around){
     Maze::detectWalls();
+    turned_around = false;
+  }
 
   Serial.println("New Maze Layout");
-  Maze::showWalls();
-  Maze::printDistance();
+  // Maze::showWalls();
+  // Maze::printDistance();
   *state = Maze::decide();
 
   // *state = moves[(sup % nMoves)];
@@ -168,6 +171,8 @@ void exploreMaze(){
             // MovementController::straighten();
             turn_around_dir = -1;
             state = DECIDE;
+            turned_around = true;
+            MovementController::go(1, 50, BASE_POWER);
             Maze::curDir = ROTATE(Maze::curDir, 2);
           }
         }
@@ -184,6 +189,8 @@ void exploreMaze(){
             // MovementController::straighten();
             turn_around_dir = -1;
             state = DECIDE;
+            turned_around = true;
+            MovementController::go(1, 50, BASE_POWER);
             Maze::curDir = ROTATE(Maze::curDir, 2);
           }
         }
@@ -224,7 +231,7 @@ void setup(){
   Maze::initialize();
   Serial.println("Maze initialized..");
 
-  delay(3000);
+  delay(1000);
   SensorController::calibrate();
 }
 

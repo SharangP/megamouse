@@ -33,12 +33,12 @@ unsigned char Maze::getWalls(int x, int y){
 }
 
 void Maze::setWalls(int x, int y, int val){
-  Serial.print("Setting wall at ");
-  Serial.print(x);
-  Serial.print(",");
-  Serial.print(y);
-  Serial.print(" to ");
-  Serial.println(val);
+  // Serial.print("Setting wall at ");
+  // Serial.print(x);
+  // Serial.print(",");
+  // Serial.print(y);
+  // Serial.print(" to ");
+  // Serial.println(val);
 
   if(y % 2){
     walls[x][y/2] = walls[x][y/2] | val;
@@ -342,12 +342,12 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
   int row = cell.x;
   int col = cell.y;
 
-  Serial.print("getWalls of ");
-  Serial.print(row);
-  Serial.print(",");
-  Serial.print(col);
-  Serial.print(" is ");
-  Serial.println(getWalls(row,col));
+  // Serial.print("getWalls of ");
+  // Serial.print(row);
+  // Serial.print(",");
+  // Serial.print(col);
+  // Serial.print(" is ");
+  // Serial.println(getWalls(row,col));
 
   if ( getWalls(row,col) == 0 ){
     neighbors.push_back( Cell(row, col-1));
