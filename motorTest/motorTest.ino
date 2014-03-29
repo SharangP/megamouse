@@ -13,13 +13,13 @@ void slowToStop(Motor right, Motor left, int time){
   float leftDecrement = ((float)left.power)/time;
   float rightPowerFloat = right.power;
   float leftPowerFloat = left.power;
-  
+
   for(i = 0; i < time; i++){
     rightPowerFloat -= rightDecrement;
     leftPowerFloat -= leftDecrement;
     right.power = (int)rightPowerFloat;
     left.power = (int)leftPowerFloat;
-    
+
     analogWrite(right.enablePin, right.power);
     analogWrite(left.enablePin, left.power);
     delay(1);

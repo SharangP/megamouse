@@ -54,7 +54,6 @@ void SensorController::printSensors(){
 void SensorController::calibrate(){
   Serial.print("Calibrating...");
 
-  int i;
   const int nSamples = 50;  // 100 samples failed
   double samples[3][nSamples];
 
@@ -65,8 +64,9 @@ void SensorController::calibrate(){
   sensorSigma[RIGHT] = 0;
   sensorSigma[CENTER] = 0;
 
+
   //Serial.print("Finding mean...");
-  for(i = 0; i < nSamples; i++){
+  for(int i = 0; i < nSamples; i++){
     //Serial.println(i);
     samples[LEFT][i]   = analogRead(LEFT_IR);
     samples[RIGHT][i]  = analogRead(RIGHT_IR);
@@ -78,7 +78,7 @@ void SensorController::calibrate(){
 
     delay(SAMPLE_PERIOD);
   }
-  for(i = 0; i < nSamples; i++){
+  for(int i = 0; i < nSamples; i++){
     sensorSigma[LEFT]   += sq(samples[LEFT][i] - sensorMean[LEFT]);
     sensorSigma[RIGHT]  += sq(samples[RIGHT][i] - sensorMean[RIGHT]);
     // sensorSigma[CENTER] += sq(samples[CENTER][i] - sensorMean[CENTER]);
@@ -87,6 +87,19 @@ void SensorController::calibrate(){
   sensorSigma[LEFT]   = max(sqrt(sensorSigma[LEFT]/nSamples), BASE_IR_SIGMA);
   sensorSigma[RIGHT]  = max(sqrt(sensorSigma[RIGHT]/nSamples), BASE_IR_SIGMA);
   // sensorSigma[CENTER] = sqrt(sensorSigma[CENTER]/nSamples);
+
+  //dont calibrate right wall if it doesnt exist
+  int l = analogRead(LEFT_IR);
+  delay(SAMPLE_PERIOD);
+  l += analogRead(LEFT_IR);
+  delay(SAMPLE_PERIOD);
+  l += analogRead(LEFT_IR);
+  delay(SAMPLE_PERIOD);
+
+  if(l/3 < SIDE_WALL_THRESH){
+    sensorMean[LEFT] = sensorMean[RIGHT];
+    sensorSigma[LEFT] = sensorSigma[RIGHT];
+  }
 
   Serial.println("");
   Serial.print("Sigma Right/Left: ");

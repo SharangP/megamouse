@@ -13,8 +13,9 @@
 
 int Maze::curDir = NORTH;
 Maze::Cell Maze::curPos = Maze::Cell(MAZE_SIZE-1, 0);
+// unsigned char Maze::distanceValue[MAZE_SIZE][MAZE_SIZE] = {{0}};
 unsigned char Maze::distanceValue[MAZE_SIZE][MAZE_SIZE] = {{0}};
-unsigned char Maze::walls[MAZE_SIZE][MAZE_SIZE] ={{0}};
+unsigned char Maze::walls[MAZE_SIZE][MAZE_SIZE/2] ={{0}};
 
 
 Maze::Cell::Cell(int x, int y){
@@ -24,6 +25,19 @@ Maze::Cell::Cell(int x, int y){
 
 Maze::Cell::Cell(){}
 
+unsigned char Maze::getWalls(int x, int y){
+  if(y % 2)
+    return walls[x][y/2] & 15;
+  else
+    return ((walls[x][y/2] & 240) >> 4);
+}
+
+void Maze::setWalls(int x, int y, int val){
+  if(y % 2)
+    walls[x][y/2] = walls[x][y/2] | val;
+  else
+    walls[x][y/2] = walls[x][y/2] | (val << 4);
+}
 
 //figure out what walls the next square has
 void Maze::detectWalls(){
@@ -32,7 +46,7 @@ void Maze::detectWalls(){
   Cell newPos = nextPos();
   int wallLoc = 0;
 
-  if( !( walls[curPos.x][curPos.y] & curDir ) ){
+  if( !( getWalls(curPos.x,curPos.y) & curDir ) ){
     if(SensorController::irSmooth[CENTER] > CENTERTHRESH_CLOSE){
       Serial.println("Found wall right in front of me");
       wallLoc = curDir;
@@ -57,7 +71,9 @@ void Maze::detectWalls(){
       }
     }
   }
+  Serial.println("Flooding now");
   floodGraph();
+  Serial.println("Flooding done!");
 }
 
 
@@ -70,6 +86,11 @@ int Maze::decide(){
   Cell tmpCell;
 
   for(int i = 0; i < neighbors.size(); i++){
+    Serial.print("Neighbor: ");
+    Serial.print(curPos.x);
+    Serial.print(" , ");
+    Serial.println(curPos.y);
+
     tmpCell = neighbors[i];
     if (distanceValue[tmpCell.x][tmpCell.y] < distanceValue[nextMove.x][nextMove.y]){
       nextMove = tmpCell;
@@ -77,6 +98,7 @@ int Maze::decide(){
   }
 
   if (nextMove.x == curPos.x && nextMove.y == curPos.y){
+    Serial.println("going into idle state bc curpos is next pos!");
     return IDLE;
   }
 
@@ -93,18 +115,27 @@ int Maze::decide(){
     dir = EAST;
 
   if(dir == curDir){
+    MovementController::moveSpeedRight = BASE_POWER;
+    MovementController::moveSpeedLeft = BASE_POWER;
     return STRAIGHT;
   }
   if((ROTATE(curDir, 1) & dir)){
+    MovementController::moveSpeedRight = TURN_POWER;
+    MovementController::moveSpeedLeft = TURN_POWER;
     return TURN_RIGHT;
   }
   if((ROTATE(curDir, 3) & dir)){
+    MovementController::moveSpeedRight = TURN_POWER;
+    MovementController::moveSpeedLeft = TURN_POWER;
     return TURN_LEFT;
   }
   if((ROTATE(curDir, 2) & dir)){
+    MovementController::moveSpeedRight = TURN_POWER;
+    MovementController::moveSpeedLeft = TURN_POWER;
     return TURN_AROUND;
   }
 
+  Serial.println("going into idle state bc were at the end");
   return IDLE;
 }
 
@@ -133,37 +164,51 @@ void Maze::save(){
   //save whether you've solved it
   Serial.println("Saving current maze map to EEPROM!");
   for (int i = 0; i < MAZE_SIZE; i++){
-    for (int j = 0; j < MAZE_SIZE; j++){
+    for (int j = 0; j < MAZE_SIZE/2; j++){
       EEPROM.write(MAZE_SIZE*i+j % 512, (byte)walls[i][j]);
       delay(5);
     }
   }
 
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE, fullyExplored());
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2, fullyExplored());
   delay(5);
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE + 1, (byte)curPos.x);
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 1, (byte)curPos.x);
   delay(5);
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE + 2, (byte)curPos.y);
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 2, (byte)curPos.y);
   delay(5);
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE + 3, (byte)curDir);
+  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 3, (byte)curDir);
   delay(5);
+
+  for (int i = 0; i < MAZE_SIZE; i++){
+    for (int j = 0; j < MAZE_SIZE; j++){
+      EEPROM.write(MAZE_SIZE*MAZE_SIZE + MAZE_SIZE*i+j % 512, (byte)distanceValue[i][j]);
+      delay(5);
+    }
+  }
 }
 
 void Maze::load(){
   //load maze from EEprom
   for (int i = 0; i < MAZE_SIZE; i++)
-    for (int j = 0; j < MAZE_SIZE; j++)
+    for (int j = 0; j < MAZE_SIZE/2; j++)
       walls[i][j] = EEPROM.read(MAZE_SIZE*i+j % 512);
 
-  int cpx = EEPROM.read((MAZE_SIZE*MAZE_SIZE + 1) % 512);
-  int cpy = EEPROM.read((MAZE_SIZE*MAZE_SIZE + 2) % 512);
-  int cd = EEPROM.read((MAZE_SIZE*MAZE_SIZE + 3) % 512);
+  int cpx = EEPROM.read((MAZE_SIZE*MAZE_SIZE/2 + 1) % 512);
+  int cpy = EEPROM.read((MAZE_SIZE*MAZE_SIZE/2 + 2) % 512);
+  int cd = EEPROM.read((MAZE_SIZE*MAZE_SIZE/2 + 3) % 512);
   Serial.print("Current Pos/Dir when last idle: ");
   Serial.print(cpx);
   Serial.print(" , ");
   Serial.print(cpy);
   Serial.print(" / ");
   Serial.println(cd);
+
+  for (int i = 0; i < MAZE_SIZE; i++){
+    for (int j = 0; j < MAZE_SIZE; j++){
+      distanceValue[i][j] = EEPROM.read(MAZE_SIZE*MAZE_SIZE + MAZE_SIZE*i+j % 512);
+      delay(5);
+    }
+  }
 }
 
 Maze::Cell Maze::nextPos(){
@@ -223,7 +268,7 @@ void Maze::decrementPos(){
 
 int Maze::checkWalls(boolean next){
   Cell newPos = nextPos();
-  int nextWalls = walls[newPos.x][newPos.y];
+  int nextWalls = getWalls(newPos.x,newPos.y);
   int leftWall = !!(ROTATE(curDir, 3) & nextWalls);
   int rightWall = !!(ROTATE(curDir, 1) & nextWalls);
   int rtnWall = rightWall + (leftWall << 1);
@@ -232,19 +277,22 @@ int Maze::checkWalls(boolean next){
 
 /*Adds wall at (row,col) in direction*/
 void Maze::addWalls(int row, int col, int direction){
-    walls[row][col] = walls[row][col] | direction;
+    setWalls(row, col, getWalls(row, col) | direction);
     switch(direction){
         case NORTH:
-            walls[row-1][col] = walls[row-1][col] | SOUTH;
+            setWalls(row-1, col, getWalls(row-1, col) | SOUTH);
             break;
         case SOUTH:
-            walls[row+1][col] = walls[row+1][col] | NORTH;
+            setWalls(row+1, col, getWalls(row+1, col) | NORTH);
+            // walls[row+1][col] = walls[row+1][col] | NORTH;
             break;
         case EAST:
-            walls[row][col+1] = walls[row][col+1] | WEST;
+            setWalls(row, col+1, getWalls(row, col+1) | WEST);
+            // walls[row][col+1] = walls[row][col+1] | WEST;
             break;
         case WEST:
-            walls[row][col-1] = walls[row][col-1] | EAST;
+            setWalls(row, col-1, getWalls(row, col-1) | EAST);
+            // walls[row][col-1] = walls[row][col-1] | EAST;
             break;
         default:
             break;
@@ -252,36 +300,36 @@ void Maze::addWalls(int row, int col, int direction){
 }
 
 /*Removes wall from row, col direction*/
-void Maze::removeWalls(int row, int col, int direction){
-    if ( (walls[row][col] & direction ) ==0) {
-        return;
-    }
-    walls[row][col] -= direction;
-    switch(direction){
-        case NORTH:
-            walls[row-1][col] -= SOUTH;
-            break;
-        case SOUTH:
-            walls[row+1][col] -= NORTH;
-            break;
-        case EAST:
-            walls[row][col+1] -= WEST;
-            break;
-        case WEST:
-            walls[row][col-1] -= EAST;
-            break;
-        default:
-            break;
-    }
-}
+// void Maze::removeWalls(int row, int col, int direction){
+//     if ( (getWalls(row, col) & direction ) ==0) {
+//         return;
+//     }
+//     walls[row][col] -= direction;
+//     switch(direction){
+//         case NORTH:
+//             walls[row-1][col] -= SOUTH;
+//             break;
+//         case SOUTH:
+//             walls[row+1][col] -= NORTH;
+//             break;
+//         case EAST:
+//             walls[row][col+1] -= WEST;
+//             break;
+//         case WEST:
+//             walls[row][col-1] -= EAST;
+//             break;
+//         default:
+//             break;
+//     }
+// }
 
 /*Sets maze borders*/
  void Maze::initialize(){
     for (int j = 0; j < MAZE_SIZE; j++) {
-        walls[0][j] = walls[0][j] | NORTH;
-        walls[j][0] = walls[j][0] | WEST;
-        walls[MAZE_SIZE-1][MAZE_SIZE-1-j] = walls[MAZE_SIZE-1][MAZE_SIZE-1-j] | SOUTH;
-        walls[MAZE_SIZE-1-j][MAZE_SIZE-1] = walls[MAZE_SIZE-1-j][MAZE_SIZE-1] | EAST;
+        setWalls(0,j , getWalls(0,j) | NORTH);
+        setWalls(j, 0 , getWalls(j,0) | WEST);
+        setWalls(MAZE_SIZE-1, MAZE_SIZE-1-j , getWalls(MAZE_SIZE-1,MAZE_SIZE-1-j) | SOUTH);
+        setWalls(MAZE_SIZE-1-j,MAZE_SIZE-1 , getWalls(MAZE_SIZE-1-j,MAZE_SIZE-1) | EAST);
     }
     //we also know that we start with 3 sides
     addWalls(MAZE_SIZE-1,0,EAST);
@@ -293,7 +341,15 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
   vector<Cell> neighbors;
   int row = cell.x;
   int col = cell.y;
-  if ( walls[row][col] == 0 ){
+
+  Serial.print("getWalls of ");
+  Serial.print(row);
+  Serial.print(",");
+  Serial.print(col);
+  Serial.print(" is ");
+  Serial.println(getWalls(row,col));
+
+  if ( getWalls(row,col) == 0 ){
     neighbors.push_back( Cell(row, col-1));
     neighbors.push_back( Cell(row, col+1));
     neighbors.push_back( Cell(row+1, col));
@@ -302,18 +358,18 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
   }
 
 
-  if( (walls[row][col] & NORTH) == 0){
+  if( (getWalls(row,col) & NORTH) == 0){
     neighbors.push_back( Cell(row-1, col));
   }
-  if( (walls[row][col] & SOUTH )== 0){
+  if( (getWalls(row,col) & SOUTH )== 0){
     neighbors.push_back( Cell(row+1, col));
 
   }
-  if( (walls[row][col] & EAST )== 0){
+  if( (getWalls(row,col) & EAST )== 0){
     neighbors.push_back( Cell(row, col+1));
 
   }
-  if( (walls[row][col] & WEST )== 0){
+  if( (getWalls(row,col) & WEST )== 0){
     neighbors.push_back( Cell(row, col-1));
   }
 
@@ -330,8 +386,8 @@ void Maze::floodGraph(){
     }
     list<Cell> Q;
     int dist = 0;
-    Q.push_back( Cell(2,2));
-    distanceValue[2][2] = dist;
+    Q.push_back( Cell(CENTER_X,CENTER_Y));
+    distanceValue[CENTER_X][CENTER_Y] = dist;
 
     while(!Q.empty()){
       dist = distanceValue[Q.front().x][Q.front().y]+1;
@@ -411,7 +467,7 @@ void Maze::printDistance(){
 void Maze::printWalls(){
   for (int i = 0; i<MAZE_SIZE; i++ ) {
     for (int j = 0; j<MAZE_SIZE; j++){
-      Serial.print(walls[i][j]);
+      Serial.print(getWalls(i,j));
       Serial.print(" ");
     }
     Serial.println("");
@@ -430,7 +486,7 @@ void Maze::showWalls(){
 
   for (int i = 0; i<MAZE_SIZE; i++ ) {
     for (int j = 0; j<MAZE_SIZE; j++){
-      if ( (walls[i][j] & WEST ) != 0 )
+      if ( (getWalls(i,j) & WEST ) != 0 )
         Serial.print("|");
       else if(i == curPos.x && j == curPos.y){
         printDir();
@@ -438,7 +494,7 @@ void Maze::showWalls(){
         Serial.print(" ");
       }
 
-      if ( (walls[i][j] & SOUTH ) != 0 )
+      if ( (getWalls(i,j) & SOUTH ) != 0 )
         Serial.print("_");
       else if(i == curPos.x && j == curPos.y){
         printDir();
@@ -472,7 +528,6 @@ void Maze::setupTest(){
 
     //Serial.println("");
     //Serial.println("");
-
 }
 
 #endif

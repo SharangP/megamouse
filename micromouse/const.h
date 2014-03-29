@@ -55,16 +55,17 @@
 #define EAST 		2
 #define SOUTH  		4
 #define WEST  		8
-#define MAZE_SIZE 	5
-#define CENTER_X 	2
-#define CENTER_Y 	2
+#define MAZE_SIZE 	8
+#define CENTER_X 	4//7
+#define CENTER_Y 	4//8
 
 #define BASE_POWER			60
 #define BASE_POWER_REVERSED 50
-#define TURN_POWER			75
+#define TURN_POWER			150
 #define ADJUST_POWER 		45
 #define SLOWEST 			15
 
+#define SIDE_WALL_THRESH    225
 
 #define ROTATE(x,y) (x << y | x >> (4-y)) & 15
 

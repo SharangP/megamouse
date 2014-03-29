@@ -10,6 +10,7 @@
 
 #include "Arduino.h"
 #include <EEPROM.h>
+// #include <avr/pgmspace.h>
 #include <StandardCplusplus.h>
 #include <vector>
 #include <list>
@@ -32,7 +33,8 @@ namespace Maze{
 
   //extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
   extern unsigned char distanceValue[MAZE_SIZE][MAZE_SIZE];
-  extern unsigned char walls[MAZE_SIZE][MAZE_SIZE];
+  // extern PROGMEM prog_uchar distanceValue[MAZE_SIZE][MAZE_SIZE];
+  extern unsigned char walls[MAZE_SIZE][MAZE_SIZE/2];
   extern int curDir;
   extern Cell curPos;
   //TODO: idea: remember an x,y or big int for curPos
@@ -44,6 +46,9 @@ namespace Maze{
   // Maze(); //initialize maze to have no walls except border
   void addWalls(int row, int col, int direction);
   void removeWalls(int row, int col, int direction);
+
+  unsigned char getWalls(int x, int y);
+  void setWalls(int x, int y, int val);
 
   void initialize();
   Cell nextPos();

@@ -3,12 +3,19 @@
 *
 *  Sharang Phadke
 *  Sameer Chauhan
+U: guest 858
+P: swarthy88
+
+fix calibrate
+fix turn around
+test
 ***************/
 
 #define ENCODER_USE_INTERRUPTS
 #include <StandardCplusplus.h>
 #include <Math.h>
 #include <EEPROM.h>
+// #include <avr/pgmspace.h>
 #include <PID_v1.h>
 #include <Encoder.h>
 #include "SensorController.h"
@@ -28,7 +35,7 @@ void decision(int * state){
 
   delay(SAMPLE_PERIOD);
   for(int i = 0; i < 10; i++){
-    delay(200);
+    delay(50);
     Serial.print(10-i);
     Serial.print(" ");
   }
@@ -68,6 +75,10 @@ void exploreMaze(){
   while (!Maze::fullyExplored()){
     SensorController::sample(2);
 
+    // Serial.print("Motor Powers: L/R:  ");
+    // Serial.print(MovementController::moveSpeedLeft);
+    // Serial.println(MovementController::moveSpeedRight);
+
     switch(state){
       case DECIDE: //Make decision, reset encoder values
         decision(&state);
@@ -85,10 +96,10 @@ void exploreMaze(){
         break;
 
       case TURN_RIGHT: // Turn
-        if (!turn_went_straight){
-          // MovementController::forward(100);
-          turn_went_straight = true;
-        }
+        // if (!turn_went_straight){
+        //   // MovementController::forward(100);
+        //   turn_went_straight = true;
+        // }
         MovementController::turn(RIGHT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))
@@ -97,15 +108,15 @@ void exploreMaze(){
           MovementController::brake(state);
           state = DECIDE;
           Maze::curDir = ROTATE(Maze::curDir, 1);
-          turn_went_straight = false;
+          // turn_went_straight = false;
         }
         break;
 
       case TURN_LEFT: // Turn LEFT
-        if (!turn_went_straight){
-          // MovementController::forward(100);
-          turn_went_straight = true;
-        }
+        // if (!turn_went_straight){
+        //   // MovementController::forward(100);
+        //   turn_went_straight = true;
+        // }
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))
@@ -113,7 +124,7 @@ void exploreMaze(){
           MovementController::brake(state);
           state = DECIDE;
           Maze::curDir = ROTATE(Maze::curDir, 3);
-          turn_went_straight = false;
+          // turn_went_straight = false;
         }
         break;
 
@@ -202,6 +213,8 @@ void returnToStart(){}
 
 void setup(){
   Serial.begin(9600);
+  Serial.flush();
+
   pinMode(13, OUTPUT);
   Serial.println("Micromouse Running...");
   // MovementController::pidEncoder->SetMode(AUTOMATIC);
@@ -224,6 +237,8 @@ void loop(){
       Maze::load();
       Serial.println("Printing Maze from EEProm");
       Maze::showWalls();
+      Maze::printWalls();
+      Maze::printDistance();
       solvingMode = Maze::checkSolved();
       if(!solvingMode)
         Maze::initialize();

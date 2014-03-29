@@ -236,8 +236,8 @@ void MovementController::brake(int state){
     SensorController::leftEncoder.write(0);
     SensorController::rightEncoder.write(0);
 
-    moveSpeedRight = BASE_POWER;
-    moveSpeedLeft = BASE_POWER;
+    // moveSpeedRight = BASE_POWER;
+    // moveSpeedLeft = BASE_POWER;
   }
 }
 
