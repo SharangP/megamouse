@@ -15,7 +15,6 @@ test
 #include <StandardCplusplus.h>
 #include <Math.h>
 #include <EEPROM.h>
-// #include <avr/pgmspace.h>
 #include <PID_v1.h>
 #include <Encoder.h>
 #include "SensorController.h"
@@ -232,8 +231,6 @@ void setup(){
 void loop(){
   for(int i = 0; i < 10; i++){
     if(Serial.available()){
-      // Maze::save(); //checking whether we can read back a normal maze;
-
       Maze::load();
       Serial.println("Printing Maze from EEProm");
       Maze::showWalls();

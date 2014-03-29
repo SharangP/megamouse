@@ -10,7 +10,6 @@
 
 #include "Arduino.h"
 #include <EEPROM.h>
-// #include <avr/pgmspace.h>
 #include <StandardCplusplus.h>
 #include <vector>
 #include <list>
@@ -31,9 +30,7 @@ namespace Maze{
 };
 
 
-  //extern Cell nodes[MAZE_SIZE][MAZE_SIZE];
   extern unsigned char distanceValue[MAZE_SIZE][MAZE_SIZE];
-  // extern PROGMEM prog_uchar distanceValue[MAZE_SIZE][MAZE_SIZE];
   extern unsigned char walls[MAZE_SIZE][MAZE_SIZE/2];
   extern int curDir;
   extern Cell curPos;
@@ -59,7 +56,6 @@ namespace Maze{
   void detectWalls(); //Look ahead and add walls if necessary
   int decide();
 
-  // list<Cell*> getNeighbors(Cell* cell);
   vector<Cell> getNeighbors(Cell cell);
 
   void floodGraph();
