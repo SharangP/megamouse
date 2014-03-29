@@ -33,12 +33,12 @@ unsigned char Maze::getWalls(int x, int y){
 }
 
 void Maze::setWalls(int x, int y, int val){
-  // Serial.print("Setting wall at ");
-  // Serial.print(x);
-  // Serial.print(",");
-  // Serial.print(y);
-  // Serial.print(" to ");
-  // Serial.println(val);
+  Serial.print("Setting wall at ");
+  Serial.print(x);
+  Serial.print(",");
+  Serial.print(y);
+  Serial.print(" to ");
+  Serial.println(val);
 
   if(y % 2){
     walls[x][y/2] = walls[x][y/2] | val;
@@ -165,37 +165,38 @@ void Maze::save(){
   Serial.println("Saving current maze map to EEPROM!");
   for (int i = 0; i < MAZE_SIZE; i++){
     for (int j = 0; j < MAZE_SIZE/2; j++){
-      EEPROM.write(MAZE_SIZE*i+j % 512, (byte)walls[i][j]);
+      EEPROM.write(MAZE_SIZE*i+j, walls[i][j]);
       delay(5);
     }
+    Serial.println();
   }
 
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2, fullyExplored());
-  delay(5);
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 1, (byte)curPos.x);
-  delay(5);
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 2, (byte)curPos.y);
-  delay(5);
-  EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 3, (byte)curDir);
-  delay(5);
+  // EEPROM.write(MAZE_SIZE*MAZE_SIZE/2, fullyExplored());
+  // delay(5);
+  // EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 1, (byte)curPos.x);
+  // delay(5);
+  // EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 2, (byte)curPos.y);
+  // delay(5);
+  // EEPROM.write(MAZE_SIZE*MAZE_SIZE/2 + 3, (byte)curDir);
+  // delay(5);
 
-  for (int i = 0; i < MAZE_SIZE; i++){
-    for (int j = 0; j < MAZE_SIZE; j++){
-      EEPROM.write(MAZE_SIZE*MAZE_SIZE + MAZE_SIZE*i+j % 512, (byte)distanceValue[i][j]);
-      delay(5);
-    }
-  }
+  // for (int i = 0; i < MAZE_SIZE; i++){
+  //   for (int j = 0; j < MAZE_SIZE; j++){
+  //     EEPROM.write(MAZE_SIZE*MAZE_SIZE + MAZE_SIZE*i+j % 512, (byte)distanceValue[i][j]);
+  //     delay(5);
+  //   }
+  // }
 }
 
 void Maze::load(){
   //load maze from EEprom
   for (int i = 0; i < MAZE_SIZE; i++)
     for (int j = 0; j < MAZE_SIZE/2; j++)
-      walls[i][j] = EEPROM.read(MAZE_SIZE*i+j % 512);
+      walls[i][j] = EEPROM.read(MAZE_SIZE*i+j);
 
-  int cpx = EEPROM.read((MAZE_SIZE*MAZE_SIZE/2 + 1) % 512);
-  int cpy = EEPROM.read((MAZE_SIZE*MAZE_SIZE/2 + 2) % 512);
-  int cd = EEPROM.read((MAZE_SIZE*MAZE_SIZE/2 + 3) % 512);
+  int cpx = EEPROM.read(MAZE_SIZE*MAZE_SIZE/2 + 1);
+  int cpy = EEPROM.read(MAZE_SIZE*MAZE_SIZE/2 + 2);
+  int cd = EEPROM.read(MAZE_SIZE*MAZE_SIZE/2 + 3);
   Serial.print("Current Pos/Dir when last idle: ");
   Serial.print(cpx);
   Serial.print(" , ");
@@ -205,7 +206,7 @@ void Maze::load(){
 
   for (int i = 0; i < MAZE_SIZE; i++){
     for (int j = 0; j < MAZE_SIZE; j++){
-      distanceValue[i][j] = EEPROM.read(MAZE_SIZE*MAZE_SIZE + MAZE_SIZE*i+j % 512);
+      distanceValue[i][j] = EEPROM.read(MAZE_SIZE*MAZE_SIZE + MAZE_SIZE*i+j);
       delay(5);
     }
   }
@@ -285,15 +286,15 @@ void Maze::addWalls(int row, int col, int direction){
       break;
     case SOUTH:
       if(row+1 < MAZE_SIZE)
-      setWalls(row+1, col, getWalls(row+1, col) | NORTH);
+        setWalls(row+1, col, getWalls(row+1, col) | NORTH);
       break;
     case EAST:
       if(col+1 < MAZE_SIZE)
-      setWalls(row, col+1, getWalls(row, col+1) | WEST);
+        setWalls(row, col+1, getWalls(row, col+1) | WEST);
       break;
     case WEST:
       if(col-1 > 0)
-      setWalls(row, col-1, getWalls(row, col-1) | EAST);
+        setWalls(row, col-1, getWalls(row, col-1) | EAST);
       break;
   }
 }
@@ -341,12 +342,12 @@ vector<Maze::Cell> Maze::getNeighbors(Maze::Cell cell){
   int row = cell.x;
   int col = cell.y;
 
-  // Serial.print("getWalls of ");
-  // Serial.print(row);
-  // Serial.print(",");
-  // Serial.print(col);
-  // Serial.print(" is ");
-  // Serial.println(getWalls(row,col));
+  Serial.print("getWalls of ");
+  Serial.print(row);
+  Serial.print(",");
+  Serial.print(col);
+  Serial.print(" is ");
+  Serial.println(getWalls(row,col));
 
   if ( getWalls(row,col) == 0 ){
     neighbors.push_back( Cell(row, col-1));

@@ -231,6 +231,7 @@ void setup(){
 void loop(){
   for(int i = 0; i < 10; i++){
     if(Serial.available()){
+      // Maze::save();
       Maze::load();
       Serial.println("Printing Maze from EEProm");
       Maze::showWalls();
