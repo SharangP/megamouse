@@ -55,9 +55,9 @@
 #define EAST 		2
 #define SOUTH  		4
 #define WEST  		8
-#define MAZE_SIZE 	6 //16
-#define CENTER_X 	3//7
-#define CENTER_Y 	3//8
+#define MAZE_SIZE 	16
+#define CENTER_X 	8
+#define CENTER_Y 	8
 
 #define BASE_POWER			60
 #define BASE_POWER_REVERSED 50
