@@ -36,7 +36,15 @@ double MovementController::adjustPower(int follow){
   // double mean = SensorController::sensorMean[follow];
   double sigma = SensorController::sensorSigma[follow];
   double current = SensorController::irSmooth[follow];
-  return ADJUST_POWER*current/sigma;
+
+  if(fabs(current) < sigma)
+    return ADJUST_POWER_CLOSE*current/sigma;
+  else{
+    int sign = (current > 0) ? 1 : -1;
+    return ADJUST_POWER_FAR*sign*sqrt(fabs(current))/sigma;
+  }
+
+    // return ADJUST_POWER*sigma/current;
 }
 
 void MovementController::updatePID(int state){
@@ -230,6 +238,10 @@ void MovementController::brake(int state){
     delay(BRAKE_PERIOD);
     right->setState(0,0);
     left->setState(0,0);
+
+    moveSpeedRight = 0;
+    moveSpeedLeft = 0;
+
     digitalWrite(right->enablePin, LOW);
     digitalWrite(left->enablePin, LOW);
 

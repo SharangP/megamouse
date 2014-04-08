@@ -36,8 +36,8 @@ void decision(int * state){
   // delay(SAMPLE_PERIOD);
   // for(int i = 0; i < 10; i++){
   //   delay(50);
-  //   Serial.print(10-i);
-  //   Serial.print(" ");
+  //   // Serial.print(10-i);
+  //   // Serial.print(" ");
   // }
 
   Serial.println("");
@@ -98,27 +98,28 @@ void exploreMaze(){
         break;
 
       case TURN_RIGHT: // Turn
-        // if (!turn_went_straight){
-        //   // MovementController::forward(100);
-        //   turn_went_straight = true;
-        // }
+        if (!turn_went_straight){
+          MovementController::go(2,20,BASE_POWER);
+          // MovementController::brake(REVERSED);
+          turn_went_straight = true;
+        }
         MovementController::turn(RIGHT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))
             >= TURN_ENCODER_THRESH){
-          // state= STOP;
           MovementController::brake(state);
           state = DECIDE;
           Maze::curDir = ROTATE(Maze::curDir, 1);
-          // turn_went_straight = false;
+          turn_went_straight = false;
         }
         break;
 
       case TURN_LEFT: // Turn LEFT
-        // if (!turn_went_straight){
-        //   // MovementController::forward(100);
-        //   turn_went_straight = true;
-        // }
+        if (!turn_went_straight){
+          MovementController::go(2,20,BASE_POWER);
+          // MovementController::brake(REVERSED);
+          turn_went_straight = true;
+        }
         MovementController::turn(LEFT);
         if ((abs(SensorController::leftEncoder.read())
             + abs(SensorController::rightEncoder.read()))
@@ -126,7 +127,7 @@ void exploreMaze(){
           MovementController::brake(state);
           state = DECIDE;
           Maze::curDir = ROTATE(Maze::curDir, 3);
-          // turn_went_straight = false;
+          turn_went_straight = false;
         }
         break;
 

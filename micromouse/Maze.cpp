@@ -281,7 +281,7 @@ void Maze::addWalls(int row, int col, int direction){
   setWalls(row, col, getWalls(row, col) | direction);
   switch(direction){
     case NORTH:
-      if(row-1 > 0)
+      if(row-1 >= 0)
         setWalls(row-1, col, getWalls(row-1, col) | SOUTH);
       break;
     case SOUTH:
@@ -293,7 +293,7 @@ void Maze::addWalls(int row, int col, int direction){
         setWalls(row, col+1, getWalls(row, col+1) | WEST);
       break;
     case WEST:
-      if(col-1 > 0)
+      if(col-1 >= 0)
         setWalls(row, col-1, getWalls(row, col-1) | EAST);
       break;
   }
